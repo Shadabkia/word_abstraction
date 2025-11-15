@@ -1,0 +1,61 @@
+import { useDrag, useDrop } from 'react-dnd';
+
+interface Word {
+  id: string;
+  text: string;
+  category: string;
+}
+
+interface GridWordTileProps {
+  word: Word;
+  rowIndex: number;
+  colIndex: number;
+  onSwap: (word: Word, targetRowIndex: number, targetColIndex: number) => void;
+}
+
+export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileProps) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'word',
+    item: word,
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'word',
+    drop: (item: Word) => onSwap(item, rowIndex, colIndex),
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
+
+  return (
+    <div
+      ref={(node) => drag(drop(node))}
+      className={`
+        bg-gradient-to-br from-yellow-100 to-yellow-200
+        border-2 border-yellow-300
+        rounded-2xl
+        shadow-md
+        px-3 py-4
+        cursor-move
+        select-none
+        flex items-center justify-center
+        text-center
+        transition-all
+        h-20
+        hover:shadow-lg
+        hover:scale-105
+        active:scale-95
+        ${isDragging ? 'opacity-50' : 'opacity-100'}
+        ${isOver ? 'border-blue-400 scale-105' : ''}
+      `}
+      style={{ touchAction: 'none' }}
+    >
+      <span className="text-gray-900 text-sm leading-tight break-words font-bold">
+        {word.text}
+      </span>
+    </div>
+  );
+}
