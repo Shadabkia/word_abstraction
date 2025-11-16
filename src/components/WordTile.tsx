@@ -13,9 +13,19 @@ interface WordTileProps {
 }
 
 export function WordTile({ word, inDropZone = false }: WordTileProps) {
+  const tileRef = React.useRef<HTMLDivElement | null>(null);
+
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'word',
-    item: word,
+    // include live dimensions so the preview can match tile size
+    item: () => {
+      const rect = tileRef.current?.getBoundingClientRect();
+      return {
+        ...word,
+        __previewWidth: rect?.width ?? undefined,
+        __previewHeight: rect?.height ?? undefined,
+      };
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -23,7 +33,10 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
 
   return (
     <div
-      ref={drag}
+      ref={(node) => {
+        tileRef.current = node;
+        drag(node);
+      }}
       className={`
         bg-gradient-to-br from-yellow-100 to-yellow-200
         border-2 border-yellow-300

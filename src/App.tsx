@@ -7,6 +7,8 @@ import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { Settings, Search, Lightbulb } from 'lucide-react';
 import { Button } from './components/ui/button';
+import * as React from "react";
+import { DragPreview } from './components/DragPreview';
 
 interface Word {
   id: string;
@@ -140,8 +142,12 @@ export default function App() {
   };
 
   return (
-    <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+    <DndProvider
+      backend={isTouchDevice() ? TouchBackend : HTML5Backend}
+      options={isTouchDevice() ? { enableTouchEvents: true, enableMouseEvents: true, delay: 0 } : undefined}
+    >
       <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-50 to-white">
+        <DragPreview />
         {/* Top Bar */}
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">

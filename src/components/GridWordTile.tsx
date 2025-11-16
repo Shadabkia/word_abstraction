@@ -15,9 +15,19 @@ interface GridWordTileProps {
 }
 
 export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileProps) {
+  const tileRef = React.useRef<HTMLDivElement | null>(null);
+
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'word',
-    item: word,
+    // include live dimensions so the preview can match tile size
+    item: () => {
+      const rect = tileRef.current?.getBoundingClientRect();
+      return {
+        ...word,
+        __previewWidth: rect?.width ?? undefined,
+        __previewHeight: rect?.height ?? undefined,
+      };
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -33,7 +43,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileP
 
   return (
     <div
-      ref={(node) => drag(drop(node))}
+      ref={(node) => {
+        tileRef.current = node;
+        drag(drop(node));
+      }}
       className={`
         bg-gradient-to-br from-yellow-100 to-yellow-200
         border-2 border-yellow-300
