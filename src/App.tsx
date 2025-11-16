@@ -7,7 +7,6 @@ import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { Settings, Search, Lightbulb } from 'lucide-react';
 import { Button } from './components/ui/button';
-import * as React from "react";
 import { DragPreview } from './components/DragPreview';
 
 interface Word {
