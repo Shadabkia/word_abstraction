@@ -84,15 +84,13 @@ export default function App() {
   const completedCount = gridRows.filter(row => row.type === 'completed').length;
 
   const handleSwap = (draggedWord: Word, targetRowIndex: number, targetColIndex: number) => {
-    const newGridRows = [...gridRows];
-    
     // Find the dragged word's position
     let sourceRowIndex = -1;
     let sourceColIndex = -1;
     
-    for (let i = 0; i < newGridRows.length; i++) {
-      if (newGridRows[i].type === 'words' && newGridRows[i].words) {
-        const colIndex = newGridRows[i].words!.findIndex(w => w.id === draggedWord.id);
+    for (let i = 0; i < gridRows.length; i++) {
+      if (gridRows[i].type === 'words' && gridRows[i].words) {
+        const colIndex = gridRows[i].words!.findIndex(w => w.id === draggedWord.id);
         if (colIndex !== -1) {
           sourceRowIndex = i;
           sourceColIndex = colIndex;
@@ -101,16 +99,35 @@ export default function App() {
       }
     }
     
-    if (sourceRowIndex === -1 || newGridRows[targetRowIndex].type !== 'words') return;
+    // Validation checks
+    if (sourceRowIndex === -1) return; // Source not found
+    if (gridRows[targetRowIndex]?.type !== 'words') return; // Target row not valid
+    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) return; // Same position
     
-    // Swap the words
-    const targetWord = newGridRows[targetRowIndex].words![targetColIndex];
-    newGridRows[sourceRowIndex].words![sourceColIndex] = targetWord;
-    newGridRows[targetRowIndex].words![targetColIndex] = draggedWord;
+    // Create new grid with only the two tiles swapped
+    const newGridRows = gridRows.map((row, rowIdx) => {
+      if (row.type !== 'words') return row;
+      
+      return {
+        ...row,
+        words: row.words!.map((w, colIdx) => {
+          // If this is the source position, place the target word
+          if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) {
+            return gridRows[targetRowIndex].words![targetColIndex];
+          }
+          // If this is the target position, place the source word
+          if (rowIdx === targetRowIndex && colIdx === targetColIndex) {
+            return draggedWord;
+          }
+          // Otherwise keep the word as is
+          return w;
+        })
+      };
+    });
     
     setGridRows(newGridRows);
     
-    // Check both rows for matches
+    // Check both affected rows for matches
     setTimeout(() => {
       checkRowForMatch(newGridRows, sourceRowIndex);
       if (targetRowIndex !== sourceRowIndex) {

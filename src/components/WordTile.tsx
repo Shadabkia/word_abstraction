@@ -1,4 +1,5 @@
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import * as React from "react";
 
 interface Word {
@@ -15,7 +16,11 @@ interface WordTileProps {
 export function WordTile({ word, inDropZone = false }: WordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
 
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const isTouch =
+    typeof window !== 'undefined' &&
+    (('ontouchstart' in window) || (navigator as any).maxTouchPoints > 0);
+
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: 'word',
     // include live dimensions so the preview can match tile size
     item: () => {
@@ -30,6 +35,12 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
       isDragging: monitor.isDragging(),
     }),
   }));
+
+  React.useEffect(() => {
+    if (!isTouch) {
+      preview(getEmptyImage(), { captureDraggingState: true });
+    }
+  }, [preview, isTouch]);
 
   return (
     <div

@@ -27,7 +27,8 @@ export function DragPreview() {
     isDragging: monitor.isDragging(),
     itemType: monitor.getItemType(),
     item: monitor.getItem() as Word | null,
-    currentOffset: monitor.getSourceClientOffset(),
+    // Use the actual pointer position so we can center the preview under the finger/cursor
+    currentOffset: monitor.getClientOffset(),
   }));
 
   if (!isDragging || !item) {
