@@ -102,6 +102,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = f
           '--swap-y': `${swapOffset.y}px`,
         } as React.CSSProperties : {})
       }}
+      dir="rtl"
     >
       <span className="text-gray-900 text-sm leading-tight break-words font-bold">
         {word.text}

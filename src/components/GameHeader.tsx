@@ -1,3 +1,5 @@
+import * as React from "react";
+
 interface GameHeaderProps {
   level: number;
   completed: number;
@@ -8,10 +10,10 @@ export function GameHeader({ level, completed, total }: GameHeaderProps) {
   const progress = (completed / total) * 100;
 
   return (
-    <div className="bg-gradient-to-b from-blue-200 to-blue-100 py-6 px-4 mb-6">
-      <h1 className="text-center text-blue-900 mb-2">LEVEL {level}</h1>
+    <div className="bg-gradient-to-b from-blue-200 to-blue-100 py-6 px-4 mb-6" dir="rtl">
+      <h1 className="text-center text-blue-900 mb-2">مرحله {level}</h1>
       <p className="text-center text-blue-800 text-sm mb-4">
-        Group four word tiles by putting them in one row
+        چهار کلمه از یک دسته را در یک ردیف قرار دهید
       </p>
       
       <div className="flex items-center justify-center gap-3">

@@ -10,12 +10,17 @@ interface Word {
   __previewHeight?: number;
 }
 
-function getItemStyles(currentOffset: XYCoord | null): React.CSSProperties {
+function getItemStyles(currentOffset: XYCoord | null, width?: number, height?: number): React.CSSProperties {
   if (!currentOffset) {
     return { display: "none" };
   }
   const { x, y } = currentOffset;
-  const transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+  
+  // Center the preview under the cursor/touch point
+  const offsetX = width ? width / 2 : 0;
+  const offsetY = height ? height / 2 : 0;
+  
+  const transform = `translate(${x - offsetX}px, ${y - offsetY}px)`;
   return {
     transform,
     WebkitTransform: transform,
@@ -49,10 +54,11 @@ export function DragPreview() {
         width: "100%",
         height: "100%",
       }}
+      dir="ltr"
     >
       <div
         style={{
-          ...getItemStyles(currentOffset),
+          ...getItemStyles(currentOffset, width, height),
           width: width ?? undefined,
           height: height ?? undefined,
         }}
@@ -67,6 +73,7 @@ export function DragPreview() {
           scale-105
           opacity-90
         "
+        dir="rtl"
       >
         <span className="text-gray-900 text-sm leading-tight break-words font-bold">
           {item.text}

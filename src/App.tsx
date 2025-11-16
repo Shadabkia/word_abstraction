@@ -32,39 +32,39 @@ const isTouchDevice = () => {
 };
 
 const LEVEL_DATA: Word[] = [
-  { id: '1', text: 'ACOUSTIC', category: 'MUSICAL_TERMS' },
-  { id: '2', text: 'TREATMENT', category: 'MEDICAL' },
-  { id: '3', text: 'CAT', category: 'ANIMALS' },
-  { id: '4', text: 'BASS', category: 'MUSICAL_TERMS' },
-  { id: '5', text: 'TEACHER', category: 'PROFESSIONS' },
-  { id: '6', text: 'SCALPEL', category: 'MEDICAL' },
-  { id: '7', text: 'MEDICATIONS', category: 'MEDICAL' },
-  { id: '8', text: 'ACTOR', category: 'PROFESSIONS' },
-  { id: '9', text: 'ASTRONAUT', category: 'PROFESSIONS' },
-  { id: '10', text: 'CLASSICAL', category: 'MUSICAL_TERMS' },
-  { id: '11', text: 'MESSAGE', category: 'COMMUNICATION' },
-  { id: '12', text: 'WHITE', category: 'COLORS' },
-  { id: '13', text: 'CALL', category: 'PROFESSIONS' },
-  { id: '14', text: 'BLUE', category: 'COLORS' },
-  { id: '15', text: 'RABBIT', category: 'ANIMALS' },
-  { id: '16', text: 'ELECTRIC', category: 'MUSICAL_TERMS' },
-  { id: '17', text: 'HAMSTER', category: 'ANIMALS' },
-  { id: '18', text: 'SCREEN', category: 'COMMUNICATION' },
-  { id: '19', text: 'PATIENT', category: 'MEDICAL' },
-  { id: '20', text: 'SELFIES', category: 'COMMUNICATION' },
-  { id: '21', text: 'RED', category: 'COLORS' },
-  { id: '22', text: 'GREEN', category: 'COLORS' },
-  { id: '23', text: 'MOUSE', category: 'ANIMALS' },
-  { id: '24', text: 'TEXT', category: 'COMMUNICATION' },
+  { id: '1', text: 'پیانو', category: 'آلات_موسیقی' },
+  { id: '2', text: 'دارو', category: 'پزشکی' },
+  { id: '3', text: 'گربه', category: 'حیوانات' },
+  { id: '4', text: 'گیتار', category: 'آلات_موسیقی' },
+  { id: '5', text: 'معلم', category: 'مشاغل' },
+  { id: '6', text: 'بیمار', category: 'پزشکی' },
+  { id: '7', text: 'پزشک', category: 'پزشکی' },
+  { id: '8', text: 'بازیگر', category: 'مشاغل' },
+  { id: '9', text: 'فضانورد', category: 'مشاغل' },
+  { id: '10', text: 'ویولن', category: 'آلات_موسیقی' },
+  { id: '11', text: 'پیام', category: 'ارتباطات' },
+  { id: '12', text: 'سفید', category: 'رنگ‌ها' },
+  { id: '13', text: 'مهندس', category: 'مشاغل' },
+  { id: '14', text: 'آبی', category: 'رنگ‌ها' },
+  { id: '15', text: 'خرگوش', category: 'حیوانات' },
+  { id: '16', text: 'سنتور', category: 'آلات_موسیقی' },
+  { id: '17', text: 'همستر', category: 'حیوانات' },
+  { id: '18', text: 'تماس', category: 'ارتباطات' },
+  { id: '19', text: 'بیمارستان', category: 'پزشکی' },
+  { id: '20', text: 'عکس', category: 'ارتباطات' },
+  { id: '21', text: 'قرمز', category: 'رنگ‌ها' },
+  { id: '22', text: 'سبز', category: 'رنگ‌ها' },
+  { id: '23', text: 'موش', category: 'حیوانات' },
+  { id: '24', text: 'متن', category: 'ارتباطات' },
 ];
 
 const CATEGORY_NAMES: Record<string, string> = {
-  MUSICAL_TERMS: 'MUSICAL TERMS',
-  MEDICAL: 'MEDICAL',
-  ANIMALS: 'ANIMALS',
-  PROFESSIONS: 'PROFESSIONS',
-  COLORS: 'COLORS',
-  COMMUNICATION: 'COMMUNICATION',
+  'آلات_موسیقی': 'آلات موسیقی',
+  'پزشکی': 'پزشکی',
+  'حیوانات': 'حیوانات',
+  'مشاغل': 'مشاغل',
+  'رنگ‌ها': 'رنگ‌ها',
+  'ارتباطات': 'ارتباطات',
 };
 
 export default function App() {
@@ -188,7 +188,7 @@ export default function App() {
     if (allSame) {
       setTimeout(() => {
         const categoryName = CATEGORY_NAMES[categories[0]] || categories[0];
-        const words = row.words!.map(w => w.text.charAt(0) + w.text.slice(1).toLowerCase());
+        const words = row.words!.map(w => w.text);
         
         const newGridRows = [...rows];
         newGridRows[rowIndex] = {
