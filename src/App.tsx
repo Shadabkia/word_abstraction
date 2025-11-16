@@ -79,6 +79,8 @@ export default function App() {
   const [coins, setCoins] = useState(10);
   const [hints, setHints] = useState(3);
   const [level] = useState(1);
+  const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
+  const [swapOffsets, setSwapOffsets] = useState<Map<string, { x: number; y: number }>>(new Map());
 
   const totalCategories = 6;
   const completedCount = gridRows.filter(row => row.type === 'completed').length;
@@ -104,36 +106,76 @@ export default function App() {
     if (gridRows[targetRowIndex]?.type !== 'words') return; // Target row not valid
     if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) return; // Same position
     
-    // Create new grid with only the two tiles swapped
-    const newGridRows = gridRows.map((row, rowIdx) => {
-      if (row.type !== 'words') return row;
+    const targetWord = gridRows[targetRowIndex].words![targetColIndex];
+    
+    // Calculate position offsets for animation
+    // Calculate based on grid positions (columns and rows)
+    const colDiff = targetColIndex - sourceColIndex;
+    const rowDiff = targetRowIndex - sourceRowIndex;
+    
+    // Approximate tile width/height + gap (will be refined with actual measurements)
+    // Using percentage-based calculation for responsive design
+    const tileWidthPercent = 100 / 4; // 4 columns
+    const gapSize = 8; // gap-2 = 8px
+    
+    // Calculate pixel offsets
+    const sourceElement = document.querySelector(`[data-word-id="${draggedWord.id}"]`);
+    const targetElement = document.querySelector(`[data-word-id="${targetWord.id}"]`);
+    
+    if (sourceElement && targetElement) {
+      const sourceRect = sourceElement.getBoundingClientRect();
+      const targetRect = targetElement.getBoundingClientRect();
       
-      return {
-        ...row,
-        words: row.words!.map((w, colIdx) => {
-          // If this is the source position, place the target word
-          if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) {
-            return gridRows[targetRowIndex].words![targetColIndex];
-          }
-          // If this is the target position, place the source word
-          if (rowIdx === targetRowIndex && colIdx === targetColIndex) {
-            return draggedWord;
-          }
-          // Otherwise keep the word as is
-          return w;
-        })
-      };
-    });
+      const sourceToTargetX = targetRect.left - sourceRect.left;
+      const sourceToTargetY = targetRect.top - sourceRect.top;
+      
+      // Set offsets for both tiles (opposite directions)
+      const offsets = new Map();
+      offsets.set(draggedWord.id, { x: sourceToTargetX, y: sourceToTargetY });
+      offsets.set(targetWord.id, { x: -sourceToTargetX, y: -sourceToTargetY });
+      setSwapOffsets(offsets);
+    }
     
-    setGridRows(newGridRows);
+    // Trigger animation for both tiles
+    setAnimatingTiles(new Set([draggedWord.id, targetWord.id]));
     
-    // Check both affected rows for matches
+    // Perform swap after animation completes
     setTimeout(() => {
-      checkRowForMatch(newGridRows, sourceRowIndex);
-      if (targetRowIndex !== sourceRowIndex) {
-        checkRowForMatch(newGridRows, targetRowIndex);
-      }
-    }, 100);
+      // Create new grid with only the two tiles swapped
+      const newGridRows = gridRows.map((row, rowIdx) => {
+        if (row.type !== 'words') return row;
+        
+        return {
+          ...row,
+          words: row.words!.map((w, colIdx) => {
+            // If this is the source position, place the target word
+            if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) {
+              return targetWord;
+            }
+            // If this is the target position, place the source word
+            if (rowIdx === targetRowIndex && colIdx === targetColIndex) {
+              return draggedWord;
+            }
+            // Otherwise keep the word as is
+            return w;
+          })
+        };
+      });
+      
+      setGridRows(newGridRows);
+      
+      // Clear animation state
+      setAnimatingTiles(new Set());
+      setSwapOffsets(new Map());
+      
+      // Check both affected rows for matches
+      setTimeout(() => {
+        checkRowForMatch(newGridRows, sourceRowIndex);
+        if (targetRowIndex !== sourceRowIndex) {
+          checkRowForMatch(newGridRows, targetRowIndex);
+        }
+      }, 100);
+    }, 400);
   };
 
   const checkRowForMatch = (rows: GridRow[], rowIndex: number) => {
@@ -209,6 +251,8 @@ export default function App() {
                       rowIndex={rowIndex}
                       colIndex={colIndex}
                       onSwap={handleSwap}
+                      isAnimating={animatingTiles.has(word.id)}
+                      swapOffset={swapOffsets.get(word.id)}
                     />
                   ))}
                 </div>

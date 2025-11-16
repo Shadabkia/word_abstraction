@@ -13,9 +13,11 @@ interface GridWordTileProps {
   rowIndex: number;
   colIndex: number;
   onSwap: (word: Word, targetRowIndex: number, targetColIndex: number) => void;
+  isAnimating?: boolean;
+  swapOffset?: { x: number; y: number };
 }
 
-export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileProps) {
+export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = false, swapOffset }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const lastDropTimeRef = React.useRef<number>(0);
 
@@ -73,6 +75,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileP
         tileRef.current = node;
         drag(drop(node));
       }}
+      data-word-id={word.id}
       className={`
         bg-gradient-to-br from-yellow-100 to-yellow-200
         border-2 border-yellow-300
@@ -83,7 +86,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileP
         select-none
         flex items-center justify-center
         text-center
-        transition-all
         h-16
         hover:shadow-lg
         hover:scale-105
@@ -91,8 +93,15 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileP
         ${isDragging ? 'opacity-50' : 'opacity-100'}
         ${isOver && canDrop ? 'border-blue-400 border-4 scale-105 shadow-xl' : ''}
         ${isOver && !canDrop ? 'opacity-75' : ''}
+        ${isAnimating ? 'animate-swap' : 'transition-all'}
       `}
-      style={{ touchAction: 'none' }}
+      style={{ 
+        touchAction: 'none',
+        ...(isAnimating && swapOffset ? {
+          '--swap-x': `${swapOffset.x}px`,
+          '--swap-y': `${swapOffset.y}px`,
+        } as React.CSSProperties : {})
+      }}
     >
       <span className="text-gray-900 text-sm leading-tight break-words font-bold">
         {word.text}

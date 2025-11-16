@@ -1677,3 +1677,16 @@ html {
     transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0));
   }
 }
+
+@keyframes swapMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(var(--swap-x), var(--swap-y));
+  }
+}
+
+.animate-swap {
+  animation: swapMove 0.4s ease-in-out;
+}
