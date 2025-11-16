@@ -1,4 +1,5 @@
 import { useDrag, useDrop } from 'react-dnd';
+import * as React from "react";
 
 interface Word {
   id: string;
@@ -44,7 +45,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap }: GridWordTileP
         flex items-center justify-center
         text-center
         transition-all
-        h-20
+        h-16
         hover:shadow-lg
         hover:scale-105
         active:scale-95

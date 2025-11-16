@@ -1,4 +1,5 @@
 import { useDrag } from 'react-dnd';
+import * as React from "react";
 
 interface Word {
   id: string;
@@ -38,7 +39,7 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
         hover:scale-105
         active:scale-95
         ${isDragging ? 'opacity-50' : 'opacity-100'}
-        ${inDropZone ? 'h-16' : 'min-h-[4rem]'}
+        ${inDropZone ? 'h-12' : 'min-h-[3rem]'}
       `}
       style={{ touchAction: 'none' }}
     >
