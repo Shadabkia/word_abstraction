@@ -1,5 +1,6 @@
 import { X, Globe, Volume2 } from 'lucide-react';
 import { useState } from 'react';
+import { LanguageDialog } from './LanguageDialog';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -8,40 +9,47 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('fa');
+
+  const getLanguageDisplayName = (code: string) => {
+    return code === 'fa' ? 'فارسی' : 'English';
+  };
 
   if (!open) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 99999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.6)'
-      }}
-      onClick={() => onOpenChange(false)}
-    >
-      {/* Dialog content */}
+    <>
       <div
         style={{
-          backgroundColor: 'white',
-          borderRadius: '24px',
-          padding: '24px',
-          maxWidth: '360px',
-          width: '100%',
-          margin: '0 24px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-          textAlign: 'center',
-          position: 'relative'
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)'
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={() => onOpenChange(false)}
       >
+        {/* Dialog content */}
+        <div
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '24px',
+            padding: '24px',
+            maxWidth: '360px',
+            width: '100%',
+            margin: '0 24px',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            textAlign: 'center',
+            position: 'relative'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Close icon button */}
         <button
           style={{
@@ -103,10 +111,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                // Handle language change here
+                setLanguageDialogOpen(true);
               }}
             >
-              فارسی
+              {getLanguageDisplayName(selectedLanguage)}
             </button>
           </div>
 
@@ -157,8 +165,17 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
             </button>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+
+      {/* Language Dialog */}
+      <LanguageDialog
+        open={languageDialogOpen}
+        onOpenChange={setLanguageDialogOpen}
+        currentLanguage={selectedLanguage}
+        onLanguageSelect={setSelectedLanguage}
+      />
+    </>
   );
 }
 
