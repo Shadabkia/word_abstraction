@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
@@ -8,14 +8,10 @@ import { CategoryRow } from './components/CategoryRow';
 import { Settings, Search, Lightbulb } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { DragPreview } from './components/DragPreview';
-import { SettingsDialog } from './components/SettingsDialog';
+import { SettingsDialog } from './components/ui/dialogs/SettingsDialog';
 import { LanguageProvider } from './contexts/LanguageContext';
-
-interface Word {
-  id: string;
-  text: string;
-  category: string;
-}
+import { Word } from './data/types';
+import { getLevelData } from './data/levels';
 
 interface CompletedCategory {
   name: string;
@@ -32,44 +28,20 @@ const isTouchDevice = () => {
   return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 };
 
-const LEVEL_DATA: Word[] = [
-  { id: '1', text: 'پیانو', category: 'آلات_موسیقی' },
-  { id: '2', text: 'دارو', category: 'پزشکی' },
-  { id: '3', text: 'گربه', category: 'حیوانات' },
-  { id: '4', text: 'گیتار', category: 'آلات_موسیقی' },
-  { id: '5', text: 'معلم', category: 'مشاغل' },
-  { id: '6', text: 'بیمار', category: 'پزشکی' },
-  { id: '7', text: 'پزشک', category: 'پزشکی' },
-  { id: '8', text: 'بازیگر', category: 'مشاغل' },
-  { id: '9', text: 'فضانورد', category: 'مشاغل' },
-  { id: '10', text: 'ویولن', category: 'آلات_موسیقی' },
-  { id: '11', text: 'پیام', category: 'ارتباطات' },
-  { id: '12', text: 'سفید', category: 'رنگ‌ها' },
-  { id: '13', text: 'مهندس', category: 'مشاغل' },
-  { id: '14', text: 'آبی', category: 'رنگ‌ها' },
-  { id: '15', text: 'خرگوش', category: 'حیوانات' },
-  { id: '16', text: 'سنتور', category: 'آلات_موسیقی' },
-  { id: '17', text: 'همستر', category: 'حیوانات' },
-  { id: '18', text: 'تماس', category: 'ارتباطات' },
-  { id: '19', text: 'بیمارستان', category: 'پزشکی' },
-  { id: '20', text: 'عکس', category: 'ارتباطات' },
-  { id: '21', text: 'قرمز', category: 'رنگ‌ها' },
-  { id: '22', text: 'سبز', category: 'رنگ‌ها' },
-  { id: '23', text: 'موش', category: 'حیوانات' },
-  { id: '24', text: 'متن', category: 'ارتباطات' },
-];
-
-const CATEGORY_NAMES: Record<string, string> = {
-  'آلات_موسیقی': 'آلات موسیقی',
-  'پزشکی': 'پزشکی',
-  'حیوانات': 'حیوانات',
-  'مشاغل': 'مشاغل',
-  'رنگ‌ها': 'رنگ‌ها',
-  'ارتباطات': 'ارتباطات',
-};
-
 export default function App() {
-  const [gridRows, setGridRows] = useState<GridRow[]>([
+  const [level] = useState(1);
+  const [coins] = useState(10);
+  const [hints] = useState(3);
+  const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
+  const [swapOffsets, setSwapOffsets] = useState<Map<string, { x: number; y: number }>>(new Map());
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+
+  // Get current level data
+  const currentLevelData = useMemo(() => getLevelData(level), [level]);
+  const LEVEL_DATA = currentLevelData?.words || [];
+  const CATEGORY_NAMES = currentLevelData?.categories || {};
+
+  const [gridRows, setGridRows] = useState<GridRow[]>(() => [
     { type: 'words', words: LEVEL_DATA.slice(0, 4) },
     { type: 'words', words: LEVEL_DATA.slice(4, 8) },
     { type: 'words', words: LEVEL_DATA.slice(8, 12) },
@@ -77,12 +49,6 @@ export default function App() {
     { type: 'words', words: LEVEL_DATA.slice(16, 20) },
     { type: 'words', words: LEVEL_DATA.slice(20, 24) },
   ]);
-  const [coins] = useState(10);
-  const [hints] = useState(3);
-  const [level] = useState(1);
-  const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
-  const [swapOffsets, setSwapOffsets] = useState<Map<string, { x: number; y: number }>>(new Map());
-  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
 
   const totalCategories = 6;
   const completedCount = gridRows.filter(row => row.type === 'completed').length;

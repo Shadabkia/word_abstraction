@@ -1,7 +1,7 @@
 import { X, Globe, Volume2 } from 'lucide-react';
 import { useState } from 'react';
 import { LanguageDialog } from './LanguageDialog';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface SettingsDialogProps {
   open: boolean;
