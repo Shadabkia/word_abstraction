@@ -1,6 +1,7 @@
 import { X, Globe, Volume2 } from 'lucide-react';
 import { useState } from 'react';
 import { LanguageDialog } from './LanguageDialog';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -8,12 +9,16 @@ interface SettingsDialogProps {
 }
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
+  const { language, setLanguage, t } = useLanguage();
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('fa');
 
   const getLanguageDisplayName = (code: string) => {
-    return code === 'fa' ? 'فارسی' : 'English';
+    return code === 'fa' ? t.persian : t.english;
+  };
+
+  const handleLanguageSelect = (newLanguage: string) => {
+    setLanguage(newLanguage as 'fa' | 'en');
   };
 
   if (!open) return null;
@@ -75,7 +80,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
         {/* Title */}
         <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', color: '#1e3a8a' }}>
-          تنظیمات
+          {t.settings}
         </h2>
         
         {/* Settings rows */}
@@ -94,7 +99,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Globe size={24} color="#1e3a8a" />
               <span style={{ fontSize: '16px', fontWeight: '500', color: '#374151' }}>
-                زبان
+                {t.language}
               </span>
             </div>
             <button
@@ -114,7 +119,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                 setLanguageDialogOpen(true);
               }}
             >
-              {getLanguageDisplayName(selectedLanguage)}
+              {getLanguageDisplayName(language)}
             </button>
           </div>
 
@@ -132,7 +137,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Volume2 size={24} color="#1e3a8a" />
               <span style={{ fontSize: '16px', fontWeight: '500', color: '#374151' }}>
-                صدا
+                {t.sound}
               </span>
             </div>
             {/* Toggle button */}
@@ -172,8 +177,8 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
       <LanguageDialog
         open={languageDialogOpen}
         onOpenChange={setLanguageDialogOpen}
-        currentLanguage={selectedLanguage}
-        onLanguageSelect={setSelectedLanguage}
+        currentLanguage={language}
+        onLanguageSelect={handleLanguageSelect}
       />
     </>
   );

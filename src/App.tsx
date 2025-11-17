@@ -9,6 +9,7 @@ import { Settings, Search, Lightbulb } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { DragPreview } from './components/DragPreview';
 import { SettingsDialog } from './components/SettingsDialog';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 interface Word {
   id: string;
@@ -192,7 +193,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <LanguageProvider>
       <DndProvider
         backend={isTouchDevice() ? TouchBackend : HTML5Backend}
         options={isTouchDevice() ? { enableTouchEvents: true, enableMouseEvents: true, delay: 0 } : undefined}
@@ -289,6 +290,6 @@ export default function App() {
 
       {/* Settings dialog */}
       <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
-    </>
+    </LanguageProvider>
   );
 }

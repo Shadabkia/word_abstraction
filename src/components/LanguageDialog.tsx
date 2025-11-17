@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface LanguageDialogProps {
   open: boolean;
@@ -8,11 +9,13 @@ interface LanguageDialogProps {
 }
 
 export function LanguageDialog({ open, onOpenChange, currentLanguage, onLanguageSelect }: LanguageDialogProps) {
+  const { t } = useLanguage();
+  
   if (!open) return null;
 
   const languages = [
-    { code: 'fa', name: 'فارسی', nameEn: 'Persian' },
-    { code: 'en', name: 'English', nameEn: 'English' }
+    { code: 'fa', name: t.persian },
+    { code: 'en', name: t.english }
   ];
 
   const handleLanguageClick = (languageCode: string) => {
@@ -76,7 +79,7 @@ export function LanguageDialog({ open, onOpenChange, currentLanguage, onLanguage
 
         {/* Title */}
         <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', color: '#1e3a8a' }}>
-          انتخاب زبان
+          {t.selectLanguage}
         </h2>
         
         {/* Language list */}
