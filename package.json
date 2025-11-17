@@ -59,7 +59,9 @@
       },
       "scripts": {
             "dev": "vite",
+            "prebuild": "npm install --no-save --optional @rollup/rollup-linux-x64-gnu@4.53.2 || true",
             "build": "vite build",
-            "preview": "vite preview"
+            "preview": "vite preview",
+            "postinstall": "npm install --no-save --optional @rollup/rollup-linux-x64-gnu@4.53.2 || true"
       }
 }
