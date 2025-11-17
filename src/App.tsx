@@ -30,7 +30,7 @@ const isTouchDevice = () => {
 };
 
 export default function App() {
-  const [level] = useState(2);
+  const [level] = useState(3);
   const [coins] = useState(10);
   const [hints] = useState(3);
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
@@ -41,14 +41,20 @@ export default function App() {
   const currentLevelData = useMemo(() => getLevelData(level), [level]);
   const LEVEL_DATA = currentLevelData?.words || [];
   const CATEGORY_NAMES = currentLevelData?.categories || {};
+  const HIERARCHY = currentLevelData?.hierarchy;
+
+  // Separate visible and hidden words
+  const visibleWords = useMemo(() => LEVEL_DATA.filter(w => !w.hidden), [LEVEL_DATA]);
+  const hiddenWordsPool = useMemo(() => LEVEL_DATA.filter(w => w.hidden), [LEVEL_DATA]);
 
   // Shuffle words ensuring no row has a complete category
   const shuffledWords = useMemo(() => {
-    if (LEVEL_DATA.length === 0) return [];
-    return shuffleWordsWithConstraint(LEVEL_DATA);
-  }, [LEVEL_DATA]);
+    if (visibleWords.length === 0) return [];
+    return shuffleWordsWithConstraint(visibleWords);
+  }, [visibleWords]);
 
   const [gridRows, setGridRows] = useState<GridRow[]>([]);
+  const [hiddenPool, setHiddenPool] = useState<Word[]>([]);
 
   // Initialize grid rows when shuffled words are ready
   useEffect(() => {
@@ -61,11 +67,23 @@ export default function App() {
         { type: 'words', words: shuffledWords.slice(16, 20) },
         { type: 'words', words: shuffledWords.slice(20, 24) },
       ]);
+      setHiddenPool(hiddenWordsPool);
     }
-  }, [shuffledWords]);
+  }, [shuffledWords, hiddenWordsPool]);
 
-  const totalCategories = 6;
-  const completedCount = gridRows.filter(row => row.type === 'completed').length;
+  // Get total steps from level data (default to 6 for backward compatibility)
+  const totalSteps = currentLevelData?.totalSteps || 6;
+  
+  // Track if subcategory has been merged
+  const [subcategoryMerged, setSubcategoryMerged] = useState(false);
+  
+  // Count completed categories from grid
+  const completedCategoriesCount = gridRows.filter(row => row.type === 'completed').length;
+  
+  // Calculate total completed steps
+  // For hierarchical levels: subcategory merge (1 step) + completed categories
+  // For regular levels: just completed categories
+  const completedSteps = (subcategoryMerged ? 1 : 0) + completedCategoriesCount;
 
   const handleSwap = (draggedWord: Word, targetRowIndex: number, targetColIndex: number) => {
     // Find the dragged word's position
@@ -159,17 +177,74 @@ export default function App() {
     
     if (allSame) {
       setTimeout(() => {
-        const categoryName = CATEGORY_NAMES[categories[0]] || categories[0];
+        const matchedCategory = categories[0];
+        const categoryName = CATEGORY_NAMES[matchedCategory] || matchedCategory;
         const words = row.words!.map(w => w.text);
         
-        const newGridRows = [...rows];
-        newGridRows[rowIndex] = {
-          type: 'completed',
-          completed: { name: categoryName, words }
-        };
-        setGridRows(newGridRows);
+        // Check if this is THE subcategory that should merge
+        const subcategoryInfo = HIERARCHY?.subcategory;
+        
+        if (subcategoryInfo && subcategoryInfo.category === matchedCategory) {
+          // This is the subcategory - merge into single tile
+          handleSubcategoryCompletion(rows, rowIndex, subcategoryInfo);
+        } else {
+          // Regular category - show as completed row
+          const newGridRows = [...rows];
+          newGridRows[rowIndex] = {
+            type: 'completed',
+            completed: { name: categoryName, words }
+          };
+          setGridRows(newGridRows);
+        }
       }, 500);
     }
+  };
+
+  const handleSubcategoryCompletion = (
+    rows: GridRow[],
+    rowIndex: number,
+    subcategoryInfo: { category: string; mergesInto: string; displayAfterMerge: string; wordsToReveal: string[] }
+  ) => {
+    // Create a single Word representing the subcategory
+    const subcategoryWord: Word = {
+      id: `subcategory_${subcategoryInfo.category}_${Date.now()}`,
+      text: subcategoryInfo.displayAfterMerge,
+      category: subcategoryInfo.mergesInto // Parent category
+    };
+
+    // Get the specific 3 words that should be revealed
+    const wordsToAdd: Word[] = [];
+    const newHiddenPool = [...hiddenPool];
+    
+    // Find and add the specific words that match wordsToReveal
+    for (const wordText of subcategoryInfo.wordsToReveal) {
+      const wordIndex = newHiddenPool.findIndex(w => w.text === wordText);
+      if (wordIndex !== -1) {
+        wordsToAdd.push(newHiddenPool[wordIndex]);
+        newHiddenPool.splice(wordIndex, 1);
+      }
+    }
+
+    // Create new row: 1 subcategory tile + 3 revealed words
+    const newRow: Word[] = [subcategoryWord, ...wordsToAdd];
+    
+    // Pad with empty slots if needed (shouldn't happen with proper level design)
+    while (newRow.length < 4) {
+      newRow.push({
+        id: `empty_${Date.now()}_${newRow.length}`,
+        text: '...',
+        category: 'empty'
+      });
+    }
+
+    // Update grid
+    const newGridRows = [...rows];
+    newGridRows[rowIndex] = { type: 'words', words: newRow };
+    setGridRows(newGridRows);
+    setHiddenPool(newHiddenPool);
+    
+    // Mark subcategory as merged (counts as 1 step)
+    setSubcategoryMerged(true);
   };
 
   return (
@@ -207,7 +282,7 @@ export default function App() {
         </div>
 
         {/* Game Header */}
-        <GameHeader level={level} completed={completedCount} total={totalCategories} />
+        <GameHeader level={level} completed={completedSteps} total={totalSteps} />
 
         {/* Game Grid */}
         <div className="px-4 space-y-3 pb-32">

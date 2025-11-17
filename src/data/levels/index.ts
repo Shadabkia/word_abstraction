@@ -1,14 +1,12 @@
 import { LevelData } from '../types';
 import level1 from './level1';
 import level2 from './level2';
-
-// Add more levels here as you create them
-// import level3 from './level3';
+import level3 from './level3';
 
 const levels: Record<number, LevelData> = {
   1: level1,
   2: level2,
-  // 3: level3,
+  3: level3,
 };
 
 /**
