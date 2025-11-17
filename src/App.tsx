@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
@@ -12,6 +12,7 @@ import { SettingsDialog } from './components/ui/dialogs/SettingsDialog';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Word } from './data/types';
 import { getLevelData } from './data/levels';
+import { shuffleWordsWithConstraint } from './utils/shuffleWords';
 
 interface CompletedCategory {
   name: string;
@@ -29,7 +30,7 @@ const isTouchDevice = () => {
 };
 
 export default function App() {
-  const [level] = useState(1);
+  const [level] = useState(2);
   const [coins] = useState(10);
   const [hints] = useState(3);
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
@@ -41,14 +42,27 @@ export default function App() {
   const LEVEL_DATA = currentLevelData?.words || [];
   const CATEGORY_NAMES = currentLevelData?.categories || {};
 
-  const [gridRows, setGridRows] = useState<GridRow[]>(() => [
-    { type: 'words', words: LEVEL_DATA.slice(0, 4) },
-    { type: 'words', words: LEVEL_DATA.slice(4, 8) },
-    { type: 'words', words: LEVEL_DATA.slice(8, 12) },
-    { type: 'words', words: LEVEL_DATA.slice(12, 16) },
-    { type: 'words', words: LEVEL_DATA.slice(16, 20) },
-    { type: 'words', words: LEVEL_DATA.slice(20, 24) },
-  ]);
+  // Shuffle words ensuring no row has a complete category
+  const shuffledWords = useMemo(() => {
+    if (LEVEL_DATA.length === 0) return [];
+    return shuffleWordsWithConstraint(LEVEL_DATA);
+  }, [LEVEL_DATA]);
+
+  const [gridRows, setGridRows] = useState<GridRow[]>([]);
+
+  // Initialize grid rows when shuffled words are ready
+  useEffect(() => {
+    if (shuffledWords.length > 0) {
+      setGridRows([
+        { type: 'words', words: shuffledWords.slice(0, 4) },
+        { type: 'words', words: shuffledWords.slice(4, 8) },
+        { type: 'words', words: shuffledWords.slice(8, 12) },
+        { type: 'words', words: shuffledWords.slice(12, 16) },
+        { type: 'words', words: shuffledWords.slice(16, 20) },
+        { type: 'words', words: shuffledWords.slice(20, 24) },
+      ]);
+    }
+  }, [shuffledWords]);
 
   const totalCategories = 6;
   const completedCount = gridRows.filter(row => row.type === 'completed').length;
