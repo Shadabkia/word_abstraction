@@ -20,6 +20,7 @@ interface GridWordTileProps {
 export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = false, swapOffset }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const lastDropTimeRef = React.useRef<number>(0);
+  const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const isTouch =
     typeof window !== 'undefined' &&
@@ -30,10 +31,13 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = f
     // include live dimensions so the preview can match tile size
     item: () => {
       const rect = tileRef.current?.getBoundingClientRect();
+      const offset = touchOffsetRef.current;
       return {
         ...word,
         __previewWidth: rect?.width ?? undefined,
         __previewHeight: rect?.height ?? undefined,
+        __offsetX: offset.x,
+        __offsetY: offset.y,
       };
     },
     collect: (monitor) => ({
@@ -69,6 +73,27 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = f
     }),
   }), [word.id, rowIndex, colIndex, onSwap]);
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (tileRef.current && e.touches.length > 0) {
+      const rect = tileRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+      touchOffsetRef.current = {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top,
+      };
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (tileRef.current) {
+      const rect = tileRef.current.getBoundingClientRect();
+      touchOffsetRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    }
+  };
+
   return (
     <div
       ref={(node) => {
@@ -76,6 +101,8 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = f
         drag(drop(node));
       }}
       data-word-id={word.id}
+      onTouchStart={handleTouchStart}
+      onMouseDown={handleMouseDown}
       className={`
         bg-gradient-to-br from-yellow-100 to-yellow-200
         border-2 border-yellow-300

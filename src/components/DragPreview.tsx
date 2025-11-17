@@ -8,19 +8,21 @@ interface Word {
   // injected on drag start
   __previewWidth?: number;
   __previewHeight?: number;
+  __offsetX?: number;
+  __offsetY?: number;
 }
 
-function getItemStyles(currentOffset: XYCoord | null, width?: number, height?: number): React.CSSProperties {
+function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offsetY: number = 0, height?: number): React.CSSProperties {
   if (!currentOffset) {
     return { display: "none" };
   }
   const { x, y } = currentOffset;
   
-  // Center the preview under the cursor/touch point
-  const offsetX = width ? width / 2 : 0;
-  const offsetY = height ? height / 2 : 0;
+  // Position the preview above the finger so it's visible
+  // Move it up slightly above the touch point
+  const upwardOffset = (height ?? 64) * 0.5 ; // half tile height + 10px gap
   
-  const transform = `translate(${x - offsetX}px, ${y - offsetY}px)`;
+  const transform = `translate(${x - offsetX}px, ${y - offsetY - upwardOffset}px)`;
   return {
     transform,
     WebkitTransform: transform,
@@ -42,6 +44,8 @@ export function DragPreview() {
 
   const width = item.__previewWidth;
   const height = item.__previewHeight;
+  const offsetX = item.__offsetX ?? (width ? width / 2 : 0);
+  const offsetY = item.__offsetY ?? (height ? height / 2 : 0);
 
   return (
     <div
@@ -58,7 +62,7 @@ export function DragPreview() {
     >
       <div
         style={{
-          ...getItemStyles(currentOffset, width, height),
+          ...getItemStyles(currentOffset, offsetX, offsetY, height),
           width: width ?? undefined,
           height: height ?? undefined,
         }}

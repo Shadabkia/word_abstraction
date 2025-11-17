@@ -15,6 +15,7 @@ interface WordTileProps {
 
 export function WordTile({ word, inDropZone = false }: WordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
+  const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const isTouch =
     typeof window !== 'undefined' &&
@@ -29,6 +30,8 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
         ...word,
         __previewWidth: rect?.width ?? undefined,
         __previewHeight: rect?.height ?? undefined,
+        __offsetX: touchOffsetRef.current.x,
+        __offsetY: touchOffsetRef.current.y,
       };
     },
     collect: (monitor) => ({
@@ -42,12 +45,35 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
     }
   }, [preview, isTouch]);
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (tileRef.current && e.touches.length > 0) {
+      const rect = tileRef.current.getBoundingClientRect();
+      const touch = e.touches[0];
+      touchOffsetRef.current = {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top,
+      };
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (tileRef.current) {
+      const rect = tileRef.current.getBoundingClientRect();
+      touchOffsetRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    }
+  };
+
   return (
     <div
       ref={(node) => {
         tileRef.current = node;
         drag(node);
       }}
+      onTouchStart={handleTouchStart}
+      onMouseDown={handleMouseDown}
       className={`
         bg-gradient-to-br from-yellow-100 to-yellow-200
         border-2 border-yellow-300
