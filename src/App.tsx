@@ -8,6 +8,7 @@ import { CategoryRow } from './components/CategoryRow';
 import { Settings, Search, Lightbulb } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { DragPreview } from './components/DragPreview';
+import { SettingsDialog } from './components/SettingsDialog';
 
 interface Word {
   id: string;
@@ -75,11 +76,12 @@ export default function App() {
     { type: 'words', words: LEVEL_DATA.slice(16, 20) },
     { type: 'words', words: LEVEL_DATA.slice(20, 24) },
   ]);
-  const [coins, setCoins] = useState(10);
-  const [hints, setHints] = useState(3);
+  const [coins] = useState(10);
+  const [hints] = useState(3);
   const [level] = useState(1);
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
   const [swapOffsets, setSwapOffsets] = useState<Map<string, { x: number; y: number }>>(new Map());
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
 
   const totalCategories = 6;
   const completedCount = gridRows.filter(row => row.type === 'completed').length;
@@ -106,16 +108,6 @@ export default function App() {
     if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) return; // Same position
     
     const targetWord = gridRows[targetRowIndex].words![targetColIndex];
-    
-    // Calculate position offsets for animation
-    // Calculate based on grid positions (columns and rows)
-    const colDiff = targetColIndex - sourceColIndex;
-    const rowDiff = targetRowIndex - sourceRowIndex;
-    
-    // Approximate tile width/height + gap (will be refined with actual measurements)
-    // Using percentage-based calculation for responsive design
-    const tileWidthPercent = 100 / 4; // 4 columns
-    const gapSize = 8; // gap-2 = 8px
     
     // Calculate pixel offsets
     const sourceElement = document.querySelector(`[data-word-id="${draggedWord.id}"]`);
@@ -200,12 +192,13 @@ export default function App() {
   };
 
   return (
-    <DndProvider
-      backend={isTouchDevice() ? TouchBackend : HTML5Backend}
-      options={isTouchDevice() ? { enableTouchEvents: true, enableMouseEvents: true, delay: 0 } : undefined}
-    >
-      <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-50 to-white">
-        <DragPreview />
+    <>
+      <DndProvider
+        backend={isTouchDevice() ? TouchBackend : HTML5Backend}
+        options={isTouchDevice() ? { enableTouchEvents: true, enableMouseEvents: true, delay: 0 } : undefined}
+      >
+        <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-50 to-white">
+          <DragPreview />
         {/* Top Bar */}
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
@@ -267,6 +260,11 @@ export default function App() {
               variant="ghost"
               size="icon"
               className="w-14 h-14 bg-white/80 rounded-2xl shadow-lg hover:bg-white"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowSettingsDialog(true);
+              }}
             >
               <Settings className="w-6 h-6" />
             </Button>
@@ -286,7 +284,11 @@ export default function App() {
             </Button>
           </div>
         </div>
-      </div>
-    </DndProvider>
+        </div>
+      </DndProvider>
+
+      {/* Settings dialog */}
+      <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
+    </>
   );
 }
