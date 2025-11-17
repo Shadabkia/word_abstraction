@@ -2,6 +2,7 @@ import { LevelData } from '../types';
 
 const level2: LevelData = {
   levelNumber: 2,
+  totalSteps: 6,
   words: [
     // میوه‌ها (Fruits)
     { id: '1', text: 'سیب', category: 'میوه‌ها' },

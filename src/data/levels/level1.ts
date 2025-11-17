@@ -2,6 +2,7 @@ import { LevelData } from '../types';
 
 const level1: LevelData = {
   levelNumber: 1,
+  totalSteps: 6,
   words: [
     { id: '1', text: 'پیانو', category: 'آلات_موسیقی' },
     { id: '2', text: 'دارو', category: 'پزشکی' },
