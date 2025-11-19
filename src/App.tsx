@@ -36,6 +36,7 @@ export default function App() {
   const [animatingTiles, setAnimatingTiles] = useState<Set<string>>(new Set());
   const [swapOffsets, setSwapOffsets] = useState<Map<string, { x: number; y: number }>>(new Map());
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
 
   // Get current level data
   const currentLevelData = useMemo(() => getLevelData(level), [level]);
@@ -211,6 +212,12 @@ export default function App() {
       text: subcategoryInfo.displayAfterMerge,
       category: subcategoryInfo.mergesInto // Parent category
     };
+    
+    // Trigger glow animation for this subcategory tile
+    setGlowingSubcategoryId(subcategoryWord.id);
+    setTimeout(() => {
+      setGlowingSubcategoryId(null);
+    }, 1200); // Match animation duration
 
     // Get the specific 3 words that should be revealed
     const wordsToAdd: Word[] = [];
@@ -301,6 +308,7 @@ export default function App() {
                       onSwap={handleSwap}
                       isAnimating={animatingTiles.has(word.id)}
                       swapOffset={swapOffsets.get(word.id)}
+                      isSubcategoryGlow={word.id === glowingSubcategoryId}
                     />
                   ))}
                 </div>

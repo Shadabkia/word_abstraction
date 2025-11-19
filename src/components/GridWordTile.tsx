@@ -15,9 +15,10 @@ interface GridWordTileProps {
   onSwap: (word: Word, targetRowIndex: number, targetColIndex: number) => void;
   isAnimating?: boolean;
   swapOffset?: { x: number; y: number };
+  isSubcategoryGlow?: boolean;
 }
 
-export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = false, swapOffset }: GridWordTileProps) {
+export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = false, swapOffset, isSubcategoryGlow = false }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const lastDropTimeRef = React.useRef<number>(0);
   const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -120,7 +121,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isAnimating = f
         ${isDragging ? 'opacity-50' : 'opacity-100'}
         ${isOver && canDrop ? 'border-blue-400 border-4 scale-105 shadow-xl' : ''}
         ${isOver && !canDrop ? 'opacity-75' : ''}
-        ${isAnimating ? 'animate-swap' : 'transition-all'}
+        ${isAnimating ? 'animate-swap' : isSubcategoryGlow ? 'animate-merge-shine relative overflow-hidden' : 'transition-all'}
       `}
       style={{ 
         touchAction: 'none',
