@@ -3,6 +3,18 @@ export interface Word {
   text: string;
   category: string;
   hidden?: boolean; // For words revealed after subcategory merge
+  meta?: {
+    en?: string;
+    finglish?: string;
+  };
+  // Icon support for merged groups
+  icon?: {
+    id: string;        // Unique identifier for icon mapping
+    label?: string;    // Display name next to icon
+    emoji?: string;    // Emoji fallback if icon not available
+    iconName?: string; // Icon name from icon library (e.g., 'Dog', 'Cat')
+  };
+  isMergedGroup?: boolean; // Indicates this is a merged word group
 }
 
 export interface SubcategoryInfo {
@@ -10,6 +22,12 @@ export interface SubcategoryInfo {
   mergesInto: string;            // Parent category ID (e.g., 'موجودات_زنده')
   displayAfterMerge: string;     // Text shown after merge (e.g., 'حیوانات')
   wordsToReveal: string[];       // Words to reveal after merge
+  icon?: {                       // Icon metadata for merged group
+    id: string;
+    label?: string;
+    emoji?: string;
+    iconName?: string;
+  };
 }
 
 export interface HierarchyInfo {

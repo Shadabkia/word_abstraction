@@ -1,4 +1,5 @@
 import { useLanguage } from "../contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 interface GameHeaderProps {
   level: number;
@@ -8,37 +9,38 @@ interface GameHeaderProps {
 
 export function GameHeader({ level, completed, total }: GameHeaderProps) {
   const { t } = useLanguage();
-  const progress = (completed / total) * 100;
+  const progress = Math.min(100, (completed / total) * 100);
 
   return (
-    <div className="bg-gradient-to-b from-blue-200 to-blue-100 py-6 px-4 mb-6" dir="rtl">
-      <h1 className="text-center text-blue-900 mb-2">{t.level} {level}</h1>
-      <p className="text-center text-blue-800 text-sm mb-4">
+    <div className="flex flex-col items-center justify-center mb-3 sm:mb-4" dir="rtl">
+      <div className="bg-white/80 backdrop-blur-sm px-4 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-sm mb-2 sm:mb-3 border border-white">
+        <h1 className="text-xl sm:text-2xl font-bold text-indigo-900 flex items-center gap-1.5 sm:gap-2">
+          <span className="text-indigo-400">#</span> {level}
+        </h1>
+      </div>
+      
+      <p className="text-slate-500 text-xs sm:text-sm mb-2 sm:mb-3 font-medium px-2 text-center">
         {t.gameInstruction}
       </p>
       
-      <div className="flex items-center justify-center gap-3">
-        <div className="flex items-center">
-          <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg shadow-md flex items-center justify-center transform -rotate-12">
-            <span className="text-white text-lg">📚</span>
-          </div>
-          <div className="w-8 h-8 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-lg shadow-md flex items-center justify-center transform rotate-12 -ml-2">
-            <span className="text-white text-lg">📚</span>
-          </div>
-        </div>
+      <div className="w-full max-w-xs bg-slate-200 h-5 sm:h-6 rounded-full relative overflow-hidden shadow-inner">
+        {/* Background striped pattern for empty state */}
+        <div className="absolute inset-0 opacity-20 bg-[length:8px_8px] sm:bg-[length:10px_10px] bg-[linear-gradient(45deg,transparent_25%,#000_25%,#000_50%,transparent_50%,transparent_75%,#000_75%,#000_100%)]"></div>
         
-        <div className="flex-1 max-w-xs">
-          <div className="h-6 bg-blue-200 rounded-full overflow-hidden shadow-inner">
-            <div
-              className="h-full bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-        
-        <span className="text-blue-900 min-w-[3rem] text-center">
-          {completed}/{total}
-        </span>
+        {/* Progress Fill */}
+        <motion.div 
+          className="absolute top-0 right-0 h-full bg-gradient-to-r from-candy-primary to-candy-accent rounded-full flex items-center justify-end px-1.5 sm:px-2"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ type: "spring", stiffness: 50, damping: 15 }}
+        >
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-white/50 rounded-full animate-pulse"></div>
+        </motion.div>
+      </div>
+      
+      <div className="flex justify-between w-full max-w-xs px-2 mt-0.5 sm:mt-1">
+        <span className="text-[10px] sm:text-xs font-bold text-indigo-500">{completed} / {total}</span>
+        <span className="text-[10px] sm:text-xs font-bold text-slate-400">0</span>
       </div>
     </div>
   );
