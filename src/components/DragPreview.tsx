@@ -20,14 +20,14 @@ interface Word {
   __offsetY?: number;
 }
 
-function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offsetY: number = 0, height?: number): React.CSSProperties {
+function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offsetY: number = 0): React.CSSProperties {
   if (!currentOffset) {
     return { display: "none" };
   }
   const { x, y } = currentOffset;
   
   // Move it up slightly above the touch point (60px above finger)
-  const upwardOffset = 90;  
+  const upwardOffset = 60;  
    
   const transform = `translate(${x - offsetX}px, ${y - offsetY - upwardOffset}px)`;
   return {
@@ -37,9 +37,8 @@ function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offse
 }
 
 export function DragPreview() {
-  const { isDragging, itemType, item, currentOffset } = useDragLayer((monitor) => ({
+  const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     isDragging: monitor.isDragging(),
-    itemType: monitor.getItemType(),
     item: monitor.getItem() as Word | null,
     // Use the actual pointer position so we can center the preview under the finger/cursor
     currentOffset: monitor.getClientOffset(),
@@ -74,7 +73,7 @@ export function DragPreview() {
     >
       <div
         style={{
-          ...getItemStyles(currentOffset, offsetX, offsetY, height),
+          ...getItemStyles(currentOffset, offsetX, offsetY),
           width: width ?? undefined,
           height: height ?? undefined,
         }}
@@ -87,7 +86,6 @@ export function DragPreview() {
           text-center
           px-2
           scale-110
-          ${isMerged ? 'rotate-0' : 'rotate-6'}
           z-50
         `}
         dir="rtl"
