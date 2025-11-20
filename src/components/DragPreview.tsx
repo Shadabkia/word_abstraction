@@ -26,10 +26,9 @@ function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offse
   }
   const { x, y } = currentOffset;
   
-  // Position the preview above the finger so it's visible
-  // Move it up slightly above the touch point
-  const upwardOffset = (height ?? 64) * 1.2; 
-  
+  // Move it up slightly above the touch point (60px above finger)
+  const upwardOffset = 90;  
+   
   const transform = `translate(${x - offsetX}px, ${y - offsetY - upwardOffset}px)`;
   return {
     transform,
@@ -89,7 +88,6 @@ export function DragPreview() {
           px-2
           scale-110
           ${isMerged ? 'rotate-0' : 'rotate-6'}
-          transition-transform
           z-50
         `}
         dir="rtl"
