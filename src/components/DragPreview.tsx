@@ -1,10 +1,18 @@
 import * as React from "react";
 import { useDragLayer, XYCoord } from "react-dnd";
+import { getIcon } from '@/utils/iconMapper';
 
 interface Word {
   id: string;
   text: string;
   category: string;
+  icon?: {
+    id: string;
+    label?: string;
+    emoji?: string;
+    iconName?: string;
+  };
+  isMergedGroup?: boolean;
   // injected on drag start
   __previewWidth?: number;
   __previewHeight?: number;
@@ -20,7 +28,7 @@ function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offse
   
   // Position the preview above the finger so it's visible
   // Move it up slightly above the touch point
-  const upwardOffset = (height ?? 64) * 0.5 ; // half tile height + 10px gap
+  const upwardOffset = (height ?? 64) * 1.2; 
   
   const transform = `translate(${x - offsetX}px, ${y - offsetY - upwardOffset}px)`;
   return {
@@ -47,6 +55,11 @@ export function DragPreview() {
   const offsetX = item.__offsetX ?? (width ? width / 2 : 0);
   const offsetY = item.__offsetY ?? (height ? height / 2 : 0);
 
+  const IconComponent = item.icon?.iconName ? getIcon(item.icon.iconName) : null;
+  const hasEmoji = item.icon && item.icon.emoji;
+  const displayText = item.icon?.label || item.text;
+  const isMerged = item.isMergedGroup;
+
   return (
     <div
       style={{
@@ -66,25 +79,38 @@ export function DragPreview() {
           width: width ?? undefined,
           height: height ?? undefined,
         }}
-        className="
-          bg-gradient-to-br from-yellow-100 to-yellow-200
-          border-2 border-yellow-300
-          rounded-2xl
+        className={`
+          ${isMerged ? 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-300' : 'bg-white border-slate-200'}
+          rounded-xl sm:rounded-2xl
+          border-b-[4px] sm:border-b-[6px]
           shadow-2xl
-          px-3 py-4
-          flex items-center justify-center
+          flex items-center justify-center gap-1
           text-center
-          scale-105
-          opacity-90
-        "
+          px-2
+          scale-110
+          ${isMerged ? 'rotate-0' : 'rotate-6'}
+          transition-transform
+          z-50
+        `}
         dir="rtl"
       >
-        <span className="text-gray-900 text-sm leading-tight break-words font-bold">
-          {item.text}
+        {/* Show icon from library */}
+        {IconComponent && (
+          <IconComponent 
+            className={`w-5 h-5 sm:w-6 sm:h-6 ${isMerged ? 'text-purple-600' : 'text-blue-600'}`}
+            strokeWidth={2.5}
+          />
+        )}
+        
+        {/* Show emoji fallback */}
+        {!IconComponent && hasEmoji && (
+          <span className="text-base sm:text-lg">{item.icon!.emoji}</span>
+        )}
+        
+        <span className={`${isMerged ? 'text-purple-700' : 'text-blue-600'} text-sm sm:text-lg leading-tight break-words font-bold drop-shadow-sm`}>
+          {displayText}
         </span>
       </div>
     </div>
   );
 }
-
-

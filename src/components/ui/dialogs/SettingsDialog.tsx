@@ -44,11 +44,11 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
         <div
           style={{
             backgroundColor: 'white',
-            borderRadius: '24px',
-            padding: '24px',
+            borderRadius: '20px',
+            padding: '20px',
             maxWidth: '360px',
             width: '100%',
-            margin: '0 24px',
+            margin: '0 16px',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             textAlign: 'center',
             position: 'relative'
@@ -79,40 +79,41 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
         </button>
 
         {/* Title */}
-        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px', color: '#1e3a8a' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '20px', color: '#1e3a8a' }}>
           {t.settings}
         </h2>
         
         {/* Settings rows */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'right' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'right' }}>
           {/* Language row */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '12px 16px',
+              padding: '10px 14px',
               backgroundColor: '#f9fafb',
               borderRadius: '12px'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Globe size={24} color="#1e3a8a" />
-              <span style={{ fontSize: '16px', fontWeight: '500', color: '#374151' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Globe size={20} color="#1e3a8a" />
+              <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>
                 {t.language}
               </span>
             </div>
             <button
               style={{
-                padding: '6px 16px',
-                borderRadius: '12px',
+                padding: '6px 14px',
+                borderRadius: '10px',
                 background: 'linear-gradient(to bottom right, #4ade80, #16a34a)',
                 color: 'white',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: 'bold',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                minHeight: '32px'
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -129,14 +130,14 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '12px 16px',
+              padding: '10px 14px',
               backgroundColor: '#f9fafb',
               borderRadius: '12px'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Volume2 size={24} color="#1e3a8a" />
-              <span style={{ fontSize: '16px', fontWeight: '500', color: '#374151' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Volume2 size={20} color="#1e3a8a" />
+              <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>
                 {t.sound}
               </span>
             </div>

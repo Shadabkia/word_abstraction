@@ -6,6 +6,13 @@ interface Word {
   id: string;
   text: string;
   category: string;
+  icon?: {
+    id: string;
+    label?: string;
+    emoji?: string;
+    iconName?: string;
+  };
+  isMergedGroup?: boolean;
 }
 
 interface WordTileProps {

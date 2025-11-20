@@ -85,7 +85,14 @@ const level3: LevelData = {
       mergesInto: 'موجودات_زنده',
       displayAfterMerge: 'حیوانات',
       // These 3 words will fill the empty spaces after merge
-      wordsToReveal: ['آفتاب', 'اتو', 'لباسشویی']
+      wordsToReveal: ['آفتاب', 'اتو', 'لباسشویی'],
+      // Icon metadata for the merged group
+      icon: {
+        id: 'animals_group',
+        label: 'حیوانات',
+        emoji: '🐾', // Paw prints emoji as fallback
+        iconName: 'Dog' // Lucide icon name
+      }
     }
   }
 };

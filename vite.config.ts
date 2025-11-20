@@ -1,10 +1,11 @@
 
-  import { defineConfig } from 'vite';
-  import react from '@vitejs/plugin-react-swc';
-  import path from 'path';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
-  export default defineConfig({
-    plugins: [react()],
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
@@ -52,9 +53,28 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          util: path.resolve(__dirname, 'util.html'),
+        },
+      },
     },
     server: {
+      host: true,
       port: 3009,
       open: true,
+      proxy: {
+        '/api': 'http://localhost:3001',
+      },
+      watch: {
+        // Ignore database files to prevent page reloads
+        ignored: [
+          '**/server/game_data.db',
+          '**/server/game_data.db-shm',
+          '**/server/game_data.db-wal',
+          '**/server/**/*.db*',
+        ],
+      },
     },
   });
