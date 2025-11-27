@@ -1,0 +1,11 @@
+{
+  "appId": "com.word.abstraction",
+  "appName": "WordAbstraction",
+  "webDir": "build",
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": true
+    }
+  }
+}
+
