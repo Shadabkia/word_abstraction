@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "id": "lvl_004_living_beings",
+    "version": "1.0.0",
+    "title": "موجودات زنده",
+    "description": "دسته‌بندی موجودات زنده با سطوح مختلف",
+    "author": "WordAbstraction",
+    "difficulty": 2,
+    "tags": ["hierarchical", "animals", "intermediate", "transform"],
+    "constraints": {
+      "time_limit_sec": 360,
+      "max_moves": 35
+    }
+  },
+
+  "dictionary": {
+    "comment": "Level 4: Living beings - domestic animals and birds transform into living beings category",
+    "tiles": [
+      {"id": "t_1", "text": "سگ", "type": "word", "meta": {"category": "حیوانات_اهلی"}},
+      {"id": "t_2", "text": "کبوتر", "type": "word", "meta": {"category": "پرندگان"}},
+      {"id": "t_3", "text": "سیب", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_4", "text": "پرتقال", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_5", "text": "گربه", "type": "word", "meta": {"category": "حیوانات_اهلی"}},
+      {"id": "t_6", "text": "کلاغ", "type": "word", "meta": {"category": "پرندگان"}},
+      {"id": "t_7", "text": "انگور", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_8", "text": "گاو", "type": "word", "meta": {"category": "حیوانات_اهلی"}},
+      {"id": "t_9", "text": "گوسفند", "type": "word", "meta": {"category": "حیوانات_اهلی"}},
+      {"id": "t_10", "text": "مرغ", "type": "word", "meta": {"category": "پرندگان"}},
+      {"id": "t_11", "text": "هندوانه", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_12", "text": "گنجشک", "type": "word", "meta": {"category": "پرندگان"}},
+      {"id": "t_animals_group", "text": "★ حیوانات", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "domestic-animals"}, "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_13", "text": "انسان", "type": "word", "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_14", "text": "میکروب", "type": "word", "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_15", "text": "باد", "type": "word", "meta": {"category": "هوا", "is_hidden_at_start": true}},
+      {"id": "t_birds_group", "text": "★ پرندگان", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "birds-group"}, "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_16", "text": "باران", "type": "word", "meta": {"category": "هوا", "is_hidden_at_start": true}},
+      {"id": "t_17", "text": "تگرگ", "type": "word", "meta": {"category": "هوا", "is_hidden_at_start": true}},
+      {"id": "t_18", "text": "برف", "type": "word", "meta": {"category": "هوا", "is_hidden_at_start": true}}
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_domestic_animals",
+        "display_name": "حیوانات اهلی",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_1", "t_5", "t_8", "t_9"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_animals_group", "t_13", "t_14", "t_15"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این حیوانات می‌توانند به یک مفهوم بزرگتر تبدیل شوند"
+        }
+      },
+      {
+        "id": "grp_birds",
+        "display_name": "پرندگان",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_2", "t_6", "t_10", "t_12"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_birds_group", "t_16", "t_17", "t_18"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این پرندگان می‌توانند به یک مفهوم بزرگتر تبدیل شوند"
+        }
+      },
+      {
+        "id": "grp_fruits",
+        "display_name": "میوه‌ها",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_3", "t_4", "t_7", "t_11"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_weather",
+        "display_name": "هوا",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_15", "t_16", "t_17", "t_18"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_living_beings",
+        "display_name": "موجودات زنده",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_animals_group", "t_birds_group", "t_13", "t_14"]
+        },
+        "outcomes": {
+          "visual_feedback": "confetti_blast",
+          "sound_fx": "sfx_mega_success"
+        }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_1", "t_2", "t_3", "t_4"],
+      ["t_5", "t_6", "t_7", "t_8"],
+      ["t_9", "t_10", "t_11", "t_12"]
+    ]
+  }
+}
+

@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "id": "lvl_006_agriculture",
+    "version": "1.0.0",
+    "title": "کشاورزی و صنایع دستی",
+    "description": "از دامداری و کشت تا صنایع غذایی و نساجی",
+    "author": "WordAbstraction",
+    "difficulty": 3,
+    "tags": ["hierarchical", "agriculture", "advanced", "transform", "multi-level"],
+    "constraints": {
+      "time_limit_sec": 420,
+      "max_moves": 40
+    }
+  },
+
+  "dictionary": {
+    "comment": "Level 6: Agriculture and crafts - ranching, farming, tools, and jobs transform into cooking, baking, and textile",
+    "tiles": [
+      {"id": "t_1", "text": "گاو", "type": "word", "meta": {"category": "دامداری"}},
+      {"id": "t_2", "text": "گندم", "type": "word", "meta": {"category": "زراعت"}},
+      {"id": "t_3", "text": "تراکتور", "type": "word", "meta": {"category": "ابزار"}},
+      {"id": "t_4", "text": "آبیار", "type": "word", "meta": {"category": "مشاغل"}},
+      {"id": "t_5", "text": "گوسفند", "type": "word", "meta": {"category": "دامداری"}},
+      {"id": "t_6", "text": "پنبه", "type": "word", "meta": {"category": "زراعت"}},
+      {"id": "t_7", "text": "داس", "type": "word", "meta": {"category": "ابزار"}},
+      {"id": "t_8", "text": "چوپان", "type": "word", "meta": {"category": "مشاغل"}},
+      {"id": "t_9", "text": "مرغ", "type": "word", "meta": {"category": "دامداری"}},
+      {"id": "t_10", "text": "چغندر", "type": "word", "meta": {"category": "زراعت"}},
+      {"id": "t_11", "text": "بیل", "type": "word", "meta": {"category": "ابزار"}},
+      {"id": "t_12", "text": "کشاورز", "type": "word", "meta": {"category": "مشاغل"}},
+      {"id": "t_13", "text": "بز", "type": "word", "meta": {"category": "دامداری"}},
+      {"id": "t_14", "text": "لوبیا", "type": "word", "meta": {"category": "زراعت"}},
+      {"id": "t_15", "text": "شخم", "type": "word", "meta": {"category": "ابزار"}},
+      {"id": "t_16", "text": "باغبان", "type": "word", "meta": {"category": "مشاغل"}},
+      {"id": "t_ranch_group", "text": "★ دام", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "ranch-group"}, "meta": {"category": "دسته‌بندی", "is_hidden_at_start": true}},
+      {"id": "t_17", "text": "گوشت", "type": "word", "meta": {"category": "آشپزی", "is_hidden_at_start": true}},
+      {"id": "t_18", "text": "شیر", "type": "word", "meta": {"category": "قنادی", "is_hidden_at_start": true}},
+      {"id": "t_19", "text": "پشم", "type": "word", "meta": {"category": "نساجی", "is_hidden_at_start": true}},
+      {"id": "t_farming_group", "text": "★ زراعت", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "farming-group"}, "meta": {"category": "دسته‌بندی", "is_hidden_at_start": true}},
+      {"id": "t_20", "text": "آرد", "type": "word", "meta": {"category": "قنادی", "is_hidden_at_start": true}},
+      {"id": "t_21", "text": "نخ", "type": "word", "meta": {"category": "نساجی", "is_hidden_at_start": true}},
+      {"id": "t_22", "text": "سبزی", "type": "word", "meta": {"category": "آشپزی", "is_hidden_at_start": true}},
+      {"id": "t_tools_group", "text": "★ ابزار", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "tools-group"}, "meta": {"category": "دسته‌بندی", "is_hidden_at_start": true}},
+      {"id": "t_23", "text": "دیگ", "type": "word", "meta": {"category": "آشپزی", "is_hidden_at_start": true}},
+      {"id": "t_24", "text": "تنور", "type": "word", "meta": {"category": "قنادی", "is_hidden_at_start": true}},
+      {"id": "t_25", "text": "چرخ‌خیاطی", "type": "word", "meta": {"category": "نساجی", "is_hidden_at_start": true}},
+      {"id": "t_jobs_group", "text": "★ شغل", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "jobs-group"}, "meta": {"category": "دسته‌بندی", "is_hidden_at_start": true}},
+      {"id": "t_26", "text": "آشپز", "type": "word", "meta": {"category": "آشپزی", "is_hidden_at_start": true}},
+      {"id": "t_27", "text": "نانوا", "type": "word", "meta": {"category": "قنادی", "is_hidden_at_start": true}},
+      {"id": "t_28", "text": "خیاط", "type": "word", "meta": {"category": "نساجی", "is_hidden_at_start": true}}
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_ranching",
+        "display_name": "دامداری",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_1", "t_5", "t_9", "t_13"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_ranch_group", "t_17", "t_18", "t_19"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این دام‌ها محصولات مختلفی تولید می‌کنند"
+        }
+      },
+      {
+        "id": "grp_farming",
+        "display_name": "زراعت",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_2", "t_6", "t_10", "t_14"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_farming_group", "t_20", "t_21", "t_22"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این محصولات کشاورزی به مواد مختلف تبدیل می‌شوند"
+        }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_3", "t_7", "t_11", "t_15"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_tools_group", "t_23", "t_24", "t_25"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این ابزارها در صنایع مختلف استفاده می‌شوند"
+        }
+      },
+      {
+        "id": "grp_jobs",
+        "display_name": "مشاغل",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_4", "t_8", "t_12", "t_16"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_jobs_group", "t_26", "t_27", "t_28"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این مشاغل به صنایع مختلف تبدیل می‌شوند"
+        }
+      },
+      {
+        "id": "grp_cooking",
+        "display_name": "آشپزی",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_17", "t_22", "t_23", "t_26"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_baking",
+        "display_name": "قنادی",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_18", "t_20", "t_24", "t_27"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_textile",
+        "display_name": "نساجی",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_19", "t_21", "t_25", "t_28"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_classification",
+        "display_name": "دسته‌بندی",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_ranch_group", "t_farming_group", "t_tools_group", "t_jobs_group"]
+        },
+        "outcomes": {
+          "visual_feedback": "confetti_blast",
+          "sound_fx": "sfx_mega_success"
+        }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_1", "t_2", "t_3", "t_4"],
+      ["t_5", "t_6", "t_7", "t_8"],
+      ["t_9", "t_10", "t_11", "t_12"],
+      ["t_13", "t_14", "t_15", "t_16"]
+    ]
+  }
+}
+

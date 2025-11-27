@@ -8,6 +8,7 @@ interface Word {
   category: string;
   icon?: {
     id: string;
+    type?: 'library' | 'emoji';
     label?: string;
     emoji?: string;
     iconName?: string;
@@ -37,12 +38,27 @@ function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offse
 }
 
 export function DragPreview() {
-  const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
-    isDragging: monitor.isDragging(),
-    item: monitor.getItem() as Word | null,
-    // Use the actual pointer position so we can center the preview under the finger/cursor
-    currentOffset: monitor.getClientOffset(),
-  }));
+  // FIX: Cache the item to prevent mid-drag updates
+  const itemRef = React.useRef<Word | null>(null);
+  
+  const { isDragging, item, currentOffset } = useDragLayer((monitor) => {
+    const currentItem = monitor.getItem() as Word | null;
+    // Freeze item data when drag starts
+    if (monitor.isDragging() && currentItem && !itemRef.current) {
+      itemRef.current = currentItem;
+    }
+    // Clear cache when drag ends
+    if (!monitor.isDragging()) {
+      itemRef.current = null;
+    }
+    
+    return {
+      isDragging: monitor.isDragging(),
+      item: itemRef.current || currentItem,
+      // Use the actual pointer position so we can center the preview under the finger/cursor
+      currentOffset: monitor.getClientOffset(),
+    };
+  });
 
   if (!isDragging || !item) {
     return null;
@@ -54,7 +70,13 @@ export function DragPreview() {
   const offsetY = item.__offsetY ?? (height ? height / 2 : 0);
 
   const IconComponent = item.icon?.iconName ? getIcon(item.icon.iconName) : null;
-  const hasEmoji = item.icon && item.icon.emoji;
+  
+  // Check if item has icon and determine display type
+  const hasIcon = item.icon && (item.icon.type === 'library' || item.icon.type === 'emoji');
+  const hasEmoji = hasIcon && item.icon.type === 'emoji' && item.icon.emoji;
+  const hasLibraryIcon = hasIcon && item.icon.type === 'library' && IconComponent;
+  const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon;
+  
   const displayText = item.icon?.label || item.text;
   const isMerged = item.isMergedGroup;
 
@@ -91,16 +113,21 @@ export function DragPreview() {
         dir="rtl"
       >
         {/* Show icon from library */}
-        {IconComponent && (
+        {hasLibraryIcon && IconComponent && (
           <IconComponent 
             className={`w-5 h-5 sm:w-6 sm:h-6 ${isMerged ? 'text-purple-600' : 'text-blue-600'}`}
             strokeWidth={2.5}
           />
         )}
         
-        {/* Show emoji fallback */}
-        {!IconComponent && hasEmoji && (
+        {/* Show emoji if type is emoji */}
+        {hasEmoji && (
           <span className="text-base sm:text-lg">{item.icon!.emoji}</span>
+        )}
+        
+        {/* Show fallback "*" if icon not found */}
+        {showFallbackIcon && (
+          <span className="text-base sm:text-lg font-bold">*</span>
         )}
         
         <span className={`${isMerged ? 'text-purple-700' : 'text-blue-600'} text-sm sm:text-lg leading-tight break-words font-bold drop-shadow-sm`}>

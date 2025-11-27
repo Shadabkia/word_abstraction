@@ -25,12 +25,17 @@ interface GridWordTileProps {
   onSwap: (word: Word, targetRowIndex: number, targetColIndex: number) => void;
   isSubcategoryGlow?: boolean;
   isMerging?: boolean;
+  isHinted?: boolean;
+  isDisabled?: boolean; // FIX: Add prop to disable dragging during processing
 }
 
-export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGlow = false, isMerging = false }: GridWordTileProps) {
+export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGlow = false, isMerging = false, isHinted = false, isDisabled = false }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const lastDropTimeRef = React.useRef<number>(0);
   const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  
+  // FIX #1: Freeze word data at drag start to prevent mid-drag mutations
+  const draggedWordRef = React.useRef<Word | null>(null);
 
   const isTouch =
     typeof window !== 'undefined' &&
@@ -38,22 +43,29 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: 'word',
+    canDrag: () => !isDisabled, // FIX: Disable dragging when processing
     item: () => {
       soundManager.playPickUp();
+      // Capture word data at drag start and freeze it
+      draggedWordRef.current = { ...word };
       const rect = tileRef.current?.getBoundingClientRect();
       const offset = touchOffsetRef.current;
       return {
-        ...word,
+        ...draggedWordRef.current,  // Use frozen word data
         __previewWidth: rect?.width ?? undefined,
         __previewHeight: rect?.height ?? undefined,
         __offsetX: offset.x,
         __offsetY: offset.y,
       };
     },
+    end: () => {
+      // Clear frozen data after drag ends
+      draggedWordRef.current = null;
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-  }));
+  }), [word, isDisabled]);
 
   React.useEffect(() => {
     if (!isTouch) {
@@ -61,11 +73,13 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     }
   }, [preview, isTouch]);
 
+  // FIX #2: Increase debounce and include word in dependencies
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: 'word',
     drop: (item: Word) => {
       const now = Date.now();
-      if (now - lastDropTimeRef.current < 100) return;
+      // Increased debounce from 100ms to 200ms for better touch device support
+      if (now - lastDropTimeRef.current < 200) return;
       lastDropTimeRef.current = now;
 
       if (item.id !== word.id) {
@@ -78,7 +92,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       isOver: monitor.isOver({ shallow: true }),
       canDrop: monitor.canDrop(),
     }),
-  }), [word.id, rowIndex, colIndex, onSwap]);
+  }), [word, rowIndex, colIndex, onSwap]);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (tileRef.current && e.touches.length > 0) {
@@ -101,16 +115,22 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     }
   };
 
-  // Dynamic random rotation for playfulness
-  const rotation = React.useMemo(() => word.isMergedGroup ? 0 : Math.random() * 2 - 1, [word.isMergedGroup]);
+  // FIX #3: Dynamic random rotation for playfulness (use word.id for stability)
+  const rotation = React.useMemo(() => word.isMergedGroup ? 0 : Math.random() * 2 - 1, [word.id, word.isMergedGroup]);
 
-  // Get icon component if icon name is provided
+  // Get icon component if icon is provided (stable memoization)
+  const iconName = word.icon?.iconName;
   const IconComponent = React.useMemo(() => 
-    word.icon?.iconName ? getIcon(word.icon.iconName) : null, 
-    [word.icon?.iconName]
+    iconName ? getIcon(iconName) : null, 
+    [iconName]
   );
   
-  const hasEmoji = word.icon && word.icon.emoji;
+  // Check if word has icon and it should be displayed
+  const hasIcon = word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
+  const hasEmoji = hasIcon && word.icon.type === 'emoji' && word.icon.emoji;
+  const hasLibraryIcon = hasIcon && word.icon.type === 'library' && IconComponent;
+  const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon; // Show "*" if icon not found
+  
   const displayText = word.icon?.label || word.text;
 
   // Simplified, visually distinct merge animation
@@ -126,25 +146,50 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     }
   } : {};
 
+  // Hint animation - "The Playful Bob"
+  // A deceptive, simple, but delightful floating animation
+  const hintAnimation = isHinted ? {
+    y: [0, -8, 0],
+    scale: [1, 1.05, 1],
+    rotate: [0, 2, -2, 0],
+    filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
+    opacity: 1, // Ensure opacity stays at 1 (otherwise reverts to initial 0)
+    zIndex: 20, // Ensure it's on top
+    transition: {
+      duration: 1.2,
+      ease: "easeInOut",
+      repeat: Infinity,
+    }
+  } : {};
+
   return (
     <motion.div
       layoutId={word.id}
-      layout
+      layout={!isDragging} // FIX: Disable layout animation during drag
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={isMerging ? mergeAnimation : { 
-        opacity: isDragging ? 0.5 : 1, 
-        scale: 1, 
-        x: 0,
-        y: 0,
-        rotate: 0,
-        zIndex: isDragging ? 100 : 10 
-      }}
-      transition={isMerging ? {} : { 
-        type: "spring", 
-        stiffness: 350, 
-        damping: 25,
-        layout: { duration: 0.2 }
-      }}
+      animate={
+        isMerging ? mergeAnimation : 
+        isHinted ? hintAnimation :
+        { 
+          opacity: isDragging ? 0.5 : 1, 
+          scale: 1, 
+          x: 0,
+          y: 0,
+          rotate: 0,
+          filter: "brightness(1)",
+          zIndex: isDragging ? 100 : 10 
+        }
+      }
+      transition={
+        isMerging || isHinted ? {} : 
+        { 
+          type: "spring", 
+          stiffness: 350, 
+          damping: 25,
+          layout: { duration: 0.2 },
+          repeat: 0 // Explicitly stop repeating
+        }
+      }
       ref={(node) => {
         tileRef.current = node;
         drag(drop(node));
@@ -155,7 +200,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       className={`
         relative group
         h-14 sm:h-16
-        cursor-grab active:cursor-grabbing
+        ${isDisabled ? 'cursor-not-allowed opacity-60' : 'cursor-grab active:cursor-grabbing'}
         select-none
         z-10
       `}
@@ -190,6 +235,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         }
         ${isOver && canDrop ? 'translate-y-[4px] sm:translate-y-[5px] brightness-95' : 'hover:-translate-y-[1px]'}
         ${isSubcategoryGlow ? 'ring-4 ring-yellow-300 border-yellow-400 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
+        ${isHinted ? 'ring-4 ring-blue-400/40 border-blue-400 z-20 shadow-[0_0_15px_rgba(96,165,250,0.4)]' : ''}
       `}>
         
         {/* Inner shine for extra polish */}
@@ -198,16 +244,21 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         {/* Content */}
         <div className="flex flex-col items-center justify-center gap-0.5 z-10">
           {/* Show icon from Lucide library */}
-          {IconComponent && (
+          {hasLibraryIcon && IconComponent && (
             <IconComponent 
               className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-600' : 'text-slate-600'}`}
               strokeWidth={2.5}
             />
           )}
           
-          {/* Show emoji fallback if no icon component */}
-          {!IconComponent && hasEmoji && (
+          {/* Show emoji if type is emoji */}
+          {hasEmoji && (
             <span className="text-lg sm:text-xl drop-shadow-sm filter">{word.icon!.emoji}</span>
+          )}
+          
+          {/* Show fallback "*" if icon not found */}
+          {showFallbackIcon && (
+            <span className="text-lg sm:text-xl font-bold drop-shadow-sm filter">*</span>
           )}
           
           <span className={`

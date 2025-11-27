@@ -1,28 +1,117 @@
+// New JSON-based level format
+
+export interface TileVisuals {
+  icon_enabled?: boolean;
+  icon_id?: string | null;      // Kebab-case icon ID from iconRegistry
+  icon_type?: 'library' | 'emoji' | null;  // Type is inferred from registry, but can be overridden
+  color_hex?: string;
+  animation_fx?: string;
+}
+
+export interface TileMeta {
+  category?: string;
+  complexity?: number;
+  is_hidden_at_start?: boolean;
+  en?: string;
+  finglish?: string;
+}
+
+export interface Tile {
+  id: string;
+  text: string;
+  type: 'word' | 'meta_group';
+  visuals?: TileVisuals;
+  meta?: TileMeta;
+}
+
+export interface Dictionary {
+  comment?: string;
+  tiles: Tile[];
+}
+
+export interface GroupRequirements {
+  trigger_ids: string[];
+}
+
+export interface GroupOutcomes {
+  reveal_ids?: string[];
+  sound_fx?: string;
+  action?: string;
+  visual_feedback?: string;
+}
+
+export interface GroupMeta {
+  hint_text?: string;
+}
+
+export interface Group {
+  id: string;
+  display_name: string;
+  behavior: 'transform' | 'final' | 'standard';
+  requirements: GroupRequirements;
+  outcomes?: GroupOutcomes;
+  meta?: GroupMeta;
+}
+
+export interface Mechanics {
+  groups: Group[];
+}
+
+export interface Layout {
+  rows: number;
+  cols: number;
+  initial_grid: string[][];
+}
+
+export interface LevelConstraints {
+  time_limit_sec?: number;
+  max_moves?: number;
+}
+
+export interface LevelMeta {
+  id: string;
+  version: string;
+  title: string;
+  description?: string;
+  author?: string;
+  difficulty: number;
+  tags?: string[];
+  constraints?: LevelConstraints;
+}
+
+export interface LevelJSON {
+  meta: LevelMeta;
+  dictionary: Dictionary;
+  mechanics: Mechanics;
+  layout: Layout;
+}
+
+// Legacy format (for backward compatibility during transition)
 export interface Word {
   id: string;
   text: string;
   category: string;
-  hidden?: boolean; // For words revealed after subcategory merge
+  hidden?: boolean;
   meta?: {
     en?: string;
     finglish?: string;
   };
-  // Icon support for merged groups
   icon?: {
-    id: string;        // Unique identifier for icon mapping
-    label?: string;    // Display name next to icon
-    emoji?: string;    // Emoji fallback if icon not available
-    iconName?: string; // Icon name from icon library (e.g., 'Dog', 'Cat')
+    id: string;              // Kebab-case icon ID
+    type?: 'library' | 'emoji';  // Icon type
+    label?: string;          // Display label
+    emoji?: string;          // Emoji character (if type is emoji)
+    iconName?: string;       // Lucide icon name (if type is library) - DEPRECATED: use id instead
   };
-  isMergedGroup?: boolean; // Indicates this is a merged word group
+  isMergedGroup?: boolean;
 }
 
 export interface SubcategoryInfo {
-  category: string;              // Subcategory ID (e.g., 'حیوانات')
-  mergesInto: string;            // Parent category ID (e.g., 'موجودات_زنده')
-  displayAfterMerge: string;     // Text shown after merge (e.g., 'حیوانات')
-  wordsToReveal: string[];       // Words to reveal after merge
-  icon?: {                       // Icon metadata for merged group
+  category: string;
+  mergesInto: string;
+  displayAfterMerge: string;
+  wordsToReveal: string[];
+  icon?: {
     id: string;
     label?: string;
     emoji?: string;
@@ -31,14 +120,14 @@ export interface SubcategoryInfo {
 }
 
 export interface HierarchyInfo {
-  subcategory?: SubcategoryInfo; // Single subcategory that merges
+  subcategory?: SubcategoryInfo;
+  subcategories?: SubcategoryInfo[];
 }
 
 export interface LevelData {
   levelNumber: number;
   words: Word[];
   categories: Record<string, string>;
-  totalSteps: number;            // Total completion steps
-  hierarchy?: HierarchyInfo;     // Optional hierarchical structure
+  totalSteps: number;
+  hierarchy?: HierarchyInfo;
 }
-

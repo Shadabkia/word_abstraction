@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "id": "lvl_003_hierarchical",
+    "version": "1.0.0",
+    "title": "دسته‌بندی سلسله‌مراتبی",
+    "description": "ترکیب دسته‌ها برای ایجاد سطوح بالاتر",
+    "author": "WordAbstraction",
+    "difficulty": 2,
+    "tags": ["hierarchical", "intermediate", "transform"],
+    "constraints": {
+      "time_limit_sec": 360,
+      "max_moves": 35
+    }
+  },
+
+  "dictionary": {
+    "comment": "Level 3: Hierarchical categories with transformation. حیوانات transforms into موجودات_زنده",
+    "tiles": [
+      {"id": "t_1", "text": "سگ", "type": "word", "meta": {"category": "حیوانات"}},
+      {"id": "t_2", "text": "گربه", "type": "word", "meta": {"category": "حیوانات"}},
+      {"id": "t_3", "text": "گاو", "type": "word", "meta": {"category": "حیوانات"}},
+      {"id": "t_4", "text": "گوسفند", "type": "word", "meta": {"category": "حیوانات"}},
+      {"id": "t_5", "text": "انسان‌ها", "type": "word", "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_6", "text": "گیاهان", "type": "word", "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_7", "text": "باکتری‌ها", "type": "word", "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_animals_group", "text": "حیوانات", "type": "meta_group", "visuals": {"icon_enabled": true, "icon_id": "animals-group"}, "meta": {"category": "موجودات_زنده", "is_hidden_at_start": true}},
+      {"id": "t_8", "text": "کوه", "type": "word", "meta": {"category": "طبیعت"}},
+      {"id": "t_9", "text": "دریا", "type": "word", "meta": {"category": "طبیعت"}},
+      {"id": "t_10", "text": "رودخانه", "type": "word", "meta": {"category": "طبیعت"}},
+      {"id": "t_11", "text": "جنگل", "type": "word", "meta": {"category": "طبیعت"}},
+      {"id": "t_12", "text": "گیتار", "type": "word", "meta": {"category": "موسیقی"}},
+      {"id": "t_13", "text": "ویولن", "type": "word", "meta": {"category": "موسیقی"}},
+      {"id": "t_14", "text": "سنتور", "type": "word", "meta": {"category": "موسیقی"}},
+      {"id": "t_15", "text": "دهل", "type": "word", "meta": {"category": "موسیقی"}},
+      {"id": "t_16", "text": "سینک", "type": "word", "meta": {"category": "آشپزخانه"}},
+      {"id": "t_17", "text": "گاز", "type": "word", "meta": {"category": "آشپزخانه"}},
+      {"id": "t_18", "text": "قوری", "type": "word", "meta": {"category": "آشپزخانه"}},
+      {"id": "t_19", "text": "قابلمه", "type": "word", "meta": {"category": "آشپزخانه"}},
+      {"id": "t_20", "text": "تلویزیون", "type": "word", "meta": {"category": "لوازم_الکترونیک"}},
+      {"id": "t_21", "text": "یخچال", "type": "word", "meta": {"category": "لوازم_الکترونیک"}},
+      {"id": "t_22", "text": "لباسشویی", "type": "word", "meta": {"category": "لوازم_الکترونیک"}},
+      {"id": "t_23", "text": "اتو", "type": "word", "meta": {"category": "لوازم_الکترونیک"}},
+      {"id": "t_24", "text": "آفتاب", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_25", "text": "ابر", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_26", "text": "باران", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_27", "text": "باد", "type": "word", "meta": {"category": "آب_و_هوا"}}
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_animals_sub",
+        "display_name": "حیوانات",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_1", "t_2", "t_3", "t_4"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_animals_group", "t_5", "t_6", "t_7"],
+          "sound_fx": "sfx_transform"
+        },
+        "meta": {
+          "hint_text": "این دسته‌ها می‌توانند به یک مفهوم بزرگتر تبدیل شوند"
+        }
+      },
+      {
+        "id": "grp_living_things",
+        "display_name": "موجودات زنده",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_animals_group", "t_5", "t_6", "t_7"]
+        },
+        "outcomes": {
+          "visual_feedback": "confetti_blast",
+          "sound_fx": "sfx_mega_success"
+        }
+      },
+      {
+        "id": "grp_nature",
+        "display_name": "طبیعت",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_8", "t_9", "t_10", "t_11"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_music",
+        "display_name": "موسیقی",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_12", "t_13", "t_14", "t_15"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_kitchen",
+        "display_name": "آشپزخانه",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_16", "t_17", "t_18", "t_19"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_electronics",
+        "display_name": "لوازم الکترونیک",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_20", "t_21", "t_22", "t_23"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_weather",
+        "display_name": "آب و هوا",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_24", "t_25", "t_26", "t_27"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 6,
+    "cols": 4,
+    "initial_grid": [
+      ["t_1", "t_8", "t_12", "t_16"],
+      ["t_2", "t_9", "t_13", "t_17"],
+      ["t_3", "t_10", "t_14", "t_18"],
+      ["t_4", "t_11", "t_15", "t_19"],
+      ["t_20", "t_25", "t_26", "t_27"],
+      ["t_21", "t_22", "t_23", "t_24"]
+    ]
+  }
+}
+

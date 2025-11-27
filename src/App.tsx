@@ -5,15 +5,14 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
-import { Settings, Search, Lightbulb, Sparkles, Gift, Database } from 'lucide-react';
+import { Settings, Search, Lightbulb, Gift } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { DragPreview } from './components/DragPreview';
 import { SettingsDialog } from './components/ui/dialogs/SettingsDialog';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Word } from './data/types';
-import { getLevelData } from './data/levels';
+import { Word, LevelData, LevelJSON } from './data/types';
+import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
 import { shuffleWordsWithConstraint } from './utils/shuffleWords';
-import { loadLevelFromDB, loadPublishedLevels, isDatabaseAvailable } from './utils/levelLoader';
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
 
@@ -33,46 +32,55 @@ const isTouchDevice = () => {
 };
 
 export default function App() {
-  const [level] = useState(3);
+  const [level, setLevel] = useState(1);
   const [coins] = useState(10);
-  const [hints] = useState(3);
+  const [hints, setHints] = useState(3);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
+  const [hintedWordIds, setHintedWordIds] = useState<Set<string>>(new Set());
   
-  // Database level support
-  const [dbAvailable, setDbAvailable] = useState(false);
-  const [useDatabase, setUseDatabase] = useState(false);
-  const [dbLevels, setDbLevels] = useState<any[]>([]);
-  const [selectedDbLevel, setSelectedDbLevel] = useState<number | null>(null);
-  const [dbLevelData, setDbLevelData] = useState<any | null>(null);
+  // Level data state
+  const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showLevelSelector, setShowLevelSelector] = useState(false);
+  const [availableLevels, setAvailableLevels] = useState<number[]>([1, 2, 3]); // Default levels
+  const [levelMetadata, setLevelMetadata] = useState<LevelJSON[]>([]);
+  
+  // FIX: Track when game is processing to prevent race conditions
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Check database availability on mount
+  // Load available levels and metadata on mount
   useEffect(() => {
-    isDatabaseAvailable().then(available => {
-      setDbAvailable(available);
-      if (available) {
-        loadPublishedLevels().then(levels => setDbLevels(levels));
+    Promise.all([
+      getAvailableLevels(),
+      loadAllLevelMetadata()
+    ]).then(([levels, metadata]) => {
+      if (levels.length > 0) {
+        setAvailableLevels(levels);
       }
+      if (metadata.length > 0) {
+        setLevelMetadata(metadata);
+      }
+    }).catch(error => {
+      console.error('Failed to load available levels:', error);
     });
   }, []);
 
-  // Load selected database level
+  // Load level data on mount and when level changes
   useEffect(() => {
-    if (useDatabase && selectedDbLevel) {
-      loadLevelFromDB(selectedDbLevel).then(data => {
-        setDbLevelData(data);
-      });
-    }
-  }, [useDatabase, selectedDbLevel]);
-
-  // Get current level data (from DB or hardcoded)
-  const currentLevelData = useMemo(() => {
-    if (useDatabase && dbLevelData) {
-      return dbLevelData;
-    }
-    return getLevelData(level);
-  }, [useDatabase, dbLevelData, level]);
+    setIsLoading(true);
+    // Reset game state when level changes
+    setMergedSubcategoriesCount(0);
+    setHintedWordIds(new Set());
+    
+    loadLevel(level).then(data => {
+      setCurrentLevelData(data);
+      setIsLoading(false);
+    }).catch(error => {
+      console.error('Failed to load level:', error);
+      setIsLoading(false);
+    });
+  }, [level]);
   
   const LEVEL_DATA = currentLevelData?.words || [];
   const CATEGORY_NAMES = currentLevelData?.categories || {};
@@ -91,37 +99,54 @@ export default function App() {
   const [gridRows, setGridRows] = useState<GridRow[]>([]);
   const [hiddenPool, setHiddenPool] = useState<Word[]>([]);
 
-  // Initialize grid rows when shuffled words are ready
+  // FIX: Initialize grid rows when shuffled words are ready
   useEffect(() => {
     if (shuffledWords.length > 0) {
-      setGridRows([
-        { type: 'words', words: shuffledWords.slice(0, 4) },
-        { type: 'words', words: shuffledWords.slice(4, 8) },
-        { type: 'words', words: shuffledWords.slice(8, 12) },
-        { type: 'words', words: shuffledWords.slice(12, 16) },
-        { type: 'words', words: shuffledWords.slice(16, 20) },
-        { type: 'words', words: shuffledWords.slice(20, 24) },
-      ]);
-      setHiddenPool(hiddenWordsPool);
+      // Dynamically create rows based on the actual number of words
+      const rowSize = 4; // All levels use 4 columns
+      const numRows = Math.ceil(shuffledWords.length / rowSize);
+      const newRows: GridRow[] = [];
+      
+      for (let i = 0; i < numRows; i++) {
+        const startIdx = i * rowSize;
+        const endIdx = Math.min(startIdx + rowSize, shuffledWords.length);
+        const rowWords = shuffledWords.slice(startIdx, endIdx);
+        
+        // Only add row if it has words
+        if (rowWords.length > 0) {
+          // Create immutable word objects to prevent reference changes
+          const immutableWords = rowWords.map(w => ({ ...w }));
+          newRows.push({ type: 'words', words: immutableWords });
+        }
+      }
+      
+      setGridRows(newRows);
+      setHiddenPool([...hiddenWordsPool]); // Clone to ensure immutability
     }
   }, [shuffledWords, hiddenWordsPool]);
 
   // Get total steps from level data (default to 6 for backward compatibility)
   const totalSteps = currentLevelData?.totalSteps || 6;
   
-  // Track if subcategory has been merged
-  const [subcategoryMerged, setSubcategoryMerged] = useState(false);
+  // Track count of merged subcategories (for levels with multiple transform groups)
+  const [mergedSubcategoriesCount, setMergedSubcategoriesCount] = useState(0);
   
   // Count completed categories from grid
   const completedCategoriesCount = gridRows.filter(row => row.type === 'completed').length;
   
-  // Calculate total completed steps
-  const completedSteps = (subcategoryMerged ? 1 : 0) + completedCategoriesCount;
+  // Calculate total completed steps (merged subcategories + completed final groups)
+  const completedSteps = mergedSubcategoriesCount + completedCategoriesCount;
 
   // Track merging row for animation
   const [mergingRow, setMergingRow] = useState<number | null>(null);
 
   const handleSwap = (draggedWord: Word, targetRowIndex: number, targetColIndex: number) => {
+    // FIX: Prevent swaps while processing matches/merges
+    if (isProcessing) {
+      console.log('Swap blocked: currently processing');
+      return;
+    }
+    
     // Find the dragged word's position
     let sourceRowIndex = -1;
     let sourceColIndex = -1;
@@ -137,55 +162,78 @@ export default function App() {
       }
     }
     
-    // Validation checks
-    if (sourceRowIndex === -1) return; // Source not found
-    if (gridRows[targetRowIndex]?.type !== 'words') return; // Target row not valid
-    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) return; // Same position
+    // FIX: Enhanced validation checks
+    if (sourceRowIndex === -1) {
+      console.warn('handleSwap: source word not found in grid');
+      return;
+    }
+    if (gridRows[targetRowIndex]?.type !== 'words') {
+      console.warn('handleSwap: target row is not a word row');
+      return;
+    }
+    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) {
+      console.log('handleSwap: same position, no swap needed');
+      return;
+    }
+    if (!gridRows[targetRowIndex].words || targetColIndex >= gridRows[targetRowIndex].words!.length) {
+      console.warn('handleSwap: invalid target position');
+      return;
+    }
     
     const targetWord = gridRows[targetRowIndex].words![targetColIndex];
+    if (!targetWord) {
+      console.warn('handleSwap: target word is null or undefined');
+      return;
+    }
     
-    // Create new grid with only the two tiles swapped
+    // FIX: Create new grid with immutable word objects to prevent reference issues
     const newGridRows = gridRows.map((row, rowIdx) => {
       if (row.type !== 'words') return row;
       
       return {
         ...row,
         words: row.words!.map((w, colIdx) => {
-          // If this is the source position, place the target word
+          // If this is the source position, place a copy of the target word
           if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) {
-            return targetWord;
+            return { ...targetWord };
           }
-          // If this is the target position, place the source word
+          // If this is the target position, place a copy of the dragged word
           if (rowIdx === targetRowIndex && colIdx === targetColIndex) {
-            return draggedWord;
+            return { ...draggedWord };
           }
-          // Otherwise keep the word as is
-          return w;
+          // Otherwise keep a copy of the word
+          return { ...w };
         })
       };
     });
     
     setGridRows(newGridRows);
     
-    // Check both affected rows for matches
-    // Small delay to allow animation to start/finish visually if needed, 
-    // though logic happens instantly now.
-    setTimeout(() => {
+    // FIX: Check matches immediately to prevent state inconsistency
+    // The visual delay should be handled by animations, not setTimeout
+    requestAnimationFrame(() => {
       checkRowForMatch(newGridRows, sourceRowIndex);
       if (targetRowIndex !== sourceRowIndex) {
         checkRowForMatch(newGridRows, targetRowIndex);
       }
-    }, 300);
+    });
   };
 
   const checkRowForMatch = (rows: GridRow[], rowIndex: number) => {
     const row = rows[rowIndex];
     if (row.type !== 'words' || !row.words || row.words.length !== 4) return;
     
-    const categories = row.words.map(w => w.category);
+    // FIX: Filter out empty/invalid words
+    const validWords = row.words.filter(w => w && w.category && w.category !== 'empty');
+    if (validWords.length !== 4) return;
+    
+    const categories = validWords.map(w => w.category);
     const allSame = categories.every(cat => cat === categories[0]);
     
     if (allSame) {
+      // FIX: Set processing flag to block other interactions
+      setIsProcessing(true);
+      
       // Trigger merge animation
       setMergingRow(rowIndex);
 
@@ -193,14 +241,16 @@ export default function App() {
       setTimeout(() => {
         const matchedCategory = categories[0];
         const categoryName = CATEGORY_NAMES[matchedCategory] || matchedCategory;
-        const words = row.words!.map(w => w.text);
+        const words = validWords.map(w => w.text);
         
-        // Check if this is THE subcategory that should merge
-        const subcategoryInfo = HIERARCHY?.subcategory;
+        // Check if this is a subcategory that should merge
+        // Support both single subcategory (backward compat) and multiple subcategories
+        const subcategories = HIERARCHY?.subcategories || (HIERARCHY?.subcategory ? [HIERARCHY.subcategory] : []);
+        const matchingSubcategory = subcategories.find(sub => sub.category === matchedCategory);
         
-        if (subcategoryInfo && subcategoryInfo.category === matchedCategory) {
-          // This is the subcategory - merge into single tile
-          handleSubcategoryCompletion(rows, rowIndex, subcategoryInfo);
+        if (matchingSubcategory) {
+          // This is a subcategory - merge into single tile
+          handleSubcategoryCompletion(rows, rowIndex, matchingSubcategory);
         } else {
           // Regular category - show as completed row
           soundManager.playSuccess();
@@ -220,6 +270,8 @@ export default function App() {
         
         // Reset merging state after grid update
         setMergingRow(null);
+        // FIX: Clear processing flag to allow new interactions
+        setIsProcessing(false);
       }, 1000);
     }
   };
@@ -240,13 +292,14 @@ export default function App() {
       };
     }
   ) => {
-    // Create a single Word representing the subcategory
+    // FIX: Use category and timestamp for stable IDs
+    const timestamp = Date.now();
     const subcategoryWord: Word = {
-      id: `subcategory_${subcategoryInfo.category}_${Date.now()}`,
+      id: `merged_${subcategoryInfo.category}_${timestamp}`,
       text: subcategoryInfo.displayAfterMerge,
-      category: subcategoryInfo.mergesInto, // Parent category
-      isMergedGroup: true, // Mark as merged group
-      icon: subcategoryInfo.icon // Include icon metadata if available
+      category: subcategoryInfo.mergesInto,
+      isMergedGroup: true,
+      icon: subcategoryInfo.icon
     };
     
     // Trigger glow animation for this subcategory tile
@@ -267,9 +320,9 @@ export default function App() {
     const wordsToAdd: Word[] = [];
     const newHiddenPool = [...hiddenPool];
     
-    // Find and add the specific words that match wordsToReveal
-    for (const wordText of subcategoryInfo.wordsToReveal) {
-      const wordIndex = newHiddenPool.findIndex(w => w.text === wordText);
+    // Find and add the specific words that match wordsToReveal (by ID)
+    for (const wordId of subcategoryInfo.wordsToReveal) {
+      const wordIndex = newHiddenPool.findIndex(w => w.id === wordId);
       if (wordIndex !== -1) {
         wordsToAdd.push(newHiddenPool[wordIndex]);
         newHiddenPool.splice(wordIndex, 1);
@@ -294,9 +347,67 @@ export default function App() {
     setGridRows(newGridRows);
     setHiddenPool(newHiddenPool);
     
-    // Mark subcategory as merged (counts as 1 step)
-    setSubcategoryMerged(true);
+    // Increment merged subcategories count (each merge counts as 1 step)
+    setMergedSubcategoriesCount(prev => prev + 1);
   };
+
+  const handleHint = () => {
+    if (hints <= 0) {
+      soundManager.playError();
+      return;
+    }
+
+    // Get all words currently visible in the grid
+    const currentWords = new Set<string>();
+    gridRows.forEach(row => {
+      if (row.type === 'words' && row.words) {
+        row.words.forEach(word => currentWords.add(word.id));
+      }
+    });
+
+    // Find all possible categories that haven't been completed
+    const categoryToWords = new Map<string, string[]>();
+    
+    LEVEL_DATA.forEach(word => {
+      if (currentWords.has(word.id)) {
+        if (!categoryToWords.has(word.category)) {
+          categoryToWords.set(word.category, []);
+        }
+        categoryToWords.get(word.category)!.push(word.id);
+      }
+    });
+
+    // Find a category with at least 2 words visible
+    let hintWords: string[] = [];
+    for (const [category, wordIds] of categoryToWords.entries()) {
+      if (wordIds.length >= 2) {
+        // Shuffle and pick 2 random words from this category
+        const shuffled = [...wordIds].sort(() => Math.random() - 0.5);
+        hintWords = shuffled.slice(0, 2);
+        break;
+      }
+    }
+
+    if (hintWords.length === 2) {
+      // Show hint animation
+      setHintedWordIds(new Set(hintWords));
+      setHints(hints - 1);
+      soundManager.playMatch();
+    } else {
+      // No valid hint available
+      soundManager.playError();
+    }
+  };
+
+  // Auto-clear hints after 5 seconds
+  useEffect(() => {
+    if (hintedWordIds.size > 0) {
+      const timer = setTimeout(() => {
+        setHintedWordIds(new Set());
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [hintedWordIds]);
 
   return (
     <LanguageProvider>
@@ -339,93 +450,202 @@ export default function App() {
               </div>
             </div>
 
-            {/* Database Level Selector Button */}
-            {dbAvailable && (
-              <div className="px-3 sm:px-4 mb-2">
-                <button
-                  onClick={() => setShowLevelSelector(!showLevelSelector)}
-                  className="w-full glass-panel rounded-xl p-2 sm:p-3 flex items-center justify-between hover:bg-white/10 transition-colors"
-                >
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <Database className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                    <span className="text-xs sm:text-sm font-medium">
-                      {useDatabase && selectedDbLevel 
-                        ? `DB Level ${selectedDbLevel}`
-                        : `Level ${level} (Hardcoded)`
-                      }
-                    </span>
-                  </div>
-                  <span className="text-[10px] sm:text-xs text-gray-400">
-                    {showLevelSelector ? 'Hide' : 'Change'}
+            {/* Level Selector Button */}
+            <div className="px-3 sm:px-4 mb-2">
+              <button
+                onClick={() => setShowLevelSelector(!showLevelSelector)}
+                className="w-full glass-panel rounded-xl p-2 sm:p-3 flex items-center justify-between hover:bg-white/10 transition-colors"
+              >
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-xs sm:text-sm font-medium">
+                    Level {level}
                   </span>
-                </button>
-              </div>
-            )}
+                </div>
+                <span className="text-[10px] sm:text-xs text-gray-400">
+                  {showLevelSelector ? 'Hide' : 'Change'}
+                </span>
+              </button>
+            </div>
 
             {/* Level Selector Dropdown */}
-            {showLevelSelector && dbAvailable && (
+            {showLevelSelector && (
               <div className="px-3 sm:px-4 mb-3 sm:mb-4">
-                <div className="glass-panel rounded-xl p-3 sm:p-4 space-y-2">
-                  <h3 className="text-xs sm:text-sm font-bold mb-2">Select Level</h3>
+                <div className="glass-panel rounded-xl p-3 sm:p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+                  <h3 className="text-sm sm:text-base font-bold mb-2 sticky top-0 bg-slate-800/95 backdrop-blur-sm py-2 -mt-2">
+                    انتخاب سطح
+                  </h3>
                   
-                  {/* Hardcoded Levels */}
-                  <div className="space-y-1">
-                    <p className="text-[10px] sm:text-xs text-gray-400 mb-1">Hardcoded Levels:</p>
-                    {[1, 2, 3].map(lvl => (
-                      <button
-                        key={`hardcoded-${lvl}`}
-                        onClick={() => {
-                          setUseDatabase(false);
-                          setShowLevelSelector(false);
-                          // Would need to add level setter to change hardcoded level
-                        }}
-                        className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                          !useDatabase && level === lvl
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-700/50 hover:bg-gray-600/50'
-                        }`}
-                      >
-                        Level {lvl}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Database Levels */}
-                  {dbLevels.length > 0 && (
-                    <div className="space-y-1 pt-2 border-t border-gray-600">
-                      <p className="text-[10px] sm:text-xs text-gray-400 mb-1">Database Levels:</p>
-                      {dbLevels.map(dbLevel => (
+                  <div className="space-y-2.5 sm:space-y-3">
+                    {levelMetadata.map((meta, idx) => {
+                      // Extract level number from meta.id (e.g., "lvl_001_basic_categories" -> 1)
+                      const lvl = parseInt(meta.meta.id.match(/\d+/)?.[0] || '1');
+                      const isActive = level === lvl;
+                      const hasTransforms = meta.mechanics.groups.some(g => g.behavior === 'transform');
+                      const transformCount = meta.mechanics.groups.filter(g => g.behavior === 'transform').length;
+                      const finalCount = meta.mechanics.groups.filter(g => g.behavior === 'final' || g.behavior === 'standard').length;
+                      
+                      // Difficulty color mapping
+                      const difficultyColors = [
+                        { bg: 'bg-green-500', text: 'text-green-100', border: 'border-green-400', label: 'آسان' },
+                        { bg: 'bg-blue-500', text: 'text-blue-100', border: 'border-blue-400', label: 'متوسط' },
+                        { bg: 'bg-yellow-500', text: 'text-yellow-100', border: 'border-yellow-400', label: 'نرمال' },
+                        { bg: 'bg-orange-500', text: 'text-orange-100', border: 'border-orange-400', label: 'سخت' },
+                        { bg: 'bg-red-500', text: 'text-red-100', border: 'border-red-400', label: 'خیلی سخت' },
+                      ];
+                      
+                      const difficultyStyle = difficultyColors[Math.min(meta.meta.difficulty - 1, 4)] || difficultyColors[0];
+                      
+                      return (
                         <button
-                          key={`db-${dbLevel.id}`}
+                          key={`level-${lvl}`}
                           onClick={() => {
-                            setUseDatabase(true);
-                            setSelectedDbLevel(dbLevel.id);
+                            setLevel(lvl);
                             setShowLevelSelector(false);
                           }}
-                          className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                            useDatabase && selectedDbLevel === dbLevel.id
-                              ? 'bg-green-500 text-white'
-                              : 'bg-gray-700/50 hover:bg-gray-600/50'
+                          className={`w-full text-left rounded-xl transition-all duration-200 ${
+                            isActive
+                              ? 'bg-gradient-to-br from-purple-600 to-blue-600 shadow-lg scale-[1.02]'
+                              : 'bg-slate-700/60 hover:bg-slate-700/80 hover:shadow-md'
                           }`}
                         >
-                          <div className="font-medium" dir="rtl">{dbLevel.name}</div>
-                          {dbLevel.name_en && (
-                            <div className="text-[10px] sm:text-xs opacity-70">{dbLevel.name_en}</div>
-                          )}
+                          <div className="p-3 sm:p-4">
+                            {/* Header with level number and difficulty */}
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-sm sm:text-base ${
+                                  isActive ? 'bg-white/20 text-white' : 'bg-slate-600/50 text-slate-300'
+                                }`}>
+                                  {lvl}
+                                </div>
+                                <div>
+                                  <h4 className={`font-bold text-sm sm:text-base leading-tight ${
+                                    isActive ? 'text-white' : 'text-slate-100'
+                                  }`}>
+                                    {meta.meta.title}
+                                  </h4>
+                                </div>
+                              </div>
+                              
+                              {/* Difficulty Badge */}
+                              <div className={`${difficultyStyle.bg} ${difficultyStyle.text} px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border ${difficultyStyle.border} whitespace-nowrap`}>
+                                {difficultyStyle.label}
+                              </div>
+                            </div>
+                            
+                            {/* Description */}
+                            {meta.meta.description && (
+                              <p className={`text-xs sm:text-sm mb-3 leading-relaxed ${
+                                isActive ? 'text-white/80' : 'text-slate-300'
+                              }`}>
+                                {meta.meta.description}
+                              </p>
+                            )}
+                            
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-2 gap-2 mb-2">
+                              <div className={`rounded-lg p-2 ${
+                                isActive ? 'bg-white/10' : 'bg-slate-600/30'
+                              }`}>
+                                <div className={`text-[10px] sm:text-xs ${
+                                  isActive ? 'text-white/70' : 'text-slate-400'
+                                }`}>
+                                  شبکه
+                                </div>
+                                <div className={`font-bold text-xs sm:text-sm ${
+                                  isActive ? 'text-white' : 'text-slate-200'
+                                }`}>
+                                  {meta.layout.rows} × {meta.layout.cols}
+                                </div>
+                              </div>
+                              
+                              <div className={`rounded-lg p-2 ${
+                                isActive ? 'bg-white/10' : 'bg-slate-600/30'
+                              }`}>
+                                <div className={`text-[10px] sm:text-xs ${
+                                  isActive ? 'text-white/70' : 'text-slate-400'
+                                }`}>
+                                  گروه‌ها
+                                </div>
+                                <div className={`font-bold text-xs sm:text-sm ${
+                                  isActive ? 'text-white' : 'text-slate-200'
+                                }`}>
+                                  {meta.mechanics.groups.length}
+                                </div>
+                              </div>
+                              
+                              {hasTransforms && (
+                                <div className={`rounded-lg p-2 ${
+                                  isActive ? 'bg-white/10' : 'bg-slate-600/30'
+                                }`}>
+                                  <div className={`text-[10px] sm:text-xs ${
+                                    isActive ? 'text-white/70' : 'text-slate-400'
+                                  }`}>
+                                    تبدیل‌ها
+                                  </div>
+                                  <div className={`font-bold text-xs sm:text-sm ${
+                                    isActive ? 'text-white' : 'text-slate-200'
+                                  }`}>
+                                    {transformCount}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <div className={`rounded-lg p-2 ${
+                                isActive ? 'bg-white/10' : 'bg-slate-600/30'
+                              }`}>
+                                <div className={`text-[10px] sm:text-xs ${
+                                  isActive ? 'text-white/70' : 'text-slate-400'
+                                }`}>
+                                  کلمات
+                                </div>
+                                <div className={`font-bold text-xs sm:text-sm ${
+                                  isActive ? 'text-white' : 'text-slate-200'
+                                }`}>
+                                  {meta.dictionary.tiles.length}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Tags */}
+                            {meta.meta.tags && meta.meta.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 mt-2">
+                                {meta.meta.tags.slice(0, 3).map(tag => (
+                                  <span
+                                    key={tag}
+                                    className={`px-2 py-0.5 rounded-full text-[10px] sm:text-xs ${
+                                      isActive 
+                                        ? 'bg-white/20 text-white/90' 
+                                        : 'bg-slate-600/50 text-slate-300'
+                                    }`}
+                                  >
+                                    #{tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </button>
-                      ))}
-                    </div>
-                  )}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}
 
             {/* Game Header (Level & Progress) */}
             <div className="px-3 sm:px-4 mt-2 mb-3 sm:mb-4">
-              <GameHeader level={useDatabase && selectedDbLevel ? selectedDbLevel : level} completed={completedSteps} total={totalSteps} />
+              <GameHeader level={level} completed={completedSteps} total={totalSteps} />
             </div>
 
+            {/* Loading State */}
+            {isLoading && (
+              <div className="px-3 sm:px-4 py-8 text-center">
+                <div className="text-white text-lg">Loading level...</div>
+              </div>
+            )}
+
             {/* Game Grid */}
+            {!isLoading && (
             <div className="px-3 sm:px-4 space-y-2 sm:space-y-3">
               {gridRows.map((row, rowIndex) => (
                 <div key={rowIndex} className="animate-pop-in" style={{ animationDelay: `${rowIndex * 0.1}s` }}>
@@ -442,6 +662,8 @@ export default function App() {
                           onSwap={handleSwap}
                           isSubcategoryGlow={word.id === glowingSubcategoryId}
                           isMerging={mergingRow === rowIndex}
+                          isHinted={hintedWordIds.has(word.id)}
+                          isDisabled={isProcessing}
                         />
                       ))}
                     </div>
@@ -449,6 +671,7 @@ export default function App() {
                 </div>
               ))}
             </div>
+            )}
           </div>
 
           {/* Bottom Floating Dock */}
@@ -475,7 +698,11 @@ export default function App() {
                 </div>
               </Button>
               
-              <Button className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden">
+              <Button 
+                onClick={handleHint}
+                disabled={hints <= 0}
+                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
                 <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-7 sm:h-7 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-white shadow-sm">

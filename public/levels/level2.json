@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "id": "lvl_002_everyday_life",
+    "version": "1.0.0",
+    "title": "زندگی روزمره",
+    "description": "دسته‌بندی اشیا و مفاهیم روزانه",
+    "author": "WordAbstraction",
+    "difficulty": 1,
+    "tags": ["daily", "life", "beginner"],
+    "constraints": {
+      "time_limit_sec": 300,
+      "max_moves": 30
+    }
+  },
+
+  "dictionary": {
+    "comment": "Level 2: Everyday categories - fruits, vegetables, sports, weather, vehicles, school",
+    "tiles": [
+      {"id": "t_1", "text": "سیب", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_2", "text": "موز", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_3", "text": "پرتقال", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_4", "text": "انگور", "type": "word", "meta": {"category": "میوه‌ها"}},
+      {"id": "t_5", "text": "گوجه", "type": "word", "meta": {"category": "سبزیجات"}},
+      {"id": "t_6", "text": "خیار", "type": "word", "meta": {"category": "سبزیجات"}},
+      {"id": "t_7", "text": "هویج", "type": "word", "meta": {"category": "سبزیجات"}},
+      {"id": "t_8", "text": "کاهو", "type": "word", "meta": {"category": "سبزیجات"}},
+      {"id": "t_9", "text": "فوتبال", "type": "word", "meta": {"category": "ورزش‌ها"}},
+      {"id": "t_10", "text": "بسکتبال", "type": "word", "meta": {"category": "ورزش‌ها"}},
+      {"id": "t_11", "text": "شنا", "type": "word", "meta": {"category": "ورزش‌ها"}},
+      {"id": "t_12", "text": "والیبال", "type": "word", "meta": {"category": "ورزش‌ها"}},
+      {"id": "t_13", "text": "باران", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_14", "text": "برف", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_15", "text": "آفتاب", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_16", "text": "ابر", "type": "word", "meta": {"category": "آب_و_هوا"}},
+      {"id": "t_17", "text": "ماشین", "type": "word", "meta": {"category": "وسایل_نقلیه"}},
+      {"id": "t_18", "text": "اتوبوس", "type": "word", "meta": {"category": "وسایل_نقلیه"}},
+      {"id": "t_19", "text": "هواپیما", "type": "word", "meta": {"category": "وسایل_نقلیه"}},
+      {"id": "t_20", "text": "دوچرخه", "type": "word", "meta": {"category": "وسایل_نقلیه"}},
+      {"id": "t_21", "text": "کتاب", "type": "word", "meta": {"category": "مدرسه"}},
+      {"id": "t_22", "text": "دفتر", "type": "word", "meta": {"category": "مدرسه"}},
+      {"id": "t_23", "text": "مداد", "type": "word", "meta": {"category": "مدرسه"}},
+      {"id": "t_24", "text": "خودکار", "type": "word", "meta": {"category": "مدرسه"}}
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_fruits",
+        "display_name": "میوه‌ها",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_1", "t_2", "t_3", "t_4"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_vegetables",
+        "display_name": "سبزیجات",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_5", "t_6", "t_7", "t_8"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_sports",
+        "display_name": "ورزش‌ها",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_9", "t_10", "t_11", "t_12"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_weather",
+        "display_name": "آب و هوا",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_13", "t_14", "t_15", "t_16"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_vehicles",
+        "display_name": "وسایل نقلیه",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_17", "t_18", "t_19", "t_20"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      },
+      {
+        "id": "grp_school",
+        "display_name": "مدرسه",
+        "behavior": "standard",
+        "requirements": {
+          "trigger_ids": ["t_21", "t_22", "t_23", "t_24"]
+        },
+        "outcomes": {
+          "sound_fx": "sfx_success"
+        }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 6,
+    "cols": 4,
+    "initial_grid": [
+      ["t_1", "t_2", "t_3", "t_4"],
+      ["t_5", "t_6", "t_7", "t_8"],
+      ["t_9", "t_10", "t_11", "t_12"],
+      ["t_13", "t_14", "t_15", "t_16"],
+      ["t_17", "t_18", "t_19", "t_20"],
+      ["t_21", "t_22", "t_23", "t_24"]
+    ]
+  }
+}
+

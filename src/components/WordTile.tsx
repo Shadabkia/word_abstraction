@@ -8,6 +8,7 @@ interface Word {
   category: string;
   icon?: {
     id: string;
+    type?: 'library' | 'emoji';
     label?: string;
     emoji?: string;
     iconName?: string;
@@ -23,6 +24,8 @@ interface WordTileProps {
 export function WordTile({ word, inDropZone = false }: WordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // FIX: Freeze word data at drag start to prevent mutations
+  const draggedWordRef = React.useRef<Word | null>(null);
 
   const isTouch =
     typeof window !== 'undefined' &&
@@ -30,21 +33,25 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
 
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: 'word',
-    // include live dimensions so the preview can match tile size
     item: () => {
+      // Capture and freeze word data
+      draggedWordRef.current = { ...word };
       const rect = tileRef.current?.getBoundingClientRect();
       return {
-        ...word,
+        ...draggedWordRef.current,
         __previewWidth: rect?.width ?? undefined,
         __previewHeight: rect?.height ?? undefined,
         __offsetX: touchOffsetRef.current.x,
         __offsetY: touchOffsetRef.current.y,
       };
     },
+    end: () => {
+      draggedWordRef.current = null;
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-  }));
+  }), [word]);
 
   React.useEffect(() => {
     if (!isTouch) {
