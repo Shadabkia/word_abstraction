@@ -87,8 +87,8 @@ export default function App() {
   const HIERARCHY = currentLevelData?.hierarchy;
 
   // Separate visible and hidden words
-  const visibleWords = useMemo(() => LEVEL_DATA.filter(w => !w.hidden), [LEVEL_DATA]);
-  const hiddenWordsPool = useMemo(() => LEVEL_DATA.filter(w => w.hidden), [LEVEL_DATA]);
+  const visibleWords = useMemo(() => LEVEL_DATA.filter((w: Word) => !w.hidden), [LEVEL_DATA]);
+  const hiddenWordsPool = useMemo(() => LEVEL_DATA.filter((w: Word) => w.hidden), [LEVEL_DATA]);
 
   // Shuffle words ensuring no row has a complete category
   const shuffledWords = useMemo(() => {
