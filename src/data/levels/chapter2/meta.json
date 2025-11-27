@@ -1,0 +1,12 @@
+{
+  "id": "chapter_2",
+  "name": "The Wild (طبیعت)",
+  "description": "In Chapter 1, we focused on \"Things found in a house.\" The relationships were functional (Bread goes with Butter). In Chapter 2, we shift to Taxonomy (Scientific Classification). The player must stop thinking about \"Usage\" and start thinking about \"Biology.\"",
+  "levels": [
+    "level6.json",
+    "level7.json",
+    "level8.json",
+    "level9.json",
+    "level10.json"
+  ]
+}

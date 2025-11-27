@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_9_1_rhymes",
+    "chapter": 9,
+    "level_index": 41,
+    "version": "1.0.0",
+    "title": "دوستان دروغین (False Friends)",
+    "description": "They sound alike but are unrelated. Rhymes.",
+    "difficulty": 3,
+    "tags": ["abstract", "language", "rhymes"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_kar", "text": "کار", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_bar", "text": "بار", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_tar", "text": "تار", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_mar", "text": "مار", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      
+      { "id": "t_miz", "text": "میز", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_tiz", "text": "تیز", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_riz", "text": "ریز", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_hiz", "text": "هیز", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_noor", "text": "نور", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+      { "id": "t_door", "text": "دور", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_shoor", "text": "شور", "type": "word", "visuals": { "color_hex": "#F5F5DC" } },
+      { "id": "t_moor", "text": "مور", "type": "word", "visuals": { "color_hex": "#000000" } },
+      
+      { "id": "t_das", "text": "داس", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_tas", "text": "تاس", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_yas", "text": "یاس", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+      { "id": "t_nas", "text": "ناس", "type": "word", "visuals": { "color_hex": "#2F4F4F" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_ar",
+        "display_name": "قافیه آر (Rhyme -ar)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_kar", "t_bar", "t_tar", "t_mar"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_iz",
+        "display_name": "قافیه ایز (Rhyme -iz)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_miz", "t_tiz", "t_riz", "t_hiz"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_oor",
+        "display_name": "قافیه اور (Rhyme -oor)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_noor", "t_door", "t_shoor", "t_moor"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_as",
+        "display_name": "قافیه آس (Rhyme -as)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_das", "t_tas", "t_yas", "t_nas"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_kar", "t_miz", "t_noor", "t_das"],
+      ["t_bar", "t_tiz", "t_door", "t_tas"],
+      ["t_tar", "t_riz", "t_shoor", "t_yas"],
+      ["t_mar", "t_hiz", "t_moor", "t_nas"]
+    ]
+  }
+}

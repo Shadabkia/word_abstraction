@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "id": "lvl_1_4_livingroom",
+    "chapter": 1,
+    "level_index": 4,
+    "version": "1.0.0",
+    "title": "اتاق نشیمن",
+    "description": "The room is messy. Organize the furniture and turn on the TV.",
+    "difficulty": 2,
+    "tags": ["furniture", "electronics", "4x4_intro"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      
+      { "id": "t_sofa",       "text": "مبل",       "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_armchair",   "text": "کاناپه",    "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_ottoman",    "text": "پاف",       "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_chair",      "text": "صندلی",     "type": "word", "visuals": { "color_hex": "#CD853F" } },
+
+      
+      { "id": "t_carpet",     "text": "فرش",       "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_curtain",    "text": "پرده",      "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      { "id": "t_cushion",    "text": "کوسن",      "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_rug",        "text": "قالیچه",    "type": "word", "visuals": { "color_hex": "#800000" } },
+
+      
+      { "id": "t_chandelier", "text": "لوستر",     "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_lampshade",  "text": "آباژور",    "type": "word", "visuals": { "color_hex": "#EEE8AA" } },
+      { "id": "t_wall_lamp",  "text": "دیوارکوب",  "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_bulb",       "text": "لامپ",      "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+
+      
+      { "id": "t_tv",         "text": "تلویزیون",  "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_remote",     "text": "کنترل",     "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_antenna",    "text": "آنتن",      "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_cable",      "text": "کابل",      "type": "word", "visuals": { "color_hex": "#708090" } },
+
+      
+      { "id": "t_media_icon", "text": "★ رسانه",   "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_media" } },
+      { "id": "t_news",       "text": "اخبار",     "type": "word", "visuals": { "color_hex": "#00008B" } },
+      { "id": "t_film",       "text": "فیلم",      "type": "word", "visuals": { "color_hex": "#8B008B" } },
+      { "id": "t_serial",     "text": "سریال",     "type": "word", "visuals": { "color_hex": "#4B0082" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_electronics",
+        "display_name": "لوازم برقی (Electronics)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_tv", "t_remote", "t_antenna", "t_cable"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_media_icon", "t_news", "t_film", "t_serial"],
+          "sound_fx": "sfx_tv_static_intro"
+        },
+        "meta": { "hint": "Look for the black screens and wires." }
+      },
+      {
+        "id": "grp_seating",
+        "display_name": "نشیمن (Seating)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_sofa", "t_armchair", "t_ottoman", "t_chair"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_textiles",
+        "display_name": "منسوجات (Textiles)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_carpet", "t_curtain", "t_cushion", "t_rug"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_lighting",
+        "display_name": "روشنایی (Lighting)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_chandelier", "t_lampshade", "t_wall_lamp", "t_bulb"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_content",
+        "display_name": "سرگرمی (Entertainment)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_media_icon", "t_news", "t_film", "t_serial"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_sofa",     "t_remote",     "t_carpet",    "t_bulb"],
+      ["t_chandelier","t_tv",        "t_curtain",   "t_chair"],
+      ["t_cushion",  "t_armchair",   "t_cable",     "t_wall_lamp"],
+      ["t_antenna",  "t_rug",        "t_ottoman",   "t_lampshade"]
+    ],
+    "comment": "Maximum Entropy. The Electronics are placed on the diagonal (0,1), (1,1), (2,2), (3,0) to break visual clusters."
+  }
+}

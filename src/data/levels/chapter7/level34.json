@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_7_4_evolution",
+    "chapter": 7,
+    "level_index": 34,
+    "version": "1.0.0",
+    "title": "تکامل (Evolution)",
+    "description": "History of tools. From fire to AI.",
+    "difficulty": 3,
+    "tags": ["time", "history", "technology"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cave", "text": "غار", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_fire", "text": "آتش", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_spear", "text": "نیزه", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_stone_wheel", "text": "چرخ سنگی", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      
+      { "id": "t_farm", "text": "مزرعه", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_plow", "text": "گاوآهن", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_hut", "text": "کلبه", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_pottery", "text": "سفال", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      
+      { "id": "t_factory", "text": "کارخانه", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_steam_engine", "text": "موتور بخار", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_train", "text": "قطار", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_steel", "text": "فولاد", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      
+      { "id": "t_computer", "text": "کامپیوتر", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_robot", "text": "ربات", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_internet", "text": "اینترنت", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_ai", "text": "هوش مصنوعی", "type": "word", "visuals": { "color_hex": "#00FF00" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_primitive",
+        "display_name": "عصر حجر (Stone Age)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cave", "t_fire", "t_spear", "t_stone_wheel"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_agrarian",
+        "display_name": "عصر کشاورزی (Agrarian Age)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_farm", "t_plow", "t_hut", "t_pottery"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_industrial",
+        "display_name": "عصر صنعتی (Industrial Age)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_factory", "t_steam_engine", "t_train", "t_steel"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_digital",
+        "display_name": "عصر دیجیتال (Digital Age)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_computer", "t_robot", "t_internet", "t_ai"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cave", "t_farm", "t_factory", "t_computer"],
+      ["t_fire", "t_plow", "t_steam_engine", "t_robot"],
+      ["t_spear", "t_hut", "t_train", "t_internet"],
+      ["t_stone_wheel", "t_pottery", "t_steel", "t_ai"]
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "chapter_3",
+  "name": "The Marketplace (بازار و پیشه)",
+  "description": "The theme is Supply Chains, Jobs, and Economy. The design goal is to teach 'Dependency' where one item is needed for another.",
+  "levels": [
+    "level11.json",
+    "level12.json",
+    "level13.json",
+    "level14.json",
+    "level15.json"
+  ]
+}

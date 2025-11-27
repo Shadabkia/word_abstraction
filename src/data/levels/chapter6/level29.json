@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_6_4_sports",
+    "chapter": 6,
+    "level_index": 29,
+    "version": "1.0.0",
+    "title": "ورزشگاه (Sports Stadium)",
+    "description": "Team spirit vs Lone wolf. Go for Gold.",
+    "difficulty": 3,
+    "tags": ["city", "sports", "competition"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_football", "text": "فوتبال", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_volleyball", "text": "والیبال", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_basketball", "text": "بسکتبال", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_handball", "text": "هندبال", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      
+      { "id": "t_wrestling", "text": "کشتی", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_swimming", "text": "شنا", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_weightlifting", "text": "وزنه‌برداری", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_karate", "text": "کاراته", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      
+      { "id": "t_ball", "text": "توپ", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_goal", "text": "دروازه", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_medal", "text": "مدال", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_whistle", "text": "سوت", "type": "word", "visuals": { "color_hex": "#C0C0C0" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_team_sports",
+        "display_name": "ورزش‌های تیمی (Team Sports)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_football", "t_volleyball", "t_basketball", "t_handball"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_individual",
+        "display_name": "ورزش‌های انفرادی (Individual)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_wrestling", "t_swimming", "t_weightlifting", "t_karate"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_equipment",
+        "display_name": "تجهیزات (Equipment)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_ball", "t_goal", "t_medal", "t_whistle"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_football", "t_wrestling", "t_ball", "t_volleyball"],
+      ["t_swimming", "t_goal", "t_basketball", "t_weightlifting"],
+      ["t_medal", "t_handball", "t_karate", "t_whistle"]
+    ]
+  }
+}

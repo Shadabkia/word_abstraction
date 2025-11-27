@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_7_3_growth",
+    "chapter": 7,
+    "level_index": 33,
+    "version": "1.0.0",
+    "title": "رشد (Human Growth)",
+    "description": "The stages of life. From cradle to cane.",
+    "difficulty": 3,
+    "tags": ["time", "life", "human"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cradle", "text": "گهواره", "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      { "id": "t_pacifier", "text": "پستانک", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_diaper", "text": "پوشک", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_milk_bottle", "text": "شیشه شیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      
+      { "id": "t_toy", "text": "اسباب‌بازی", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_tricycle", "text": "سه‌چرخه", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_backpack", "text": "کیف مدرسه", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      { "id": "t_ball", "text": "توپ", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      
+      { "id": "t_briefcase", "text": "کیف سامسونت", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_tie", "text": "کراوات", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_car_key", "text": "سوئیچ ماشین", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_wedding_ring", "text": "حلقه ازدواج", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_cane", "text": "عصا", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_glasses", "text": "عینک ذره‌بینی", "type": "word", "visuals": { "color_hex": "#F5F5DC" } },
+      { "id": "t_rocking_chair", "text": "صندلی گهواره‌ای", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_dentures", "text": "دندان مصنوعی", "type": "word", "visuals": { "color_hex": "#FFFAF0" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_baby",
+        "display_name": "نوزاد (Baby)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cradle", "t_pacifier", "t_diaper", "t_milk_bottle"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_child",
+        "display_name": "کودک (Child)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_toy", "t_tricycle", "t_backpack", "t_ball"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_adult",
+        "display_name": "بزرگسال (Adult)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_briefcase", "t_tie", "t_car_key", "t_wedding_ring"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_elder",
+        "display_name": "سالمند (Elder)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cane", "t_glasses", "t_rocking_chair", "t_dentures"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cradle", "t_toy", "t_briefcase", "t_cane"],
+      ["t_pacifier", "t_tricycle", "t_tie", "t_glasses"],
+      ["t_diaper", "t_backpack", "t_car_key", "t_rocking_chair"],
+      ["t_milk_bottle", "t_ball", "t_wedding_ring", "t_dentures"]
+    ]
+  }
+}

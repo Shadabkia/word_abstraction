@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_5_2_music",
+    "chapter": 5,
+    "level_index": 22,
+    "version": "1.0.0",
+    "title": "موسیقی سنتی (Classical Music)",
+    "description": "Listen to the rhythm. Categorize the instruments.",
+    "difficulty": 3,
+    "tags": ["culture", "music", "instruments"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_tar", "text": "تار", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_setar", "text": "سه‌تار", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_santur", "text": "سنتور", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_kamancheh", "text": "کمانچه", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      
+      { "id": "t_daf", "text": "دف", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_tonbak", "text": "تنبک", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_dayereh", "text": "دایره", "type": "word", "visuals": { "color_hex": "#FFE4C4" } },
+      { "id": "t_dohol", "text": "دهل", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_ney", "text": "نی", "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_sorna", "text": "سرنا", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_karna", "text": "کرنا", "type": "word", "visuals": { "color_hex": "#B8860B" } },
+      { "id": "t_balaban", "text": "بالابان", "type": "word", "visuals": { "color_hex": "#CD5C5C" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_string",
+        "display_name": "سازهای زهی (String)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_tar", "t_setar", "t_santur", "t_kamancheh"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_percussion",
+        "display_name": "سازهای کوبه‌ای (Percussion)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_daf", "t_tonbak", "t_dayereh", "t_dohol"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_wind",
+        "display_name": "سازهای بادی (Wind)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_ney", "t_sorna", "t_karna", "t_balaban"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_tar", "t_ney", "t_daf", "t_setar"],
+      ["t_sorna", "t_tonbak", "t_santur", "t_karna"],
+      ["t_kamancheh", "t_dayereh", "t_balaban", "t_dohol"]
+    ]
+  }
+}

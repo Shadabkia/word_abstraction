@@ -8,7 +8,6 @@
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0",
     "@capgo/capacitor-updater": "^6.27.11",
-    "@langchain/openai": "^1.1.2",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-aspect-ratio": "^1.1.2",
@@ -77,7 +76,8 @@
     "cap:sync": "npx cap sync",
     "cap:copy": "npx cap copy",
     "cap:open:android": "npx cap open android",
-    "cap:build": "npm run build && npx cap sync"
+    "cap:build": "npm run build && npx cap sync",
+    "validate-levels": "node validate-levels.js"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.53.2",

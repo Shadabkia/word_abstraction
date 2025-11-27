@@ -1,135 +1,96 @@
-# Persian Word Abstraction Game
+# Word Abstraction Game
 
-A multilingual word-grouping puzzle game where players find hidden connections between words by dragging and merging them into categories. Inspired by word association games, enhanced with Persian language support, icons, and AI-powered content generation.
+A multilingual puzzle game where you find connections between words. Group 16 words into 4 categories to clear the board!
 
-## 🎮 The Game
+## 🎮 Introduction & Gameplay
 
-**Concept**: Players are presented with 16 words and must group them into 4 categories of 4 words each. Each correct grouping reveals the category name and merges the words together. Some categories transform into visual icons for enhanced engagement.
+**The Goal:** Organize a grid of 16 words into 4 meaningful groups of 4 words each.
 
-**Languages Supported**:
-- 🇮🇷 Persian (Farsi) - Primary language
-- 🇬🇧 English - Full translations
-- 🔤 Finglish - Persian words in Latin script
+**How to Play:**
+1.  **Read**: Look at the 16 words on the board.
+2.  **Connect**: Find 4 words that belong together (e.g., they are all "Dairy Products").
+3.  **Drag & Drop**: Move the words into a single row to group them.
+4.  **Solve**: If correct, the words merge into a category tile (or an icon!).
 
-**Gameplay Features**:
-- Drag-and-drop word tiles to category rows
-- Progressive revelation of categories as words match
-- Icon transformations for visual categories (fruits 🍎, colors 🎨, etc.)
-- Multi-step levels with increasing difficulty
-- Smooth animations and confetti celebrations
-- Sound effects and haptic feedback
+**Example:**
+*   **Words**: Cheese, Butter, Milk, Cream
+*   **Category**: 🥛 Dairy
+*   **Result**: The row locks and transforms into a single "Dairy" block.
 
-## 🛠️ Admin Utilities
+## 🛠️ Setup & Development
 
-**Content Management Panel** (`npm run util`)
+### Prerequisites
+*   Node.js (v18+)
+*   Android Studio (for mobile build)
 
-A dedicated admin interface for managing game content:
+### Quick Start
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+2.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
+    The game will open at `http://localhost:5173`.
 
-- **Groups Tab**: Browse, edit, and manage word groups
-  - View Persian, English, and Finglish translations
-  - Set difficulty levels and quality scores
-  - Configure icon settings (emoji, label, icon name)
-  - Approve/reject AI-generated groups
+## 🧩 Levels & Design
 
-- **Levels Tab**: Create and organize game levels
-  - Drag-and-drop interface for level composition
-  - Select which groups to include in each level
-  - Control icon conversions per group
-  - Preview level difficulty distribution
+Levels are stored as JSON files in `src/data/levels/`.
 
-- **Process Tab**: AI content generation
-  - Connect OpenAI API for automated word group generation
-  - Configure batch size and quality thresholds
-  - Review and curate AI-generated content
-  - Automate Persian word group creation at scale
+### File Structure
+Each level file (e.g., `chapter1/level1.json`) contains:
+*   **Meta**: Title, description, difficulty.
+*   **Dictionary**: The 16 word tiles with translations and colors.
+*   **Mechanics**: The 4 valid groups (rules) and their outcomes (e.g., transform to icon).
+*   **Layout**: The initial grid arrangement.
 
-## 🚀 Key Features
+### Design Principles
+1.  **Economy**: Exactly 16 tiles must be used. No leftovers, no missing pieces.
+2.  **Solvability**: The level must be solvable without guessing.
+3.  **Groups**: Must have exactly 4 groups of 4 words.
 
-### Data Architecture
-- **SQLite Database**: Cross-platform, embedded database for word groups and levels
-- **Multi-language Schema**: Native support for Persian, English, and Finglish
-- **Icon System**: Flexible icon mapping with emoji fallbacks and label support
+### How to Add a Level
+1.  Create a new JSON file in a chapter folder (e.g., `src/data/levels/chapter1/level2.json`).
+2.  Define your words and groups following the format of existing levels.
+3.  Update the `meta.json` in that chapter to include your new level filename.
+4.  Run the validator to check your work.
 
-### Content Generation
-- **AI-Powered**: Uses OpenAI GPT models to generate culturally relevant Persian word groups
-- **Quality Control**: Built-in scoring and approval workflow for generated content
-- **Batch Processing**: Generate and curate content in bulk with customizable parameters
+## ✅ Level Validator
 
-### Icon Transformations
-- Merged word groups can display as icons (e.g., 🍎 میوه‌ها)
-- Supports emoji fallbacks and icon libraries (Lucide)
-- Configurable per-group and per-level
+We have a built-in tool to ensure levels are broken-free and solvable.
 
-### Developer Experience
-- TypeScript + React for type-safe UI development
-- Express + better-sqlite3 for efficient backend
-- Hot-reload development with Vite
-- Cross-platform compatibility (Windows, macOS, Linux)
-
-## 📦 Installation & Running
-
+**Run Validator:**
 ```bash
-# Install dependencies
-npm install
-
-# Run the game (development)
-npm run dev
-
-# Run admin utilities
-npm run util
-
-# Build for production
-npm run build
-
-# Run production server
-npm run server
+npm run validate-levels
 ```
 
-## 🗂️ Project Structure
+**What it Checks:**
+*   **Schema**: Is the JSON valid?
+*   **Economy**: Do inputs equal outputs? (Are all 16 tiles used?)
+*   **Simulation**: Can the AI solve it? (Detects deadlocks).
 
-```
-├── src/
-│   ├── App.tsx              # Main game interface
-│   ├── components/          # Game UI components (tiles, rows, header)
-│   ├── data/                # Static level data (fallback)
-│   ├── utils/               # Level loader, icon mapper, sound manager
-│   └── util/                # Admin panel components
-├── server/
-│   ├── index.js             # Express API server
-│   ├── db.js                # Database schema and connection
-│   ├── worker.js            # AI content generation worker
-│   ├── levelCurator.js      # AI level curation (future)
-│   ├── game_data.db         # SQLite database (tracked in git)
-│   └── seed_*.js            # Database seeding scripts
-└── build/                   # Production build output (git-ignored)
-```
+## 📱 Capacitor & Mobile Build
 
-## 🌐 API Endpoints
+This project uses [Capacitor](https://capacitorjs.com/) to run on Android.
 
-- `GET /api/levels` - List all levels
-- `GET /api/levels/:id` - Get specific level with word groups
-- `GET /api/groups` - List all word groups (with filters)
-- `POST /api/groups` - Create new word group
-- `PUT /api/groups/:id` - Update word group
-- `POST /api/process/start` - Start AI content generation
-- `POST /api/process/stop` - Stop AI worker
+### Basic Commands
+*   **Sync Changes**: Copies your web build to the Android project.
+    ```bash
+    npm run cap:sync
+    ```
+*   **Open Android Studio**: Opens the native project for building/running on device.
+    ```bash
+    npm run cap:open:android
+    ```
 
-## 🎯 Use Cases
+### Building the APK
+1.  Build the web app: `npm run build`
+2.  Sync with Capacitor: `npm run cap:sync`
+3.  Open Android Studio: `npm run cap:open:android`
+4.  In Android Studio: `Build` -> `Build Bundle(s) / APK(s)` -> `Build APK(s)`.
 
-- **Language Learning**: Practice Persian vocabulary through contextual grouping
-- **Cultural Education**: Explore Iranian culture, literature, and geography
-- **Cognitive Training**: Pattern recognition and abstract thinking exercises
-- **Entertainment**: Casual puzzle game with progressive difficulty
-
-## 📝 Notes
-
-- Database (`game_data.db`) is tracked in git and works cross-platform
-- Temporary SQLite files (`*.db-wal`, `*.db-shm`) are git-ignored
-- Admin panel runs on port 3001, game preview on port 3009
-- AI features require OpenAI API key (configured in Process Tab)
-
----
-
-**Original Design**: [Figma - Design Word Merge Game UI](https://www.figma.com/design/GzOmO4w6e0PxqKJixMLWpW/Design-Word-Merge-Game-UI)
-
-**Version**: 0.1.0 | **License**: Private
+### Live Updates
+We use **Capacitor Updater** to push updates without re-downloading the app store version.
+*   Configured in `capacitor.config.json`.
+*   Updates are downloaded from the URL specified in `VITE_UPDATE_URL`.

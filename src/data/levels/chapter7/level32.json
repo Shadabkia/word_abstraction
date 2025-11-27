@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_7_2_seasons",
+    "chapter": 7,
+    "level_index": 32,
+    "version": "1.0.1",
+    "title": "چهار فصل (The Four Seasons)",
+    "description": "Cyclical change. Match the items to their season.",
+    "difficulty": 3,
+    "tags": ["time", "nature", "seasons"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_blossom", "text": "شکوفه", "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      { "id": "t_sprout", "text": "جوانه", "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_rain", "text": "باران بهاری", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_nest", "text": "لانه پرنده", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      
+      { "id": "t_sun", "text": "خورشید داغ", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_icecream", "text": "بستنی", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_beach", "text": "ساحل", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+      { "id": "t_sunglasses", "text": "عینک آفتابی", "type": "word", "visuals": { "color_hex": "#000000" } },
+      
+      { "id": "t_leaf", "text": "برگ زرد", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_wind", "text": "باد", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_school", "text": "مدرسه", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_pomegranate", "text": "انار", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      
+      { "id": "t_snow", "text": "برف", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_snowman", "text": "آدم‌برفی", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_scarf", "text": "شال‌گردن", "type": "word", "visuals": { "color_hex": "#00008B" } },
+      { "id": "t_heater", "text": "بخاری", "type": "word", "visuals": { "color_hex": "#FF4500" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_spring",
+        "display_name": "بهار (Spring)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_blossom", "t_sprout", "t_rain", "t_nest"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_summer",
+        "display_name": "تابستان (Summer)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_sun", "t_icecream", "t_beach", "t_sunglasses"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_autumn",
+        "display_name": "پاییز (Autumn)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_leaf", "t_wind", "t_school", "t_pomegranate"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_winter",
+        "display_name": "زمستان (Winter)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_snow", "t_snowman", "t_scarf", "t_heater"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_blossom", "t_sun", "t_leaf", "t_snow"],
+      ["t_sprout", "t_icecream", "t_wind", "t_snowman"],
+      ["t_rain", "t_beach", "t_school", "t_scarf"],
+      ["t_nest", "t_sunglasses", "t_pomegranate", "t_heater"]
+    ]
+  }
+}

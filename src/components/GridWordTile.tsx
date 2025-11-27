@@ -25,11 +25,11 @@ interface GridWordTileProps {
   onSwap: (word: Word, targetRowIndex: number, targetColIndex: number) => void;
   isSubcategoryGlow?: boolean;
   isMerging?: boolean;
-  isHinted?: boolean;
+  hintColor?: 'yellow' | 'green';
   isDisabled?: boolean; // FIX: Add prop to disable dragging during processing
 }
 
-export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGlow = false, isMerging = false, isHinted = false, isDisabled = false }: GridWordTileProps) {
+export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGlow = false, isMerging = false, hintColor, isDisabled = false }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const lastDropTimeRef = React.useRef<number>(0);
   const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -146,17 +146,14 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     }
   } : {};
 
-  // Hint animation - "The Playful Bob"
-  // A deceptive, simple, but delightful floating animation
-  const hintAnimation = isHinted ? {
-    y: [0, -8, 0],
+  // Simplified hint animation (just subtle scale/pulse)
+  const hintAnimation = hintColor ? {
     scale: [1, 1.05, 1],
-    rotate: [0, 2, -2, 0],
     filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
-    opacity: 1, // Ensure opacity stays at 1 (otherwise reverts to initial 0)
-    zIndex: 20, // Ensure it's on top
+    zIndex: 20,
+    opacity: 1,
     transition: {
-      duration: 1.2,
+      duration: 1.5,
       ease: "easeInOut",
       repeat: Infinity,
     }
@@ -169,7 +166,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       initial={{ opacity: 0, scale: 0.8 }}
       animate={
         isMerging ? mergeAnimation : 
-        isHinted ? hintAnimation :
+        (hintColor && !isDragging) ? hintAnimation :
         { 
           opacity: isDragging ? 0.5 : 1, 
           scale: 1, 
@@ -181,7 +178,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         }
       }
       transition={
-        isMerging || isHinted ? {} : 
+        isMerging || hintColor ? {} : 
         { 
           type: "spring", 
           stiffness: 350, 
@@ -235,7 +232,8 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         }
         ${isOver && canDrop ? 'translate-y-[4px] sm:translate-y-[5px] brightness-95' : 'hover:-translate-y-[1px]'}
         ${isSubcategoryGlow ? 'ring-4 ring-yellow-300 border-yellow-400 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
-        ${isHinted ? 'ring-4 ring-blue-400/40 border-blue-400 z-20 shadow-[0_0_15px_rgba(96,165,250,0.4)]' : ''}
+        ${hintColor === 'yellow' ? 'ring-4 ring-yellow-300 border-yellow-400 z-20 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
+        ${hintColor === 'green' ? 'ring-4 ring-green-400 border-green-500 z-20 shadow-[0_0_15px_rgba(74,222,128,0.6)]' : ''}
       `}>
         
         {/* Inner shine for extra polish */}

@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "id": "lvl_4_2_art_class",
+    "chapter": 4,
+    "level_index": 17,
+    "version": "1.0.0",
+    "title": "زنگ هنر (The Art Class)",
+    "description": "Mix the colors. Create a masterpiece.",
+    "difficulty": 2,
+    "tags": ["art", "colors", "mixing"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_red", "text": "قرمز", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_blue", "text": "آبی", "type": "word", "visuals": { "color_hex": "#0000FF" } },
+      { "id": "t_yellow", "text": "زرد", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_white", "text": "سفید", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      
+      { "id": "t_green", "text": "سبز", "type": "word", "visuals": { "color_hex": "#008000" } },
+      { "id": "t_purple", "text": "بنفش", "type": "word", "visuals": { "color_hex": "#800080" } },
+      { "id": "t_orange", "text": "نارنجی", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_pink", "text": "صورتی", "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      
+      { "id": "t_brush", "text": "قلم‌مو", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_palette", "text": "پالت", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_canvas", "text": "بوم", "type": "word", "visuals": { "color_hex": "#F5F5DC" } },
+      { "id": "t_easel", "text": "سه‌پایه", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_portrait", "text": "چهره", "type": "word", "visuals": { "color_hex": "#FFE4C4" } },
+      { "id": "t_landscape", "text": "منظره", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_still_life", "text": "طبیعت بی‌جان", "type": "word", "visuals": { "color_hex": "#FF6347" } },
+      { "id": "t_sketch", "text": "طراحی", "type": "word", "visuals": { "color_hex": "#708090" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_primary",
+        "display_name": "رنگ‌های اصلی (Primary)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_red", "t_blue", "t_yellow", "t_white"] },
+        "outcomes": { "reveal_ids": ["t_green", "t_purple", "t_orange", "t_pink"] }
+      },
+      {
+        "id": "grp_secondary",
+        "display_name": "رنگ‌های فرعی (Secondary)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_green", "t_purple", "t_orange", "t_pink"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار نقاشی (Art Supplies)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_brush", "t_palette", "t_canvas", "t_easel"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_subjects",
+        "display_name": "سبک‌ها (Styles)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_portrait", "t_landscape", "t_still_life", "t_sketch"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_red", "t_brush", "t_portrait", "t_blue"],
+      ["t_yellow", "t_palette", "t_landscape", "t_white"],
+      ["t_canvas", "t_still_life", "t_easel", "t_sketch"]
+    ]
+  }
+}

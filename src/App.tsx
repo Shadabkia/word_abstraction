@@ -9,10 +9,10 @@ import { Settings, Search, Lightbulb, Gift } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { DragPreview } from './components/DragPreview';
 import { SettingsDialog } from './components/ui/dialogs/SettingsDialog';
+import { LevelSelector } from './components/LevelSelector';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Word, LevelData, LevelJSON } from './data/types';
 import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
-import { shuffleWordsWithConstraint } from './utils/shuffleWords';
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
 
@@ -34,15 +34,15 @@ const isTouchDevice = () => {
 export default function App() {
   const [level, setLevel] = useState(1);
   const [coins] = useState(10);
-  const [hints, setHints] = useState(3);
+  // hints state removed as requested - infinite hints now
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
-  const [hintedWordIds, setHintedWordIds] = useState<Set<string>>(new Set());
+  // Track hinted words and their color (yellow for lightbulb, green for search)
+  const [hintedWords, setHintedWords] = useState<Map<string, 'yellow' | 'green'>>(new Map());
   
   // Level data state
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showLevelSelector, setShowLevelSelector] = useState(false);
   const [availableLevels, setAvailableLevels] = useState<number[]>([1, 2, 3]); // Default levels
   const [levelMetadata, setLevelMetadata] = useState<LevelJSON[]>([]);
   
@@ -71,7 +71,7 @@ export default function App() {
     setIsLoading(true);
     // Reset game state when level changes
     setMergedSubcategoriesCount(0);
-    setHintedWordIds(new Set());
+    setHintedWords(new Map());
     
     loadLevel(level).then(data => {
       setCurrentLevelData(data);
@@ -87,13 +87,13 @@ export default function App() {
   const HIERARCHY = currentLevelData?.hierarchy;
 
   // Separate visible and hidden words
-  const visibleWords = useMemo(() => LEVEL_DATA.filter((w: Word) => !w.hidden), [LEVEL_DATA]);
-  const hiddenWordsPool = useMemo(() => LEVEL_DATA.filter((w: Word) => w.hidden), [LEVEL_DATA]);
+  const visibleWords = useMemo(() => LEVEL_DATA ? LEVEL_DATA.filter((w: Word) => !w.hidden) : [], [LEVEL_DATA]);
+  const hiddenWordsPool = useMemo(() => LEVEL_DATA ? LEVEL_DATA.filter((w: Word) => w.hidden) : [], [LEVEL_DATA]);
 
-  // Shuffle words ensuring no row has a complete category
+  // Use words exactly as they appear in the level file (no shuffling)
   const shuffledWords = useMemo(() => {
     if (visibleWords.length === 0) return [];
-    return shuffleWordsWithConstraint(visibleWords);
+    return visibleWords;
   }, [visibleWords]);
 
   const [gridRows, setGridRows] = useState<GridRow[]>([]);
@@ -128,6 +128,47 @@ export default function App() {
   // Get total steps from level data (default to 6 for backward compatibility)
   const totalSteps = currentLevelData?.totalSteps || 6;
   
+  // FIX: Handle empty level data gracefully
+  if (!isLoading && (!currentLevelData || !currentLevelData.words || currentLevelData.words.length === 0)) {
+    return (
+      <LanguageProvider>
+        <div className="min-h-screen bg-candy-bg bg-pattern-dots overflow-x-hidden font-display selection:bg-candy-secondary selection:text-white flex flex-col">
+          <div className="max-w-md mx-auto w-full px-4 pt-6 pb-4 flex-1 flex flex-col">
+            
+            {/* Simple Header for Navigation */}
+            <div className="mb-6">
+              <LevelSelector
+                currentLevel={level}
+                levels={levelMetadata}
+                onLevelSelect={setLevel}
+                availableLevels={availableLevels}
+              />
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 glass-panel rounded-3xl shadow-3d">
+              <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center mb-6 animate-bounceSlight">
+                <span className="text-4xl">🚧</span>
+              </div>
+              <h2 className="text-2xl font-bold text-slate-700 mb-2">
+                Level Under Construction
+              </h2>
+              <p className="text-slate-500 mb-8">
+                This level is currently being designed. <br/>Please check back later!
+              </p>
+              
+              <Button 
+                onClick={() => setLevel(1)}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-8 py-3 shadow-md transition-all btn-3d"
+              >
+                Go to Level 1
+              </Button>
+            </div>
+          </div>
+        </div>
+      </LanguageProvider>
+    );
+  }
+
   // Track count of merged subcategories (for levels with multiple transform groups)
   const [mergedSubcategoriesCount, setMergedSubcategoriesCount] = useState(0);
   
@@ -352,11 +393,6 @@ export default function App() {
   };
 
   const handleHint = () => {
-    if (hints <= 0) {
-      soundManager.playError();
-      return;
-    }
-
     // Get all words currently visible in the grid
     const currentWords = new Set<string>();
     gridRows.forEach(row => {
@@ -379,7 +415,7 @@ export default function App() {
 
     // Find a category with at least 2 words visible
     let hintWords: string[] = [];
-    for (const [category, wordIds] of categoryToWords.entries()) {
+    for (const [, wordIds] of categoryToWords.entries()) {
       if (wordIds.length >= 2) {
         // Shuffle and pick 2 random words from this category
         const shuffled = [...wordIds].sort(() => Math.random() - 0.5);
@@ -389,25 +425,66 @@ export default function App() {
     }
 
     if (hintWords.length === 2) {
-      // Show hint animation
-      setHintedWordIds(new Set(hintWords));
-      setHints(hints - 1);
-      soundManager.playMatch();
+      // Show hint animation (yellow)
+      const newHints = new Map(hintedWords);
+      hintWords.forEach(id => newHints.set(id, 'yellow'));
+      setHintedWords(newHints);
+      soundManager.playMerge();
     } else {
       // No valid hint available
       soundManager.playError();
     }
   };
 
-  // Auto-clear hints after 5 seconds
+  const handleSearchHint = () => {
+    // Get all words currently visible in the grid
+    const currentWords = new Set<string>();
+    gridRows.forEach(row => {
+      if (row.type === 'words' && row.words) {
+        row.words.forEach(word => currentWords.add(word.id));
+      }
+    });
+
+    // Check which categories are fully present (4 words)
+    const categoryToWords = new Map<string, string[]>();
+    LEVEL_DATA.forEach(word => {
+      if (currentWords.has(word.id)) {
+        if (!categoryToWords.has(word.category)) {
+           categoryToWords.set(word.category, []);
+        }
+        categoryToWords.get(word.category)!.push(word.id);
+      }
+    });
+
+    // Find a category with 4 words
+    let foundGroupIds: string[] = [];
+    for (const [, wordIds] of categoryToWords.entries()) {
+      if (wordIds.length === 4) {
+        foundGroupIds = wordIds;
+        break;
+      }
+    }
+
+    if (foundGroupIds.length === 4) {
+       // Show search hint animation (green)
+       const newHints = new Map(hintedWords);
+       foundGroupIds.forEach(id => newHints.set(id, 'green'));
+       setHintedWords(newHints);
+       soundManager.playMerge();
+    } else {
+       soundManager.playError();
+    }
+  };
+
+  // Auto-clear hints after 3 seconds
   useEffect(() => {
-    if (hintedWordIds.size > 0) {
+    if (hintedWords.size > 0) {
       const timer = setTimeout(() => {
-        setHintedWordIds(new Set());
-      }, 5000);
+        setHintedWords(new Map());
+      }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [hintedWordIds]);
+  }, [hintedWords]);
 
   return (
     <LanguageProvider>
@@ -450,191 +527,19 @@ export default function App() {
               </div>
             </div>
 
-            {/* Level Selector Button */}
+            {/* Level Selector */}
             <div className="px-3 sm:px-4 mb-2">
-              <button
-                onClick={() => setShowLevelSelector(!showLevelSelector)}
-                className="w-full glass-panel rounded-xl p-2 sm:p-3 flex items-center justify-between hover:bg-white/10 transition-colors"
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="text-xs sm:text-sm font-medium">
-                    Level {level}
-                  </span>
-                </div>
-                <span className="text-[10px] sm:text-xs text-gray-400">
-                  {showLevelSelector ? 'Hide' : 'Change'}
-                </span>
-              </button>
+              <LevelSelector
+                currentLevel={level}
+                levels={levelMetadata}
+                onLevelSelect={setLevel}
+                availableLevels={availableLevels}
+              />
             </div>
-
-            {/* Level Selector Dropdown */}
-            {showLevelSelector && (
-              <div className="px-3 sm:px-4 mb-3 sm:mb-4">
-                <div className="glass-panel rounded-xl p-3 sm:p-4 space-y-3 max-h-[60vh] overflow-y-auto">
-                  <h3 className="text-sm sm:text-base font-bold mb-2 sticky top-0 bg-slate-800/95 backdrop-blur-sm py-2 -mt-2">
-                    انتخاب سطح
-                  </h3>
-                  
-                  <div className="space-y-2.5 sm:space-y-3">
-                    {levelMetadata.map((meta, idx) => {
-                      // Extract level number from meta.id (e.g., "lvl_001_basic_categories" -> 1)
-                      const lvl = parseInt(meta.meta.id.match(/\d+/)?.[0] || '1');
-                      const isActive = level === lvl;
-                      const hasTransforms = meta.mechanics.groups.some(g => g.behavior === 'transform');
-                      const transformCount = meta.mechanics.groups.filter(g => g.behavior === 'transform').length;
-                      const finalCount = meta.mechanics.groups.filter(g => g.behavior === 'final' || g.behavior === 'standard').length;
-                      
-                      // Difficulty color mapping
-                      const difficultyColors = [
-                        { bg: 'bg-green-500', text: 'text-green-100', border: 'border-green-400', label: 'آسان' },
-                        { bg: 'bg-blue-500', text: 'text-blue-100', border: 'border-blue-400', label: 'متوسط' },
-                        { bg: 'bg-yellow-500', text: 'text-yellow-100', border: 'border-yellow-400', label: 'نرمال' },
-                        { bg: 'bg-orange-500', text: 'text-orange-100', border: 'border-orange-400', label: 'سخت' },
-                        { bg: 'bg-red-500', text: 'text-red-100', border: 'border-red-400', label: 'خیلی سخت' },
-                      ];
-                      
-                      const difficultyStyle = difficultyColors[Math.min(meta.meta.difficulty - 1, 4)] || difficultyColors[0];
-                      
-                      return (
-                        <button
-                          key={`level-${lvl}`}
-                          onClick={() => {
-                            setLevel(lvl);
-                            setShowLevelSelector(false);
-                          }}
-                          className={`w-full text-left rounded-xl transition-all duration-200 ${
-                            isActive
-                              ? 'bg-gradient-to-br from-purple-600 to-blue-600 shadow-lg scale-[1.02]'
-                              : 'bg-slate-700/60 hover:bg-slate-700/80 hover:shadow-md'
-                          }`}
-                        >
-                          <div className="p-3 sm:p-4">
-                            {/* Header with level number and difficulty */}
-                            <div className="flex items-start justify-between gap-2 mb-2">
-                              <div className="flex items-center gap-2">
-                                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-sm sm:text-base ${
-                                  isActive ? 'bg-white/20 text-white' : 'bg-slate-600/50 text-slate-300'
-                                }`}>
-                                  {lvl}
-                                </div>
-                                <div>
-                                  <h4 className={`font-bold text-sm sm:text-base leading-tight ${
-                                    isActive ? 'text-white' : 'text-slate-100'
-                                  }`}>
-                                    {meta.meta.title}
-                                  </h4>
-                                </div>
-                              </div>
-                              
-                              {/* Difficulty Badge */}
-                              <div className={`${difficultyStyle.bg} ${difficultyStyle.text} px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border ${difficultyStyle.border} whitespace-nowrap`}>
-                                {difficultyStyle.label}
-                              </div>
-                            </div>
-                            
-                            {/* Description */}
-                            {meta.meta.description && (
-                              <p className={`text-xs sm:text-sm mb-3 leading-relaxed ${
-                                isActive ? 'text-white/80' : 'text-slate-300'
-                              }`}>
-                                {meta.meta.description}
-                              </p>
-                            )}
-                            
-                            {/* Stats Grid */}
-                            <div className="grid grid-cols-2 gap-2 mb-2">
-                              <div className={`rounded-lg p-2 ${
-                                isActive ? 'bg-white/10' : 'bg-slate-600/30'
-                              }`}>
-                                <div className={`text-[10px] sm:text-xs ${
-                                  isActive ? 'text-white/70' : 'text-slate-400'
-                                }`}>
-                                  شبکه
-                                </div>
-                                <div className={`font-bold text-xs sm:text-sm ${
-                                  isActive ? 'text-white' : 'text-slate-200'
-                                }`}>
-                                  {meta.layout.rows} × {meta.layout.cols}
-                                </div>
-                              </div>
-                              
-                              <div className={`rounded-lg p-2 ${
-                                isActive ? 'bg-white/10' : 'bg-slate-600/30'
-                              }`}>
-                                <div className={`text-[10px] sm:text-xs ${
-                                  isActive ? 'text-white/70' : 'text-slate-400'
-                                }`}>
-                                  گروه‌ها
-                                </div>
-                                <div className={`font-bold text-xs sm:text-sm ${
-                                  isActive ? 'text-white' : 'text-slate-200'
-                                }`}>
-                                  {meta.mechanics.groups.length}
-                                </div>
-                              </div>
-                              
-                              {hasTransforms && (
-                                <div className={`rounded-lg p-2 ${
-                                  isActive ? 'bg-white/10' : 'bg-slate-600/30'
-                                }`}>
-                                  <div className={`text-[10px] sm:text-xs ${
-                                    isActive ? 'text-white/70' : 'text-slate-400'
-                                  }`}>
-                                    تبدیل‌ها
-                                  </div>
-                                  <div className={`font-bold text-xs sm:text-sm ${
-                                    isActive ? 'text-white' : 'text-slate-200'
-                                  }`}>
-                                    {transformCount}
-                                  </div>
-                                </div>
-                              )}
-                              
-                              <div className={`rounded-lg p-2 ${
-                                isActive ? 'bg-white/10' : 'bg-slate-600/30'
-                              }`}>
-                                <div className={`text-[10px] sm:text-xs ${
-                                  isActive ? 'text-white/70' : 'text-slate-400'
-                                }`}>
-                                  کلمات
-                                </div>
-                                <div className={`font-bold text-xs sm:text-sm ${
-                                  isActive ? 'text-white' : 'text-slate-200'
-                                }`}>
-                                  {meta.dictionary.tiles.length}
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Tags */}
-                            {meta.meta.tags && meta.meta.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 mt-2">
-                                {meta.meta.tags.slice(0, 3).map(tag => (
-                                  <span
-                                    key={tag}
-                                    className={`px-2 py-0.5 rounded-full text-[10px] sm:text-xs ${
-                                      isActive 
-                                        ? 'bg-white/20 text-white/90' 
-                                        : 'bg-slate-600/50 text-slate-300'
-                                    }`}
-                                  >
-                                    #{tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Game Header (Level & Progress) */}
             <div className="px-3 sm:px-4 mt-2 mb-3 sm:mb-4">
-              <GameHeader level={level} completed={completedSteps} total={totalSteps} />
+              <GameHeader completed={completedSteps} total={totalSteps} />
             </div>
 
             {/* Loading State */}
@@ -662,7 +567,7 @@ export default function App() {
                           onSwap={handleSwap}
                           isSubcategoryGlow={word.id === glowingSubcategoryId}
                           isMerging={mergingRow === rowIndex}
-                          isHinted={hintedWordIds.has(word.id)}
+                          hintColor={hintedWords.get(word.id)}
                           isDisabled={isProcessing}
                         />
                       ))}
@@ -690,24 +595,20 @@ export default function App() {
                 <Settings className="w-6 h-6 sm:w-7 sm:h-7" />
               </Button>
               
-              <Button className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-green hover:bg-green-500 rounded-2xl shadow-3d border-b-4 border-green-700 active:border-b-0 btn-3d relative group overflow-hidden">
+              <Button 
+                onClick={handleSearchHint}
+                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-green hover:bg-green-500 rounded-2xl shadow-3d border-b-4 border-green-700 active:border-b-0 btn-3d relative group overflow-hidden"
+              >
                 <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Search className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-                <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-7 sm:h-7 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-white shadow-sm">
-                  {hints}
-                </div>
               </Button>
               
               <Button 
                 onClick={handleHint}
-                disabled={hints <= 0}
-                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden"
               >
                 <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-                <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-7 sm:h-7 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-white shadow-sm">
-                  {hints}
-                </div>
               </Button>
             </div>
           </div>

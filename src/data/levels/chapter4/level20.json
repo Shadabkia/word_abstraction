@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_4_5_solar_system",
+    "chapter": 4,
+    "level_index": 20,
+    "version": "1.0.0",
+    "title": "منظومه شمسی (Solar System)",
+    "description": "From dust to worlds. Form the galaxy.",
+    "difficulty": 5,
+    "tags": ["boss", "astronomy", "formation"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_hydrogen", "text": "هیدروژن", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+      { "id": "t_helium", "text": "هلیوم", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_gravity", "text": "جاذبه", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_fusion", "text": "همجوشی", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      
+      { "id": "t_rock", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_metal", "text": "فلز", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_crater", "text": "دهانه", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_volcano", "text": "آتشفشان", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      
+      { "id": "t_gas", "text": "گاز", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_storm", "text": "طوفان", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_ring", "text": "حلقه", "type": "word", "visuals": { "color_hex": "#D2B48C" } },
+      { "id": "t_cold", "text": "سرما", "type": "word", "visuals": { "color_hex": "#00FFFF" } },
+      
+      { "id": "t_rocket", "text": "موشک", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_shuttle", "text": "شاتل", "type": "word", "visuals": { "color_hex": "#F8F8FF" } },
+      { "id": "t_satellite", "text": "ماهواره", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_probe", "text": "کاوشگر", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_sun", "text": "خورشید", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_sirius", "text": "شباهنگ", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_vega", "text": "وگا", "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_polaris", "text": "ستاره قطبی", "type": "word", "visuals": { "color_hex": "#F0FFFF" } },
+      
+      { "id": "t_mercury", "text": "تیر", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_venus", "text": "ناهید", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_earth", "text": "زمین", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      { "id": "t_mars", "text": "مریخ", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      
+      { "id": "t_jupiter", "text": "مشتری", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_saturn", "text": "زحل", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+      { "id": "t_uranus", "text": "اورانوس", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      { "id": "t_neptune", "text": "نپتون", "type": "word", "visuals": { "color_hex": "#00008B" } },
+      
+      { "id": "t_iss", "text": "ایستگاه فضایی", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_hubble", "text": "هابل", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_voyager", "text": "وویجر", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_apollo", "text": "آپولو", "type": "word", "visuals": { "color_hex": "#FFFFFF" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_stars_raw",
+        "display_name": "مواد ستاره‌ای (Star Matter)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_hydrogen", "t_helium", "t_gravity", "t_fusion"] },
+        "outcomes": { "reveal_ids": ["t_sun", "t_sirius", "t_vega", "t_polaris"] }
+      },
+      {
+        "id": "grp_inner_raw",
+        "display_name": "مواد سنگی (Rocky Matter)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_rock", "t_metal", "t_crater", "t_volcano"] },
+        "outcomes": { "reveal_ids": ["t_mercury", "t_venus", "t_earth", "t_mars"] }
+      },
+      {
+        "id": "grp_outer_raw",
+        "display_name": "مواد گازی (Gaseous Matter)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_gas", "t_storm", "t_ring", "t_cold"] },
+        "outcomes": { "reveal_ids": ["t_jupiter", "t_saturn", "t_uranus", "t_neptune"] }
+      },
+      {
+        "id": "grp_tech_raw",
+        "display_name": "تکنولوژی (Technology)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_rocket", "t_shuttle", "t_satellite", "t_probe"] },
+        "outcomes": { "reveal_ids": ["t_iss", "t_hubble", "t_voyager", "t_apollo"] }
+      },
+      {
+        "id": "grp_stars",
+        "display_name": "ستارگان (Stars)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_sun", "t_sirius", "t_vega", "t_polaris"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_inner_planets",
+        "display_name": "سیارات داخلی (Inner Planets)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_mercury", "t_venus", "t_earth", "t_mars"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_outer_planets",
+        "display_name": "سیارات خارجی (Outer Planets)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_jupiter", "t_saturn", "t_uranus", "t_neptune"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_missions",
+        "display_name": "مأموریت‌ها (Missions)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_iss", "t_hubble", "t_voyager", "t_apollo"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_hydrogen", "t_rock", "t_gas", "t_rocket"],
+      ["t_helium", "t_metal", "t_storm", "t_shuttle"],
+      ["t_gravity", "t_crater", "t_ring", "t_satellite"],
+      ["t_fusion", "t_volcano", "t_cold", "t_probe"]
+    ]
+  }
+}

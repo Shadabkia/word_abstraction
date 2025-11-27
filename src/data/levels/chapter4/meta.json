@@ -1,0 +1,12 @@
+{
+  "id": "chapter_4",
+  "name": "The School (مدرسه و دانش)",
+  "description": "The theme covers Basic Science, Geometry, and Elements. The design goal is to explore Combinations where A + B = C.",
+  "levels": [
+    "level16.json",
+    "level17.json",
+    "level18.json",
+    "level19.json",
+    "level20.json"
+  ]
+}

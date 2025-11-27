@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "id": "lvl_2_4_ocean",
+    "chapter": 2,
+    "level_index": 4,
+    "version": "1.0.0",
+    "title": "اقیانوس (The Ocean)",
+    "description": "The deep is crowded. Distinguish the mammals, the fish, and the shellfish.",
+    "difficulty": 4,
+    "tags": ["sea", "5x4_intro", "biology", "high_density"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      { "id": "t_pearl",    "text": "مروارید",    "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_coral",    "text": "مرجان",      "type": "word", "visuals": { "color_hex": "#FF7F50" } },
+      { "id": "t_anchor",   "text": "لنگر",       "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_chest",    "text": "صندوقچه",    "type": "word", "visuals": { "color_hex": "#8B4513" } },
+
+      { "id": "t_storm",    "text": "توفان",      "type": "word", "visuals": { "color_hex": "#483D8B" } },
+      { "id": "t_wave",     "text": "موج",        "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_whirlpool","text": "گرداب",      "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_tsunami",  "text": "سونامی",     "type": "word", "visuals": { "color_hex": "#000080" } },
+
+      { "id": "t_whale",    "text": "نهنگ",       "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_dolphin",  "text": "دلفین",      "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_seal",     "text": "فک",         "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_walrus",   "text": "گراز‌دریایی","type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+
+      { "id": "t_shark",    "text": "کوسه",       "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_tuna",     "text": "ماهی‌تن",    "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_salmon",   "text": "آزادماهی",   "type": "word", "visuals": { "color_hex": "#FA8072" } },
+      { "id": "t_clownfish","text": "دلقک‌ماهی",  "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+
+      { "id": "t_crab",     "text": "خرچنگ",      "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_lobster",  "text": "لابستر",     "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_shrimp",   "text": "میگو",       "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_oyster",   "text": "صدف",        "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+
+      
+      { "id": "t_icon_mam", "text": "★ پستاندار", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_lungs" } },
+      { "id": "t_milk",     "text": "شیر‌مادر",   "type": "word", "visuals": { "color_hex": "#FFFACD" } },
+      { "id": "t_lung",     "text": "شش",         "type": "word", "visuals": { "color_hex": "#FFB6C1" } },
+      { "id": "t_sonar",    "text": "ردیاب",      "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+
+      { "id": "t_icon_fish","text": "★ ماهی",     "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_fishbone" } },
+      { "id": "t_gill",     "text": "آبشش",       "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_scale",    "text": "پولک",       "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_fin",      "text": "باله",       "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+
+      { "id": "t_icon_shell","text": "★ سخت‌پوست","type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_crab" } },
+      { "id": "t_hard_shell","text": "پوسته",     "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_legs",      "text": "پاها",       "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_antenna",   "text": "شاخک",       "type": "word", "visuals": { "color_hex": "#FFD700" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_mammals",
+        "display_name": "پستانداران دریایی (Marine Mammals)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_whale", "t_dolphin", "t_seal", "t_walrus"] },
+        "outcomes": { "reveal_ids": ["t_icon_mam", "t_milk", "t_lung", "t_sonar"] }
+      },
+      {
+        "id": "grp_fish",
+        "display_name": "ماهی‌ها (Fish)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_shark", "t_tuna", "t_salmon", "t_clownfish"] },
+        "outcomes": { "reveal_ids": ["t_icon_fish", "t_gill", "t_scale", "t_fin"] }
+      },
+      {
+        "id": "grp_crustaceans",
+        "display_name": "سخت‌پوستان (Crustaceans)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_crab", "t_lobster", "t_shrimp", "t_oyster"] },
+        "outcomes": { "reveal_ids": ["t_icon_shell", "t_hard_shell", "t_legs", "t_antenna"] }
+      },
+      {
+        "id": "grp_treasures",
+        "display_name": "گنجینه‌ها (Treasures)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_pearl", "t_coral", "t_anchor", "t_chest"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_hazards",
+        "display_name": "خطرات دریا (Hazards)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_storm", "t_wave", "t_whirlpool", "t_tsunami"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_mam_traits",
+        "display_name": "ویژگی پستاندار (Mammal Traits)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_icon_mam", "t_milk", "t_lung", "t_sonar"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_fish_traits",
+        "display_name": "ویژگی ماهی (Fish Traits)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_icon_fish", "t_gill", "t_scale", "t_fin"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_shell_traits",
+        "display_name": "ویژگی سخت‌پوست (Shell Traits)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_icon_shell", "t_hard_shell", "t_legs", "t_antenna"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 5,
+    "cols": 4,
+    "initial_grid": [
+      ["t_whale",    "t_shark",     "t_crab",      "t_pearl"],
+      ["t_dolphin",  "t_tuna",      "t_lobster",   "t_storm"],
+      ["t_seal",     "t_salmon",    "t_shrimp",    "t_coral"],
+      ["t_walrus",   "t_clownfish", "t_oyster",    "t_anchor"],
+      ["t_chest",    "t_wave",      "t_whirlpool", "t_tsunami"]
+    ],
+    "comment": "5 Rows. The first 4 rows are structured mixes. Row 5 is mostly Hazards/Treasures."
+  }
+}

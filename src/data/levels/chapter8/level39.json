@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_8_4_senses",
+    "chapter": 8,
+    "level_index": 39,
+    "version": "1.0.0",
+    "title": "حواس پنجگانه (The Five Senses)",
+    "description": "How do we perceive? Group by sense.",
+    "difficulty": 3,
+    "tags": ["abstract", "biology", "perception"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_perfume", "text": "عطر", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_flower", "text": "گل", "type": "word", "visuals": { "color_hex": "#FF1493" } },
+      { "id": "t_smoke", "text": "دود", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_garbage", "text": "زباله", "type": "word", "visuals": { "color_hex": "#556B2F" } },
+      
+      { "id": "t_painting", "text": "نقاشی", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_rainbow", "text": "رنگین‌کمان", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_mirror", "text": "آینه", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_telescope", "text": "تلسکوپ", "type": "word", "visuals": { "color_hex": "#000080" } },
+      
+      { "id": "t_music", "text": "موسیقی", "type": "word", "visuals": { "color_hex": "#9370DB" } },
+      { "id": "t_bell", "text": "زنگ", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_thunder", "text": "رعد", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_whisper", "text": "نجوا", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+      
+      { "id": "t_salt", "text": "نمک", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_lemon", "text": "لیمو", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_candy", "text": "آبنبات", "type": "word", "visuals": { "color_hex": "#FF6347" } },
+      { "id": "t_pepper", "text": "فلفل", "type": "word", "visuals": { "color_hex": "#8B0000" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_smell",
+        "display_name": "بویایی (Smell)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_perfume", "t_flower", "t_smoke", "t_garbage"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sight",
+        "display_name": "بینایی (Sight)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_painting", "t_rainbow", "t_mirror", "t_telescope"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sound",
+        "display_name": "شنوایی (Sound)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_music", "t_bell", "t_thunder", "t_whisper"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_taste",
+        "display_name": "چشایی (Taste)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_salt", "t_lemon", "t_candy", "t_pepper"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_perfume", "t_painting", "t_music", "t_salt"],
+      ["t_flower", "t_rainbow", "t_bell", "t_lemon"],
+      ["t_smoke", "t_mirror", "t_thunder", "t_candy"],
+      ["t_garbage", "t_telescope", "t_whisper", "t_pepper"]
+    ]
+  }
+}

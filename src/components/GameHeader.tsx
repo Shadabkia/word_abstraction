@@ -2,23 +2,16 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { motion } from "framer-motion";
 
 interface GameHeaderProps {
-  level: number;
   completed: number;
   total: number;
 }
 
-export function GameHeader({ level, completed, total }: GameHeaderProps) {
+export function GameHeader({ completed, total }: GameHeaderProps) {
   const { t } = useLanguage();
   const progress = Math.min(100, (completed / total) * 100);
 
   return (
     <div className="flex flex-col items-center justify-center mb-3 sm:mb-4" dir="rtl">
-      <div className="bg-white/80 backdrop-blur-sm px-4 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-sm mb-2 sm:mb-3 border border-white">
-        <h1 className="text-xl sm:text-2xl font-bold text-indigo-900 flex items-center gap-1.5 sm:gap-2">
-          <span className="text-indigo-400">#</span> {level}
-        </h1>
-      </div>
-      
       <p className="text-slate-500 text-xs sm:text-sm mb-2 sm:mb-3 font-medium px-2 text-center">
         {t.gameInstruction}
       </p>

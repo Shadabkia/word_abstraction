@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "id": "lvl_3_3_boutique",
+    "chapter": 3,
+    "level_index": 13,
+    "version": "1.0.0",
+    "title": "خیاطی (The Boutique)",
+    "description": "Design and sew. From fabric to fashion.",
+    "difficulty": 3,
+    "tags": ["production", "fashion", "chain"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cotton", "text": "پنبه", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      { "id": "t_thread", "text": "نخ", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_needle", "text": "سوزن", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_fabric", "text": "پارچه", "type": "word", "visuals": { "color_hex": "#DA70D6" } },
+      
+      { "id": "t_scissors", "text": "قیچی", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_button", "text": "دکمه", "type": "word", "visuals": { "color_hex": "#4169E1" } },
+      { "id": "t_zipper", "text": "زیپ", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_tape", "text": "متر خیاطی", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      
+      { "id": "t_tailor", "text": "خیاط", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_mannequin", "text": "مانکن", "type": "word", "visuals": { "color_hex": "#FFE4E1" } },
+      { "id": "t_iron", "text": "اتو", "type": "word", "visuals": { "color_hex": "#778899" } },
+      { "id": "t_hanger", "text": "چوب‌لباسی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_shirt", "text": "پیراهن", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_pants", "text": "شلوار", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_coat", "text": "کت", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_hat", "text": "کلاه", "type": "word", "visuals": { "color_hex": "#8B0000" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_make",
+        "display_name": "دوخت و دوز (Sewing)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_cotton", "t_thread", "t_needle", "t_fabric"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_shirt", "t_pants", "t_coat", "t_hat"]
+        }
+      },
+      {
+        "id": "grp_accessories",
+        "display_name": "لوازم (Accessories)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_scissors", "t_button", "t_zipper", "t_tape"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_shop",
+        "display_name": "مزون (Boutique)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_tailor", "t_mannequin", "t_iron", "t_hanger"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_clothes",
+        "display_name": "لباس‌ها (Clothes)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_shirt", "t_pants", "t_coat", "t_hat"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cotton", "t_scissors", "t_tailor", "t_thread"],
+      ["t_needle", "t_button", "t_mannequin", "t_fabric"],
+      ["t_zipper", "t_iron", "t_hanger", "t_tape"]
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "id": "lvl_2_5_ecosystem",
+    "chapter": 2,
+    "level_index": 5,
+    "version": "1.0.0",
+    "title": "اکوسیستم (The Ecosystem)",
+    "description": "Nothing is permanent. Transform the entire food chain.",
+    "difficulty": 5,
+    "tags": ["boss", "biology", "total_transform", "cycle"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_sun", "text": "خورشید", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_rain", "text": "باران", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_soil", "text": "خاک", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_wind", "text": "باد", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_grass", "text": "چمن", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_tree", "text": "درخت", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_algae", "text": "جلبک", "type": "word", "visuals": { "color_hex": "#006400" } },
+      { "id": "t_cactus", "text": "کاکتوس", "type": "word", "visuals": { "color_hex": "#9ACD32" } },
+      { "id": "t_rabbit", "text": "خرگوش", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_cow", "text": "گاو", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_zebra", "text": "گورخر", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_insect", "text": "حشره", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_mushroom", "text": "قارچ", "type": "word", "visuals": { "color_hex": "#F5F5DC" } },
+      { "id": "t_worm", "text": "کرم", "type": "word", "visuals": { "color_hex": "#FFB6C1" } },
+      { "id": "t_bacteria", "text": "باکتری", "type": "word", "visuals": { "color_hex": "#8FBC8F" } },
+      { "id": "t_mold", "text": "کپک", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_icon_abiotic", "text": "★ غیرزنده", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_sun" } },
+      { "id": "t_energy", "text": "انرژی", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_heat", "text": "گرما", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_mineral", "text": "معدنی", "type": "word", "visuals": { "color_hex": "#778899" } },
+      { "id": "t_icon_prod", "text": "★ تولیدکننده", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_leaf" } },
+      { "id": "t_oxygen", "text": "اکسیژن", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_sugar", "text": "قند", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_wood", "text": "چوب", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_icon_cons", "text": "★ مصرف‌کننده", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_paw" } },
+      { "id": "t_protein", "text": "پروتئین", "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_fat", "text": "چربی", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+      { "id": "t_bone", "text": "استخوان", "type": "word", "visuals": { "color_hex": "#F8F8FF" } },
+      { "id": "t_icon_decomp", "text": "★ تجزیه‌کننده", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_recycle" } },
+      { "id": "t_nitrogen", "text": "نیتروژن", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_carbon", "text": "کربن", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_compost", "text": "کود", "type": "word", "visuals": { "color_hex": "#556B2F" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_abiotic",
+        "display_name": "عوامل غیرزنده (Abiotic)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_sun", "t_rain", "t_soil", "t_wind"] },
+        "outcomes": { "reveal_ids": ["t_icon_abiotic", "t_energy", "t_heat", "t_mineral"] }
+      },
+      {
+        "id": "grp_producers",
+        "display_name": "تولیدکنندگان (Producers)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_grass", "t_tree", "t_algae", "t_cactus"] },
+        "outcomes": { "reveal_ids": ["t_icon_prod", "t_oxygen", "t_sugar", "t_wood"] }
+      },
+      {
+        "id": "grp_consumers",
+        "display_name": "مصرف‌کنندگان (Consumers)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_rabbit", "t_cow", "t_zebra", "t_insect"] },
+        "outcomes": { "reveal_ids": ["t_icon_cons", "t_protein", "t_fat", "t_bone"] }
+      },
+      {
+        "id": "grp_decomposers",
+        "display_name": "تجزیه‌کنندگان (Decomposers)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_mushroom", "t_worm", "t_bacteria", "t_mold"] },
+        "outcomes": { "reveal_ids": ["t_icon_decomp", "t_nitrogen", "t_carbon", "t_compost"] }
+      },
+      {
+        "id": "grp_cycle",
+        "display_name": "چرخه حیات (Life Cycle)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_icon_abiotic", "t_icon_prod", "t_icon_cons", "t_icon_decomp"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_chemistry",
+        "display_name": "شیمی (Chemistry)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_oxygen", "t_nitrogen", "t_carbon", "t_mineral"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_nutrients",
+        "display_name": "مواد مغذی (Nutrients)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_sugar", "t_protein", "t_fat", "t_energy"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_physical",
+        "display_name": "مواد فیزیکی (Physical Matter)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_wood", "t_bone", "t_heat", "t_compost"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_sun",    "t_grass",  "t_rabbit", "t_mushroom"],
+      ["t_rain",   "t_tree",   "t_cow",    "t_worm"],
+      ["t_soil",   "t_algae",  "t_zebra",  "t_bacteria"],
+      ["t_wind",   "t_cactus", "t_insect", "t_mold"]
+    ],
+    "comment": "Organized as a Food Chain Grid (Left to Right) for visual clarity at start, but matches are vertical categories."
+  }
+}

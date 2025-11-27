@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "id": "lvl_4_1_geometry",
+    "chapter": 4,
+    "level_index": 16,
+    "version": "1.0.0",
+    "title": "هندسه (Geometry)",
+    "description": "From points to solids. Build the dimensions.",
+    "difficulty": 2,
+    "tags": ["math", "shapes", "progression"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_point", "text": "نقطه", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_line", "text": "خط", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_ray", "text": "نیم‌خط", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_angle", "text": "زاویه", "type": "word", "visuals": { "color_hex": "#000000" } },
+      
+      { "id": "t_triangle", "text": "مثلث", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_square", "text": "مربع", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_circle", "text": "دایره", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_rectangle", "text": "مستطیل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_cube", "text": "مکعب", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sphere", "text": "کره", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_pyramid", "text": "هرم", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_cone", "text": "مخروط", "type": "word", "visuals": { "color_hex": "#9932CC" } },
+      
+      { "id": "t_ruler", "text": "خط‌کش", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_compass", "text": "پرگار", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_protractor", "text": "نقاله", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_eraser", "text": "پاک‌کن", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      
+      { "id": "t_blackboard", "text": "تخته سیاه", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_chalk", "text": "گچ", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_notebook", "text": "دفتر", "type": "word", "visuals": { "color_hex": "#F5F5DC" } },
+      { "id": "t_calculator", "text": "ماشین حساب", "type": "word", "visuals": { "color_hex": "#696969" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_1d",
+        "display_name": "یک بعدی (1D)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_point", "t_line", "t_ray", "t_angle"] },
+        "outcomes": { "reveal_ids": ["t_triangle", "t_square", "t_circle", "t_rectangle"] }
+      },
+      {
+        "id": "grp_2d",
+        "display_name": "دو بعدی (2D)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_triangle", "t_square", "t_circle", "t_rectangle"] },
+        "outcomes": { "reveal_ids": ["t_cube", "t_sphere", "t_pyramid", "t_cone"] }
+      },
+      {
+        "id": "grp_3d",
+        "display_name": "سه بعدی (3D)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cube", "t_sphere", "t_pyramid", "t_cone"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار رسم (Drawing Tools)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_ruler", "t_compass", "t_protractor", "t_eraser"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_class",
+        "display_name": "کلاس درس (Classroom)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_blackboard", "t_chalk", "t_notebook", "t_calculator"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_point", "t_ruler", "t_blackboard", "t_line"],
+      ["t_ray", "t_compass", "t_chalk", "t_angle"],
+      ["t_protractor", "t_notebook", "t_eraser", "t_calculator"]
+    ]
+  }
+}

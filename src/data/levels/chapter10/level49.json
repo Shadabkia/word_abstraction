@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_10_4_spacetime",
+    "chapter": 10,
+    "level_index": 49,
+    "version": "1.0.0",
+    "title": "زمان و مکان (Time & Space)",
+    "description": "Physics of the universe. Fundamental laws.",
+    "difficulty": 3,
+    "tags": ["universe", "physics", "spacetime"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_gravity", "text": "گرانش", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_relativity", "text": "نسبیت", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_quantum", "text": "کوانتوم", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_force", "text": "نیرو", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      
+      { "id": "t_space", "text": "فضا", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_time", "text": "زمان", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_matter", "text": "ماده", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_energy", "text": "انرژی", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      
+      { "id": "t_atom", "text": "اتم", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      { "id": "t_quark", "text": "کوارک", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_photon", "text": "فوتون", "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_electron", "text": "الکترون", "type": "word", "visuals": { "color_hex": "#0000FF" } },
+      
+      { "id": "t_bigbang", "text": "مه‌بانگ", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_expansion", "text": "انقباض", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_universe", "text": "کیهان", "type": "word", "visuals": { "color_hex": "#483D8B" } },
+      { "id": "t_multiverse", "text": "چندجهانی", "type": "word", "visuals": { "color_hex": "#9400D3" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_physics",
+        "display_name": "فیزیک (Physics)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_gravity", "t_relativity", "t_quantum", "t_force"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_dims",
+        "display_name": "ابعاد (Dimensions)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_space", "t_time", "t_matter", "t_energy"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_particles",
+        "display_name": "ذرات (Particles)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_atom", "t_quark", "t_photon", "t_electron"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_cosmos",
+        "display_name": "کیهان (Cosmos)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_bigbang", "t_expansion", "t_universe", "t_multiverse"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_gravity", "t_space", "t_atom", "t_bigbang"],
+      ["t_relativity", "t_time", "t_quark", "t_expansion"],
+      ["t_quantum", "t_matter", "t_photon", "t_universe"],
+      ["t_force", "t_energy", "t_electron", "t_multiverse"]
+    ]
+  }
+}

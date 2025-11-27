@@ -1,0 +1,12 @@
+{
+  "id": "chapter_9",
+  "name": "The Illusion (سراب)",
+  "description": "The theme is Red Herrings, Homophones, and Trickery. The design goal is breaking habits; the player must think laterally.",
+  "levels": [
+    "level41.json",
+    "level42.json",
+    "level43.json",
+    "level44.json",
+    "level45.json"
+  ]
+}

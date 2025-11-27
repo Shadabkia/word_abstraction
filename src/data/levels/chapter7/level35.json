@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_7_5_clock",
+    "chapter": 7,
+    "level_index": 35,
+    "version": "1.0.1",
+    "title": "ساعت (The Clock)",
+    "description": "Tick tock. Measure the moments.",
+    "difficulty": 5,
+    "tags": ["boss", "time", "units", "math"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_second", "text": "ثانیه", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_minute", "text": "دقیقه", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_hour", "text": "ساعت", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_day", "text": "روز", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_week", "text": "هفته", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_month", "text": "ماه", "type": "word", "visuals": { "color_hex": "#008000" } },
+      { "id": "t_season", "text": "فصل", "type": "word", "visuals": { "color_hex": "#006400" } },
+      { "id": "t_year", "text": "سال", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      
+      { "id": "t_decade", "text": "دهه", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_century", "text": "قرن", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_millennium", "text": "هزاره", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_era", "text": "عصر", "type": "word", "visuals": { "color_hex": "#800080" } },
+      
+      { "id": "t_watch", "text": "مچی", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_clock", "text": "دیواری", "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_sundial", "text": "آفتابی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_hourglass", "text": "شنی", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+
+      { "id": "t_tick", "text": "تیک", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_tock", "text": "تاک", "type": "word", "visuals": { "color_hex": "#333333" } },
+      { "id": "t_alarm", "text": "زنگ", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_time", "text": "زمان", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+
+      { "id": "t_january", "text": "فروردین", "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_spring", "text": "بهار", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_friday", "text": "جمعه", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_1403", "text": "۱۴۰۳", "type": "word", "visuals": { "color_hex": "#000000" } },
+
+      { "id": "t_history", "text": "تاریخ", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_ancient", "text": "باستان", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_future", "text": "آینده", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_past", "text": "گذشته", "type": "word", "visuals": { "color_hex": "#696969" } },
+
+      { "id": "t_gear", "text": "چرخ‌دنده", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_hand", "text": "عقربه", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_battery", "text": "باتری", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_sand", "text": "شن", "type": "word", "visuals": { "color_hex": "#F4A460" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_small_units",
+        "display_name": "واحدهای کوچک (Small Units)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_second", "t_minute", "t_hour", "t_day"] },
+        "outcomes": { "reveal_ids": ["t_tick", "t_tock", "t_alarm", "t_time"] }
+      },
+      {
+        "id": "grp_cal_units",
+        "display_name": "واحدهای تقویمی (Calendar Units)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_week", "t_month", "t_season", "t_year"] },
+        "outcomes": { "reveal_ids": ["t_january", "t_spring", "t_friday", "t_1403"] }
+      },
+      {
+        "id": "grp_large_units",
+        "display_name": "واحدهای بزرگ (Large Units)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_decade", "t_century", "t_millennium", "t_era"] },
+        "outcomes": { "reveal_ids": ["t_history", "t_ancient", "t_future", "t_past"] }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار زمان (Tools)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_watch", "t_clock", "t_sundial", "t_hourglass"] },
+        "outcomes": { "reveal_ids": ["t_gear", "t_hand", "t_battery", "t_sand"] }
+      },
+      {
+        "id": "grp_sounds",
+        "display_name": "صدای زمان (Sounds)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_tick", "t_tock", "t_alarm", "t_time"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_instances",
+        "display_name": "مصادیق (Instances)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_january", "t_spring", "t_friday", "t_1403"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_concepts",
+        "display_name": "مفاهیم (Concepts)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_history", "t_ancient", "t_future", "t_past"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_mechanisms",
+        "display_name": "مکانیسم (Mechanisms)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_gear", "t_hand", "t_battery", "t_sand"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_second", "t_week", "t_decade", "t_watch"],
+      ["t_minute", "t_month", "t_century", "t_clock"],
+      ["t_hour", "t_season", "t_millennium", "t_sundial"],
+      ["t_day", "t_year", "t_era", "t_hourglass"]
+    ]
+  }
+}

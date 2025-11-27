@@ -77,7 +77,20 @@ export interface LevelMeta {
   difficulty: number;
   tags?: string[];
   constraints?: LevelConstraints;
+  levelNumber?: number; // Global level number injected at runtime
+  chapter?: {
+    id: string;
+    name: string;
+  };
 }
+
+export interface ChapterMeta {
+  id: string;
+  name: string;
+  description?: string;
+  levels: string[]; // List of filenames relative to chapter folder
+}
+
 
 export interface LevelJSON {
   meta: LevelMeta;
@@ -113,6 +126,7 @@ export interface SubcategoryInfo {
   wordsToReveal: string[];
   icon?: {
     id: string;
+    type?: 'library' | 'emoji';
     label?: string;
     emoji?: string;
     iconName?: string;
@@ -130,4 +144,8 @@ export interface LevelData {
   categories: Record<string, string>;
   totalSteps: number;
   hierarchy?: HierarchyInfo;
+  chapter?: {
+    id: string;
+    name: string;
+  };
 }

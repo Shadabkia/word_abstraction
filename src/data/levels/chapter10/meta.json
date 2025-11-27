@@ -1,0 +1,12 @@
+{
+  "id": "chapter_10",
+  "name": "The Universe (هستی)",
+  "description": "The theme explores Philosophy, The Elements, and the Meta-Game. This is the Grand Finale focusing on Mastery.",
+  "levels": [
+    "level46.json",
+    "level47.json",
+    "level48.json",
+    "level49.json",
+    "level50.json"
+  ]
+}

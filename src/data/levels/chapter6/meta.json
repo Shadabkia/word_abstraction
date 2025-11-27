@@ -1,0 +1,12 @@
+{
+  "id": "chapter_6",
+  "name": "The City (شهر مدرن)",
+  "description": "The theme is Urban life, Technology, and Entertainment. The design goal is dealing with 'Noise' and modern clutter.",
+  "levels": [
+    "level26.json",
+    "level27.json",
+    "level28.json",
+    "level29.json",
+    "level30.json"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "chapter_8",
+  "name": "The Abstract (مفاهیم)",
+  "description": "The theme involves Language, Feelings, and Metaphors. The design goal is High Difficulty with semantic ambiguity.",
+  "levels": [
+    "level36.json",
+    "level37.json",
+    "level38.json",
+    "level39.json",
+    "level40.json"
+  ]
+}

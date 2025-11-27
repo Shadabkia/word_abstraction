@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_5_3_ruins",
+    "chapter": 5,
+    "level_index": 23,
+    "version": "1.0.0",
+    "title": "تخت جمشید (Ancient Ruins)",
+    "description": "Walk through history. Kings and Pillars.",
+    "difficulty": 3,
+    "tags": ["history", "ancient", "persia"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cyrus", "text": "کوروش", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_darius", "text": "داریوش", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_xerxes", "text": "خشایارشا", "type": "word", "visuals": { "color_hex": "#B8860B" } },
+      { "id": "t_ardeshir", "text": "اردشیر", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      
+      { "id": "t_persepolis", "text": "تخت جمشید", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_pasargadae", "text": "پاسارگاد", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_apadana", "text": "آپادانا", "type": "word", "visuals": { "color_hex": "#D2B48C" } },
+      { "id": "t_gate", "text": "دروازه ملل", "type": "word", "visuals": { "color_hex": "#BC8F8F" } },
+      
+      { "id": "t_cylinder", "text": "منشور", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_rhyton", "text": "ریتون", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_tablet", "text": "کتیبه", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_darik", "text": "دریک", "type": "word", "visuals": { "color_hex": "#FFA500" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_kings",
+        "display_name": "شاهان (Kings)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cyrus", "t_darius", "t_xerxes", "t_ardeshir"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_ruins",
+        "display_name": "بناها (Monuments)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_persepolis", "t_pasargadae", "t_apadana", "t_gate"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_artifacts",
+        "display_name": "آثار (Artifacts)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cylinder", "t_rhyton", "t_tablet", "t_darik"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cyrus", "t_pasargadae", "t_cylinder", "t_darius"],
+      ["t_persepolis", "t_rhyton", "t_xerxes", "t_apadana"],
+      ["t_tablet", "t_ardeshir", "t_gate", "t_darik"]
+    ]
+  }
+}

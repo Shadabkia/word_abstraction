@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "id": "lvl_1_3_kitchen",
+    "chapter": 1,
+    "level_index": 3,
+    "version": "1.0.0",
+    "title": "آشپزخانه",
+    "description": "Cook the ingredients. Set the table.",
+    "difficulty": 2,
+    "tags": ["cooking", "transform_intro", "food"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      
+      { "id": "t_spoon",  "text": "قاشق",   "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_fork",   "text": "چنگال",  "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_knife",  "text": "کارد",   "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_ladle",  "text": "ملاقه",  "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+
+      
+      { "id": "t_plate",  "text": "بشقاب",  "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_bowl",   "text": "کاسه",   "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_glass",  "text": "لیوان",  "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_pitcher","text": "پارچ",   "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+
+      
+      { "id": "t_rice",   "text": "برنج",   "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_oil",    "text": "روغن",   "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_salt",   "text": "نمک",    "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_onion",  "text": "پیاز",   "type": "word", "visuals": { "color_hex": "#DA70D6" } },
+
+      
+      { "id": "t_food_icon", "text": "★ غذا", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_meal", "color_hex": "#FF4500" } },
+      { "id": "t_pot",       "text": "قابلمه", "type": "word", "visuals": { "color_hex": "#778899" } },
+      { "id": "t_stove",     "text": "اجاق",   "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_steam",     "text": "بخار",   "type": "word", "visuals": { "color_hex": "#D3D3D3" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_ingredients",
+        "display_name": "مواد اولیه (Ingredients)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_rice", "t_oil", "t_salt", "t_onion"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_food_icon", "t_pot", "t_stove", "t_steam"],
+          "sound_fx": "sfx_sizzle"
+        },
+        "meta": { "hint": "What do you need to start cooking?" }
+      },
+      {
+        "id": "grp_cutlery",
+        "display_name": "قاشق و چنگال (Cutlery)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_spoon", "t_fork", "t_knife", "t_ladle"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_dishes",
+        "display_name": "ظروف (Dishes)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_plate", "t_bowl", "t_glass", "t_pitcher"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_cooking",
+        "display_name": "پخت و پز (Cooking)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_food_icon", "t_pot", "t_stove", "t_steam"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_spoon", "t_fork",  "t_rice",  "t_plate"],
+      ["t_knife", "t_oil",   "t_bowl",  "t_ladle"],
+      ["t_salt",  "t_glass", "t_onion", "t_pitcher"]
+    ],
+    "comment": "Ingredients are scattered down the center columns to ensure the player interacts with the whole board."
+  }
+}

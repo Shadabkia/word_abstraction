@@ -1,27 +1,47 @@
-import { LevelJSON, LevelData, Word } from '../data/types';
+import { LevelJSON, LevelData, Word, ChapterMeta, SubcategoryInfo } from '../data/types';
 import { getIconMetadata } from './iconMapper';
+import { allGameData } from '../data/levels';
+
+console.log('[LevelLoader] Module loaded with bundled data');
+
+// Helper to get level data from bundled source
+function getLevelFromBundle(levelNumber: number): { json: LevelJSON, chapter: ChapterMeta } | null {
+  // Iterate through chapters to find the level
+  for (const chapterKey in allGameData) {
+    const chapterData = allGameData[chapterKey];
+    const levelFiles = chapterData.meta.levels;
+    
+    for (const filename of levelFiles) {
+      const match = filename.match(/level(\d+)\.json/);
+      if (match && parseInt(match[1]) === levelNumber) {
+        const levelJson = chapterData.levels[filename];
+        if (levelJson) {
+          const jsonCopy = JSON.parse(JSON.stringify(levelJson));
+          // Inject the global level number derived from filename
+          jsonCopy.meta.levelNumber = levelNumber;
+          
+          return {
+            json: jsonCopy, // Deep copy to avoid mutation issues
+            chapter: chapterData.meta
+          };
+        }
+      }
+    }
+  }
+  return null;
+}
 
 /**
- * Dynamically loads all JSON levels from the levels folder
+ * Loads all levels from bundled data
  */
 export async function loadAllLevels(): Promise<LevelData[]> {
   const levels: LevelData[] = [];
-  
-  // Try to load levels sequentially
-  let levelNum = 1;
-  let foundLevel = true;
-  
-  while (foundLevel) {
-    try {
-      const levelData = await loadLevel(levelNum);
-      if (levelData) {
-        levels.push(levelData);
-        levelNum++;
-      } else {
-        foundLevel = false;
-      }
-    } catch {
-      foundLevel = false;
+  const availableLevels = await getAvailableLevels();
+
+  for (const levelNum of availableLevels) {
+    const levelData = await loadLevel(levelNum);
+    if (levelData) {
+      levels.push(levelData);
     }
   }
   
@@ -29,17 +49,32 @@ export async function loadAllLevels(): Promise<LevelData[]> {
 }
 
 /**
- * Loads a single level by number
+ * Loads a single level by number from bundled data
  */
 export async function loadLevel(levelNumber: number): Promise<LevelData | null> {
   try {
-    const response = await fetch(`/levels/level${levelNumber}.json`);
-    if (!response.ok) {
+    const data = getLevelFromBundle(levelNumber);
+    
+    if (!data) {
+      console.error(`Level ${levelNumber} not found in bundle`);
       return null;
     }
-    
-    const jsonLevel: LevelJSON = await response.json();
-    return convertJSONToLevelData(jsonLevel);
+
+    const { json, chapter } = data;
+
+    // Inject chapter info
+    json.meta.chapter = {
+        id: chapter.id,
+        name: chapter.name
+    };
+
+    const levelData = convertJSONToLevelData(json);
+    // Ensure chapter info is also in LevelData
+    levelData.chapter = {
+        id: chapter.id,
+        name: chapter.name
+    };
+    return levelData;
   } catch (error) {
     console.error(`Error loading level ${levelNumber}:`, error);
     return null;
@@ -64,11 +99,16 @@ function convertJSONToLevelData(jsonLevel: LevelJSON): LevelData {
       hiddenTileIds.add(tile.id);
     }
   });
+
+  // Identify all revealed IDs from mechanics
+  const revealedIds = new Set<string>();
+  jsonLevel.mechanics.groups.forEach(g => {
+    if (g.outcomes?.reveal_ids) {
+      g.outcomes.reveal_ids.forEach(id => revealedIds.add(id));
+    }
+  });
   
   // Create groups map for category lookup
-  const groupMap = new Map(
-    jsonLevel.mechanics.groups.map(group => [group.id, group])
-  );
   
   // Second pass: convert tiles to words based on initial_grid
   const initialGrid = jsonLevel.layout.initial_grid;
@@ -128,7 +168,7 @@ function convertJSONToLevelData(jsonLevel: LevelJSON): LevelData {
   
   // Process hidden tiles (tiles that will be revealed)
   jsonLevel.dictionary.tiles.forEach(tile => {
-    if (!processedTiles.has(tile.id) && hiddenTileIds.has(tile.id)) {
+    if (!processedTiles.has(tile.id) && (hiddenTileIds.has(tile.id) || revealedIds.has(tile.id))) {
       // Find which group this tile belongs to or will be revealed by
       const revealingGroup = jsonLevel.mechanics.groups.find(g => 
         g.outcomes?.reveal_ids?.includes(tile.id)
@@ -252,20 +292,20 @@ function convertJSONToLevelData(jsonLevel: LevelJSON): LevelData {
           icon: subcategoryIcon
         };
       })
-      .filter(Boolean);
+      .filter(Boolean) as SubcategoryInfo[];
     
     if (subcategories.length > 0) {
       hierarchy = {
         // Keep backward compatibility: if there's only one, use the old format
         ...(subcategories.length === 1 ? { subcategory: subcategories[0] } : {}),
         // New format: always include subcategories array
-        subcategories: subcategories as any[]
+        subcategories: subcategories
       };
     }
   }
   
-  return {
-    levelNumber: parseInt(jsonLevel.meta.id.match(/\d+/)?.[0] || '1'),
+    return {
+    levelNumber: jsonLevel.meta.levelNumber || parseInt(jsonLevel.meta.id.match(/\d+/)?.[0] || '1'),
     words,
     categories,
     totalSteps: jsonLevel.mechanics.groups.length,
@@ -277,25 +317,34 @@ function convertJSONToLevelData(jsonLevel: LevelJSON): LevelData {
  * Gets available level numbers
  */
 export async function getAvailableLevels(): Promise<number[]> {
-  const levels = await loadAllLevels();
-  return levels.map(l => l.levelNumber);
+  const levels: number[] = [];
+  
+  for (const chapterKey in allGameData) {
+    const levelFiles = allGameData[chapterKey].meta.levels;
+    for (const filename of levelFiles) {
+      const match = filename.match(/level(\d+)\.json/);
+      if (match) {
+        levels.push(parseInt(match[1]));
+      }
+    }
+  }
+  
+  return levels.sort((a, b) => a - b);
 }
 
 /**
  * Loads just the metadata for a level (for level selector)
  */
 export async function loadLevelMetadata(levelNumber: number): Promise<LevelJSON | null> {
-  try {
-    const response = await fetch(`/levels/level${levelNumber}.json`);
-    if (!response.ok) {
-      return null;
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error(`Error loading level ${levelNumber} metadata:`, error);
-    return null;
-  }
+  const data = getLevelFromBundle(levelNumber);
+  if (!data) return null;
+  
+  const { json, chapter } = data;
+  json.meta.chapter = {
+      id: chapter.id,
+      name: chapter.name
+  };
+  return json;
 }
 
 /**
@@ -303,22 +352,11 @@ export async function loadLevelMetadata(levelNumber: number): Promise<LevelJSON 
  */
 export async function loadAllLevelMetadata(): Promise<LevelJSON[]> {
   const metadata: LevelJSON[] = [];
-  
-  let levelNum = 1;
-  let foundLevel = true;
-  
-  while (foundLevel) {
-    try {
-      const meta = await loadLevelMetadata(levelNum);
-      if (meta) {
-        metadata.push(meta);
-        levelNum++;
-      } else {
-        foundLevel = false;
-      }
-    } catch {
-      foundLevel = false;
-    }
+  const availableLevels = await getAvailableLevels();
+
+  for (const levelNum of availableLevels) {
+     const meta = await loadLevelMetadata(levelNum);
+     if (meta) metadata.push(meta);
   }
   
   return metadata;

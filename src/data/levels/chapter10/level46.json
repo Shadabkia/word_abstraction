@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_10_1_elements",
+    "chapter": 10,
+    "level_index": 46,
+    "version": "1.0.0",
+    "title": "عناصر چهارگانه (The Four Elements)",
+    "description": "Earth, Air, Water, Fire. The foundations.",
+    "difficulty": 3,
+    "tags": ["universe", "elements", "nature"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_stone", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_dirt", "text": "خاک", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_mountain", "text": "کوه", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_sand", "text": "شن", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+      
+      { "id": "t_wind", "text": "باد", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_cloud", "text": "ابر", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_storm", "text": "طوفان", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_sky", "text": "آسمان", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      
+      { "id": "t_ocean", "text": "اقیانوس", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      { "id": "t_river", "text": "رودخانه", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_rain", "text": "باران", "type": "word", "visuals": { "color_hex": "#87CEFA" } },
+      { "id": "t_ice", "text": "یخ", "type": "word", "visuals": { "color_hex": "#F0FFFF" } },
+      
+      { "id": "t_flame", "text": "شعله", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_sun", "text": "خورشید", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_volcano", "text": "آتشفشان", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_heat", "text": "گرما", "type": "word", "visuals": { "color_hex": "#FF8C00" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_earth",
+        "display_name": "خاک (Earth)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_stone", "t_dirt", "t_mountain", "t_sand"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_air",
+        "display_name": "باد (Air)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_wind", "t_cloud", "t_storm", "t_sky"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_water",
+        "display_name": "آب (Water)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_ocean", "t_river", "t_rain", "t_ice"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_fire",
+        "display_name": "آتش (Fire)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_flame", "t_sun", "t_volcano", "t_heat"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_stone", "t_wind", "t_ocean", "t_flame"],
+      ["t_dirt", "t_cloud", "t_river", "t_sun"],
+      ["t_mountain", "t_storm", "t_rain", "t_volcano"],
+      ["t_sand", "t_sky", "t_ice", "t_heat"]
+    ]
+  }
+}
