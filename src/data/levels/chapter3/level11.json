@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "id": "lvl_3_1_bakery",
+    "chapter": 3,
+    "level_index": 11,
+    "version": "1.0.0",
+    "title": "نانوایی (The Bakery)",
+    "description": "The smell of fresh bread. Gather ingredients to bake.",
+    "difficulty": 2,
+    "tags": ["production", "transformation", "food"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_wheat", "text": "گندم", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_flour", "text": "آرد", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      { "id": "t_water", "text": "آب", "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_salt", "text": "نمک", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      
+      { "id": "t_baker", "text": "نانوا", "type": "word", "visuals": { "color_hex": "#D2B48C" } },
+      { "id": "t_oven", "text": "تنور", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_paroo", "text": "پارو", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_apron", "text": "پیش‌بند", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      
+      { "id": "t_cheese", "text": "پنیر", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+      { "id": "t_sesame", "text": "کنجد", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_cream", "text": "خامه", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_tea", "text": "چای", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_sangak", "text": "نان سنگک", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_barbari", "text": "نان بربری", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_lavash", "text": "نان لواش", "type": "word", "visuals": { "color_hex": "#FFE4C4" } },
+      { "id": "t_taftoon", "text": "نان تافتون", "type": "word", "visuals": { "color_hex": "#DEB887" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_ingredients",
+        "display_name": "مواد اولیه (Ingredients)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_wheat", "t_flour", "t_water", "t_salt"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_sangak", "t_barbari", "t_lavash", "t_taftoon"]
+        }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار کار (Tools)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_baker", "t_oven", "t_paroo", "t_apron"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sides",
+        "display_name": "چاشنی (Sides)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_cheese", "t_sesame", "t_cream", "t_tea"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_breads",
+        "display_name": "نان‌ها (Breads)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_sangak", "t_barbari", "t_lavash", "t_taftoon"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_wheat", "t_baker", "t_cheese", "t_paroo"],
+      ["t_flour", "t_oven", "t_sesame", "t_apron"],
+      ["t_water", "t_cream", "t_tea", "t_salt"]
+    ]
+  }
+}

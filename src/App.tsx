@@ -5,15 +5,14 @@ import { TouchBackend } from 'react-dnd-touch-backend';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
-import { Settings, Search, Lightbulb, Sparkles, Gift, Database } from 'lucide-react';
+import { Settings, Search, Lightbulb, Gift } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { DragPreview } from './components/DragPreview';
 import { SettingsDialog } from './components/ui/dialogs/SettingsDialog';
+import { LevelSelector } from './components/LevelSelector';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Word } from './data/types';
-import { getLevelData } from './data/levels';
-import { shuffleWordsWithConstraint } from './utils/shuffleWords';
-import { loadLevelFromDB, loadPublishedLevels, isDatabaseAvailable } from './utils/levelLoader';
+import { Word, LevelData, LevelJSON } from './data/types';
+import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
 
@@ -33,95 +32,162 @@ const isTouchDevice = () => {
 };
 
 export default function App() {
-  const [level] = useState(3);
+  const [level, setLevel] = useState(1);
   const [coins] = useState(10);
-  const [hints] = useState(3);
+  // hints state removed as requested - infinite hints now
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
+  // Track hinted words and their color (yellow for lightbulb, green for search)
+  const [hintedWords, setHintedWords] = useState<Map<string, 'yellow' | 'green'>>(new Map());
   
-  // Database level support
-  const [dbAvailable, setDbAvailable] = useState(false);
-  const [useDatabase, setUseDatabase] = useState(false);
-  const [dbLevels, setDbLevels] = useState<any[]>([]);
-  const [selectedDbLevel, setSelectedDbLevel] = useState<number | null>(null);
-  const [dbLevelData, setDbLevelData] = useState<any | null>(null);
-  const [showLevelSelector, setShowLevelSelector] = useState(false);
+  // Level data state
+  const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [availableLevels, setAvailableLevels] = useState<number[]>([1, 2, 3]); // Default levels
+  const [levelMetadata, setLevelMetadata] = useState<LevelJSON[]>([]);
+  
+  // FIX: Track when game is processing to prevent race conditions
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Check database availability on mount
+  // Load available levels and metadata on mount
   useEffect(() => {
-    isDatabaseAvailable().then(available => {
-      setDbAvailable(available);
-      if (available) {
-        loadPublishedLevels().then(levels => setDbLevels(levels));
+    Promise.all([
+      getAvailableLevels(),
+      loadAllLevelMetadata()
+    ]).then(([levels, metadata]) => {
+      if (levels.length > 0) {
+        setAvailableLevels(levels);
       }
+      if (metadata.length > 0) {
+        setLevelMetadata(metadata);
+      }
+    }).catch(error => {
+      console.error('Failed to load available levels:', error);
     });
   }, []);
 
-  // Load selected database level
+  // Load level data on mount and when level changes
   useEffect(() => {
-    if (useDatabase && selectedDbLevel) {
-      loadLevelFromDB(selectedDbLevel).then(data => {
-        setDbLevelData(data);
-      });
-    }
-  }, [useDatabase, selectedDbLevel]);
-
-  // Get current level data (from DB or hardcoded)
-  const currentLevelData = useMemo(() => {
-    if (useDatabase && dbLevelData) {
-      return dbLevelData;
-    }
-    return getLevelData(level);
-  }, [useDatabase, dbLevelData, level]);
+    setIsLoading(true);
+    // Reset game state when level changes
+    setMergedSubcategoriesCount(0);
+    setHintedWords(new Map());
+    
+    loadLevel(level).then(data => {
+      setCurrentLevelData(data);
+      setIsLoading(false);
+    }).catch(error => {
+      console.error('Failed to load level:', error);
+      setIsLoading(false);
+    });
+  }, [level]);
   
   const LEVEL_DATA = currentLevelData?.words || [];
   const CATEGORY_NAMES = currentLevelData?.categories || {};
   const HIERARCHY = currentLevelData?.hierarchy;
 
   // Separate visible and hidden words
-  const visibleWords = useMemo(() => LEVEL_DATA.filter((w: Word) => !w.hidden), [LEVEL_DATA]);
-  const hiddenWordsPool = useMemo(() => LEVEL_DATA.filter((w: Word) => w.hidden), [LEVEL_DATA]);
+  const visibleWords = useMemo(() => LEVEL_DATA ? LEVEL_DATA.filter((w: Word) => !w.hidden) : [], [LEVEL_DATA]);
+  const hiddenWordsPool = useMemo(() => LEVEL_DATA ? LEVEL_DATA.filter((w: Word) => w.hidden) : [], [LEVEL_DATA]);
 
-  // Shuffle words ensuring no row has a complete category
+  // Use words exactly as they appear in the level file (no shuffling)
   const shuffledWords = useMemo(() => {
     if (visibleWords.length === 0) return [];
-    return shuffleWordsWithConstraint(visibleWords);
+    return visibleWords;
   }, [visibleWords]);
 
   const [gridRows, setGridRows] = useState<GridRow[]>([]);
   const [hiddenPool, setHiddenPool] = useState<Word[]>([]);
 
-  // Initialize grid rows when shuffled words are ready
+  // FIX: Initialize grid rows when shuffled words are ready
   useEffect(() => {
     if (shuffledWords.length > 0) {
-      setGridRows([
-        { type: 'words', words: shuffledWords.slice(0, 4) },
-        { type: 'words', words: shuffledWords.slice(4, 8) },
-        { type: 'words', words: shuffledWords.slice(8, 12) },
-        { type: 'words', words: shuffledWords.slice(12, 16) },
-        { type: 'words', words: shuffledWords.slice(16, 20) },
-        { type: 'words', words: shuffledWords.slice(20, 24) },
-      ]);
-      setHiddenPool(hiddenWordsPool);
+      // Dynamically create rows based on the actual number of words
+      const rowSize = 4; // All levels use 4 columns
+      const numRows = Math.ceil(shuffledWords.length / rowSize);
+      const newRows: GridRow[] = [];
+      
+      for (let i = 0; i < numRows; i++) {
+        const startIdx = i * rowSize;
+        const endIdx = Math.min(startIdx + rowSize, shuffledWords.length);
+        const rowWords = shuffledWords.slice(startIdx, endIdx);
+        
+        // Only add row if it has words
+        if (rowWords.length > 0) {
+          // Create immutable word objects to prevent reference changes
+          const immutableWords = rowWords.map(w => ({ ...w }));
+          newRows.push({ type: 'words', words: immutableWords });
+        }
+      }
+      
+      setGridRows(newRows);
+      setHiddenPool([...hiddenWordsPool]); // Clone to ensure immutability
     }
   }, [shuffledWords, hiddenWordsPool]);
 
   // Get total steps from level data (default to 6 for backward compatibility)
   const totalSteps = currentLevelData?.totalSteps || 6;
   
-  // Track if subcategory has been merged
-  const [subcategoryMerged, setSubcategoryMerged] = useState(false);
+  // FIX: Handle empty level data gracefully
+  if (!isLoading && (!currentLevelData || !currentLevelData.words || currentLevelData.words.length === 0)) {
+    return (
+      <LanguageProvider>
+        <div className="min-h-screen bg-candy-bg bg-pattern-dots overflow-x-hidden font-display selection:bg-candy-secondary selection:text-white flex flex-col">
+          <div className="max-w-md mx-auto w-full px-4 pt-6 pb-4 flex-1 flex flex-col">
+            
+            {/* Simple Header for Navigation */}
+            <div className="mb-6">
+              <LevelSelector
+                currentLevel={level}
+                levels={levelMetadata}
+                onLevelSelect={setLevel}
+                availableLevels={availableLevels}
+              />
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 glass-panel rounded-3xl shadow-3d">
+              <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center mb-6 animate-bounceSlight">
+                <span className="text-4xl">🚧</span>
+              </div>
+              <h2 className="text-2xl font-bold text-slate-700 mb-2">
+                Level Under Construction
+              </h2>
+              <p className="text-slate-500 mb-8">
+                This level is currently being designed. <br/>Please check back later!
+              </p>
+              
+              <Button 
+                onClick={() => setLevel(1)}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-8 py-3 shadow-md transition-all btn-3d"
+              >
+                Go to Level 1
+              </Button>
+            </div>
+          </div>
+        </div>
+      </LanguageProvider>
+    );
+  }
+
+  // Track count of merged subcategories (for levels with multiple transform groups)
+  const [mergedSubcategoriesCount, setMergedSubcategoriesCount] = useState(0);
   
   // Count completed categories from grid
   const completedCategoriesCount = gridRows.filter(row => row.type === 'completed').length;
   
-  // Calculate total completed steps
-  const completedSteps = (subcategoryMerged ? 1 : 0) + completedCategoriesCount;
+  // Calculate total completed steps (merged subcategories + completed final groups)
+  const completedSteps = mergedSubcategoriesCount + completedCategoriesCount;
 
   // Track merging row for animation
   const [mergingRow, setMergingRow] = useState<number | null>(null);
 
   const handleSwap = (draggedWord: Word, targetRowIndex: number, targetColIndex: number) => {
+    // FIX: Prevent swaps while processing matches/merges
+    if (isProcessing) {
+      console.log('Swap blocked: currently processing');
+      return;
+    }
+    
     // Find the dragged word's position
     let sourceRowIndex = -1;
     let sourceColIndex = -1;
@@ -137,55 +203,78 @@ export default function App() {
       }
     }
     
-    // Validation checks
-    if (sourceRowIndex === -1) return; // Source not found
-    if (gridRows[targetRowIndex]?.type !== 'words') return; // Target row not valid
-    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) return; // Same position
+    // FIX: Enhanced validation checks
+    if (sourceRowIndex === -1) {
+      console.warn('handleSwap: source word not found in grid');
+      return;
+    }
+    if (gridRows[targetRowIndex]?.type !== 'words') {
+      console.warn('handleSwap: target row is not a word row');
+      return;
+    }
+    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) {
+      console.log('handleSwap: same position, no swap needed');
+      return;
+    }
+    if (!gridRows[targetRowIndex].words || targetColIndex >= gridRows[targetRowIndex].words!.length) {
+      console.warn('handleSwap: invalid target position');
+      return;
+    }
     
     const targetWord = gridRows[targetRowIndex].words![targetColIndex];
+    if (!targetWord) {
+      console.warn('handleSwap: target word is null or undefined');
+      return;
+    }
     
-    // Create new grid with only the two tiles swapped
+    // FIX: Create new grid with immutable word objects to prevent reference issues
     const newGridRows = gridRows.map((row, rowIdx) => {
       if (row.type !== 'words') return row;
       
       return {
         ...row,
         words: row.words!.map((w, colIdx) => {
-          // If this is the source position, place the target word
+          // If this is the source position, place a copy of the target word
           if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) {
-            return targetWord;
+            return { ...targetWord };
           }
-          // If this is the target position, place the source word
+          // If this is the target position, place a copy of the dragged word
           if (rowIdx === targetRowIndex && colIdx === targetColIndex) {
-            return draggedWord;
+            return { ...draggedWord };
           }
-          // Otherwise keep the word as is
-          return w;
+          // Otherwise keep a copy of the word
+          return { ...w };
         })
       };
     });
     
     setGridRows(newGridRows);
     
-    // Check both affected rows for matches
-    // Small delay to allow animation to start/finish visually if needed, 
-    // though logic happens instantly now.
-    setTimeout(() => {
+    // FIX: Check matches immediately to prevent state inconsistency
+    // The visual delay should be handled by animations, not setTimeout
+    requestAnimationFrame(() => {
       checkRowForMatch(newGridRows, sourceRowIndex);
       if (targetRowIndex !== sourceRowIndex) {
         checkRowForMatch(newGridRows, targetRowIndex);
       }
-    }, 300);
+    });
   };
 
   const checkRowForMatch = (rows: GridRow[], rowIndex: number) => {
     const row = rows[rowIndex];
     if (row.type !== 'words' || !row.words || row.words.length !== 4) return;
     
-    const categories = row.words.map(w => w.category);
+    // FIX: Filter out empty/invalid words
+    const validWords = row.words.filter(w => w && w.category && w.category !== 'empty');
+    if (validWords.length !== 4) return;
+    
+    const categories = validWords.map(w => w.category);
     const allSame = categories.every(cat => cat === categories[0]);
     
     if (allSame) {
+      // FIX: Set processing flag to block other interactions
+      setIsProcessing(true);
+      
       // Trigger merge animation
       setMergingRow(rowIndex);
 
@@ -193,14 +282,16 @@ export default function App() {
       setTimeout(() => {
         const matchedCategory = categories[0];
         const categoryName = CATEGORY_NAMES[matchedCategory] || matchedCategory;
-        const words = row.words!.map(w => w.text);
+        const words = validWords.map(w => w.text);
         
-        // Check if this is THE subcategory that should merge
-        const subcategoryInfo = HIERARCHY?.subcategory;
+        // Check if this is a subcategory that should merge
+        // Support both single subcategory (backward compat) and multiple subcategories
+        const subcategories = HIERARCHY?.subcategories || (HIERARCHY?.subcategory ? [HIERARCHY.subcategory] : []);
+        const matchingSubcategory = subcategories.find(sub => sub.category === matchedCategory);
         
-        if (subcategoryInfo && subcategoryInfo.category === matchedCategory) {
-          // This is the subcategory - merge into single tile
-          handleSubcategoryCompletion(rows, rowIndex, subcategoryInfo);
+        if (matchingSubcategory) {
+          // This is a subcategory - merge into single tile
+          handleSubcategoryCompletion(rows, rowIndex, matchingSubcategory);
         } else {
           // Regular category - show as completed row
           soundManager.playSuccess();
@@ -220,6 +311,8 @@ export default function App() {
         
         // Reset merging state after grid update
         setMergingRow(null);
+        // FIX: Clear processing flag to allow new interactions
+        setIsProcessing(false);
       }, 1000);
     }
   };
@@ -240,13 +333,14 @@ export default function App() {
       };
     }
   ) => {
-    // Create a single Word representing the subcategory
+    // FIX: Use category and timestamp for stable IDs
+    const timestamp = Date.now();
     const subcategoryWord: Word = {
-      id: `subcategory_${subcategoryInfo.category}_${Date.now()}`,
+      id: `merged_${subcategoryInfo.category}_${timestamp}`,
       text: subcategoryInfo.displayAfterMerge,
-      category: subcategoryInfo.mergesInto, // Parent category
-      isMergedGroup: true, // Mark as merged group
-      icon: subcategoryInfo.icon // Include icon metadata if available
+      category: subcategoryInfo.mergesInto,
+      isMergedGroup: true,
+      icon: subcategoryInfo.icon
     };
     
     // Trigger glow animation for this subcategory tile
@@ -267,9 +361,9 @@ export default function App() {
     const wordsToAdd: Word[] = [];
     const newHiddenPool = [...hiddenPool];
     
-    // Find and add the specific words that match wordsToReveal
-    for (const wordText of subcategoryInfo.wordsToReveal) {
-      const wordIndex = newHiddenPool.findIndex(w => w.text === wordText);
+    // Find and add the specific words that match wordsToReveal (by ID)
+    for (const wordId of subcategoryInfo.wordsToReveal) {
+      const wordIndex = newHiddenPool.findIndex(w => w.id === wordId);
       if (wordIndex !== -1) {
         wordsToAdd.push(newHiddenPool[wordIndex]);
         newHiddenPool.splice(wordIndex, 1);
@@ -294,9 +388,103 @@ export default function App() {
     setGridRows(newGridRows);
     setHiddenPool(newHiddenPool);
     
-    // Mark subcategory as merged (counts as 1 step)
-    setSubcategoryMerged(true);
+    // Increment merged subcategories count (each merge counts as 1 step)
+    setMergedSubcategoriesCount(prev => prev + 1);
   };
+
+  const handleHint = () => {
+    // Get all words currently visible in the grid
+    const currentWords = new Set<string>();
+    gridRows.forEach(row => {
+      if (row.type === 'words' && row.words) {
+        row.words.forEach(word => currentWords.add(word.id));
+      }
+    });
+
+    // Find all possible categories that haven't been completed
+    const categoryToWords = new Map<string, string[]>();
+    
+    LEVEL_DATA.forEach(word => {
+      if (currentWords.has(word.id)) {
+        if (!categoryToWords.has(word.category)) {
+          categoryToWords.set(word.category, []);
+        }
+        categoryToWords.get(word.category)!.push(word.id);
+      }
+    });
+
+    // Find a category with at least 2 words visible
+    let hintWords: string[] = [];
+    for (const [, wordIds] of categoryToWords.entries()) {
+      if (wordIds.length >= 2) {
+        // Shuffle and pick 2 random words from this category
+        const shuffled = [...wordIds].sort(() => Math.random() - 0.5);
+        hintWords = shuffled.slice(0, 2);
+        break;
+      }
+    }
+
+    if (hintWords.length === 2) {
+      // Show hint animation (yellow)
+      const newHints = new Map(hintedWords);
+      hintWords.forEach(id => newHints.set(id, 'yellow'));
+      setHintedWords(newHints);
+      soundManager.playMerge();
+    } else {
+      // No valid hint available
+      soundManager.playError();
+    }
+  };
+
+  const handleSearchHint = () => {
+    // Get all words currently visible in the grid
+    const currentWords = new Set<string>();
+    gridRows.forEach(row => {
+      if (row.type === 'words' && row.words) {
+        row.words.forEach(word => currentWords.add(word.id));
+      }
+    });
+
+    // Check which categories are fully present (4 words)
+    const categoryToWords = new Map<string, string[]>();
+    LEVEL_DATA.forEach(word => {
+      if (currentWords.has(word.id)) {
+        if (!categoryToWords.has(word.category)) {
+           categoryToWords.set(word.category, []);
+        }
+        categoryToWords.get(word.category)!.push(word.id);
+      }
+    });
+
+    // Find a category with 4 words
+    let foundGroupIds: string[] = [];
+    for (const [, wordIds] of categoryToWords.entries()) {
+      if (wordIds.length === 4) {
+        foundGroupIds = wordIds;
+        break;
+      }
+    }
+
+    if (foundGroupIds.length === 4) {
+       // Show search hint animation (green)
+       const newHints = new Map(hintedWords);
+       foundGroupIds.forEach(id => newHints.set(id, 'green'));
+       setHintedWords(newHints);
+       soundManager.playMerge();
+    } else {
+       soundManager.playError();
+    }
+  };
+
+  // Auto-clear hints after 3 seconds
+  useEffect(() => {
+    if (hintedWords.size > 0) {
+      const timer = setTimeout(() => {
+        setHintedWords(new Map());
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [hintedWords]);
 
   return (
     <LanguageProvider>
@@ -339,93 +527,30 @@ export default function App() {
               </div>
             </div>
 
-            {/* Database Level Selector Button */}
-            {dbAvailable && (
-              <div className="px-3 sm:px-4 mb-2">
-                <button
-                  onClick={() => setShowLevelSelector(!showLevelSelector)}
-                  className="w-full glass-panel rounded-xl p-2 sm:p-3 flex items-center justify-between hover:bg-white/10 transition-colors"
-                >
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <Database className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                    <span className="text-xs sm:text-sm font-medium">
-                      {useDatabase && selectedDbLevel 
-                        ? `DB Level ${selectedDbLevel}`
-                        : `Level ${level} (Hardcoded)`
-                      }
-                    </span>
-                  </div>
-                  <span className="text-[10px] sm:text-xs text-gray-400">
-                    {showLevelSelector ? 'Hide' : 'Change'}
-                  </span>
-                </button>
-              </div>
-            )}
-
-            {/* Level Selector Dropdown */}
-            {showLevelSelector && dbAvailable && (
-              <div className="px-3 sm:px-4 mb-3 sm:mb-4">
-                <div className="glass-panel rounded-xl p-3 sm:p-4 space-y-2">
-                  <h3 className="text-xs sm:text-sm font-bold mb-2">Select Level</h3>
-                  
-                  {/* Hardcoded Levels */}
-                  <div className="space-y-1">
-                    <p className="text-[10px] sm:text-xs text-gray-400 mb-1">Hardcoded Levels:</p>
-                    {[1, 2, 3].map(lvl => (
-                      <button
-                        key={`hardcoded-${lvl}`}
-                        onClick={() => {
-                          setUseDatabase(false);
-                          setShowLevelSelector(false);
-                          // Would need to add level setter to change hardcoded level
-                        }}
-                        className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                          !useDatabase && level === lvl
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-700/50 hover:bg-gray-600/50'
-                        }`}
-                      >
-                        Level {lvl}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Database Levels */}
-                  {dbLevels.length > 0 && (
-                    <div className="space-y-1 pt-2 border-t border-gray-600">
-                      <p className="text-[10px] sm:text-xs text-gray-400 mb-1">Database Levels:</p>
-                      {dbLevels.map(dbLevel => (
-                        <button
-                          key={`db-${dbLevel.id}`}
-                          onClick={() => {
-                            setUseDatabase(true);
-                            setSelectedDbLevel(dbLevel.id);
-                            setShowLevelSelector(false);
-                          }}
-                          className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm transition-colors ${
-                            useDatabase && selectedDbLevel === dbLevel.id
-                              ? 'bg-green-500 text-white'
-                              : 'bg-gray-700/50 hover:bg-gray-600/50'
-                          }`}
-                        >
-                          <div className="font-medium" dir="rtl">{dbLevel.name}</div>
-                          {dbLevel.name_en && (
-                            <div className="text-[10px] sm:text-xs opacity-70">{dbLevel.name_en}</div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* Level Selector */}
+            <div className="px-3 sm:px-4 mb-2">
+              <LevelSelector
+                currentLevel={level}
+                levels={levelMetadata}
+                onLevelSelect={setLevel}
+                availableLevels={availableLevels}
+              />
+            </div>
 
             {/* Game Header (Level & Progress) */}
             <div className="px-3 sm:px-4 mt-2 mb-3 sm:mb-4">
-              <GameHeader level={useDatabase && selectedDbLevel ? selectedDbLevel : level} completed={completedSteps} total={totalSteps} />
+              <GameHeader completed={completedSteps} total={totalSteps} />
             </div>
 
+            {/* Loading State */}
+            {isLoading && (
+              <div className="px-3 sm:px-4 py-8 text-center">
+                <div className="text-white text-lg">Loading level...</div>
+              </div>
+            )}
+
             {/* Game Grid */}
+            {!isLoading && (
             <div className="px-3 sm:px-4 space-y-2 sm:space-y-3">
               {gridRows.map((row, rowIndex) => (
                 <div key={rowIndex} className="animate-pop-in" style={{ animationDelay: `${rowIndex * 0.1}s` }}>
@@ -442,6 +567,8 @@ export default function App() {
                           onSwap={handleSwap}
                           isSubcategoryGlow={word.id === glowingSubcategoryId}
                           isMerging={mergingRow === rowIndex}
+                          hintColor={hintedWords.get(word.id)}
+                          isDisabled={isProcessing}
                         />
                       ))}
                     </div>
@@ -449,6 +576,7 @@ export default function App() {
                 </div>
               ))}
             </div>
+            )}
           </div>
 
           {/* Bottom Floating Dock */}
@@ -467,20 +595,20 @@ export default function App() {
                 <Settings className="w-6 h-6 sm:w-7 sm:h-7" />
               </Button>
               
-              <Button className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-green hover:bg-green-500 rounded-2xl shadow-3d border-b-4 border-green-700 active:border-b-0 btn-3d relative group overflow-hidden">
+              <Button 
+                onClick={handleSearchHint}
+                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-green hover:bg-green-500 rounded-2xl shadow-3d border-b-4 border-green-700 active:border-b-0 btn-3d relative group overflow-hidden"
+              >
                 <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Search className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-                <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-7 sm:h-7 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-white shadow-sm">
-                  {hints}
-                </div>
               </Button>
               
-              <Button className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden">
+              <Button 
+                onClick={handleHint}
+                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden"
+              >
                 <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-                <div className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-6 h-6 sm:w-7 sm:h-7 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-white shadow-sm">
-                  {hints}
-                </div>
               </Button>
             </div>
           </div>

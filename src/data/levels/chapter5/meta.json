@@ -1,0 +1,12 @@
+{
+  "id": "chapter_5",
+  "name": "The Museum (فرهنگ و تاریخ)",
+  "description": "The theme centers on Iranian Culture, History, and Literature. The design goal is to test knowledge-based associations and cultural context.",
+  "levels": [
+    "level21.json",
+    "level22.json",
+    "level23.json",
+    "level24.json",
+    "level25.json"
+  ]
+}

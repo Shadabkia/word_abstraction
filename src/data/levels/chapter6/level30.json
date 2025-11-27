@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "id": "lvl_6_5_traffic",
+    "chapter": 6,
+    "level_index": 30,
+    "version": "1.0.0",
+    "title": "ترافیک (The Traffic Jam)",
+    "description": "Chaos on the streets. Restore order.",
+    "difficulty": 5,
+    "tags": ["boss", "city", "traffic", "rules"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_traffic", "text": "ترافیک", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_accident", "text": "تصادف", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_smoke", "text": "دود", "type": "word", "visuals": { "color_hex": "#778899" } },
+      { "id": "t_honk", "text": "بوق", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      
+      { "id": "t_police", "text": "پلیس", "type": "word", "visuals": { "color_hex": "#4169E1" } },
+      { "id": "t_ambulance", "text": "آمبولانس", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_tow_truck", "text": "جرثقیل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_officer", "text": "افسر", "type": "word", "visuals": { "color_hex": "#191970" } },
+      
+      { "id": "t_stop_sign", "text": "ایست", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_no_entry", "text": "ورود ممنوع", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_speed_limit", "text": "حداکثر سرعت", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_one_way", "text": "یک‌طرفه", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      
+      { "id": "t_red_light", "text": "چراغ قرمز", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_green_light", "text": "چراغ سبز", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_yellow_light", "text": "چراغ زرد", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_pedestrian_light", "text": "چراغ عابر", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      
+      { "id": "t_crosswalk", "text": "خط‌کشی عابر", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_intersection", "text": "چهارراه", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_highway", "text": "بزرگراه", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_lane", "text": "لاین", "type": "word", "visuals": { "color_hex": "#D3D3D3" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_jam",
+        "display_name": "معضلات (The Jam)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_traffic", "t_accident", "t_smoke", "t_honk"] },
+        "outcomes": { "reveal_ids": ["t_police", "t_ambulance", "t_tow_truck", "t_officer"] }
+      },
+      {
+        "id": "grp_signs",
+        "display_name": "تابلوها (Signs)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_stop_sign", "t_no_entry", "t_speed_limit", "t_one_way"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_lights",
+        "display_name": "چراغ‌ها (Lights)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_red_light", "t_green_light", "t_yellow_light", "t_pedestrian_light"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_road",
+        "display_name": "خیابان (Road)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_crosswalk", "t_intersection", "t_highway", "t_lane"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_order",
+        "display_name": "نظم (Order)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_police", "t_ambulance", "t_tow_truck", "t_officer"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_traffic", "t_stop_sign", "t_red_light", "t_crosswalk"],
+      ["t_accident", "t_no_entry", "t_green_light", "t_intersection"],
+      ["t_smoke", "t_speed_limit", "t_yellow_light", "t_highway"],
+      ["t_honk", "t_one_way", "t_pedestrian_light", "t_lane"]
+    ]
+  }
+}

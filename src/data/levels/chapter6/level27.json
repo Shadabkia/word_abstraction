@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_6_2_cinema",
+    "chapter": 6,
+    "level_index": 27,
+    "version": "1.0.0",
+    "title": "سینما (The Cinema)",
+    "description": "Lights, Camera, Action! Sort the movie magic.",
+    "difficulty": 3,
+    "tags": ["city", "entertainment", "movies"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_comedy", "text": "کمدی", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_horror", "text": "وحشت", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_drama", "text": "درام", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_scifi", "text": "علمی-تخیلی", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      
+      { "id": "t_popcorn", "text": "پاپ‌کورن", "type": "word", "visuals": { "color_hex": "#FFFACD" } },
+      { "id": "t_ticket_mov", "text": "بلیط سینما", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_screen", "text": "پرده نمایش", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_seat", "text": "صندلی", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      
+      { "id": "t_actor", "text": "بازیگر", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_director", "text": "کارگردان", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_camera", "text": "دوربین", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_script", "text": "فیلم‌نامه", "type": "word", "visuals": { "color_hex": "#F0F8FF" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_genres",
+        "display_name": "ژانر (Genres)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_comedy", "t_horror", "t_drama", "t_scifi"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_theater",
+        "display_name": "سالن سینما (Theater)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_popcorn", "t_ticket_mov", "t_screen", "t_seat"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_production",
+        "display_name": "عوامل (Production)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_actor", "t_director", "t_camera", "t_script"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_comedy", "t_popcorn", "t_actor", "t_horror"],
+      ["t_ticket_mov", "t_director", "t_drama", "t_screen"],
+      ["t_camera", "t_scifi", "t_seat", "t_script"]
+    ]
+  }
+}

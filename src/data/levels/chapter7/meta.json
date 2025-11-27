@@ -1,0 +1,12 @@
+{
+  "id": "chapter_7",
+  "name": "The Seasons of Life (زمان)",
+  "description": "The theme is Chronology and Transformation of Time. The design goal is to understand Linear Sequences where order matters.",
+  "levels": [
+    "level31.json",
+    "level32.json",
+    "level33.json",
+    "level34.json",
+    "level35.json"
+  ]
+}

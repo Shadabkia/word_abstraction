@@ -1,7 +1,7 @@
 import {
   // Animals - حیوانات
   Dog, Cat, Fish, Bird, Rabbit, Squirrel, Bug, Turtle, 
-  Snail, Beef, Egg,
+  Snail, Beef, Egg, PawPrint,
   
   // Nature - طبیعت
   TreePine, Flower, Leaf, Sprout, Mountain, Waves, 
@@ -35,7 +35,7 @@ import {
   
   // Objects & Tools - اشیاء و ابزار
   Book, Pencil, Scissors, Key, Lock, 
-  ShoppingBag, Gift, Star, Sparkles,
+  ShoppingBag, Gift, Star, Sparkles, Wrench,
   
   // Body & Health - بدن و سلامت
   Brain, HeartPulse, Eye, Ear, Hand,
@@ -52,10 +52,25 @@ import {
   Moon, CloudMoon, Sunrise, Sunset,
   
   // Abstract Concepts - مفاهیم انتزاعی
-  Lightbulb, Crown, Shield, Swords, Shapes,
+  Lightbulb, Crown, Shield, Swords, Shapes, Briefcase,
   
   type LucideIcon
 } from 'lucide-react';
+
+/**
+ * Icon metadata with descriptive fields
+ */
+export interface IconMetadata {
+  id: string;                    // Kebab-case unique identifier
+  type: 'library' | 'emoji';     // Icon type
+  libraryIcon?: string;          // Lucide icon name (if type is library)
+  emoji?: string;                // Emoji character (if type is emoji)
+  label: string;                 // English label
+  labelFa: string;               // Persian/Farsi label
+  category: string;              // Category grouping
+  description: string;           // Description of what it represents
+  keywords: string[];            // Search keywords
+}
 
 export interface IconOption {
   name: string;
@@ -65,7 +80,295 @@ export interface IconOption {
   component: LucideIcon;
 }
 
-// Comprehensive icon mapping for the game
+/**
+ * Comprehensive icon metadata registry
+ * Maps kebab-case IDs to complete icon information
+ */
+export const iconRegistry: Record<string, IconMetadata> = {
+  // === ANIMALS ===
+  'animals-group': {
+    id: 'animals-group',
+    type: 'emoji',
+    emoji: '🐾',
+    label: 'Animals',
+    labelFa: 'حیوانات',
+    category: 'Animals',
+    description: 'General animals category',
+    keywords: ['animals', 'pets', 'wildlife', 'حیوانات']
+  },
+  'domestic-animals': {
+    id: 'domestic-animals',
+    type: 'library',
+    libraryIcon: 'Dog',
+    label: 'Domestic Animals',
+    labelFa: 'حیوانات اهلی',
+    category: 'Animals',
+    description: 'Pets and farm animals',
+    keywords: ['domestic', 'pets', 'farm', 'اهلی']
+  },
+  'predators-group': {
+    id: 'predators-group',
+    type: 'emoji',
+    emoji: '🦁',
+    label: 'Predators',
+    labelFa: 'درندگان',
+    category: 'Animals',
+    description: 'Carnivorous predators',
+    keywords: ['predator', 'carnivore', 'wild', 'درندگان']
+  },
+  'herbivores-group': {
+    id: 'herbivores-group',
+    type: 'emoji',
+    emoji: '🐑',
+    label: 'Herbivores',
+    labelFa: 'علفخواران',
+    category: 'Animals',
+    description: 'Plant-eating animals',
+    keywords: ['herbivore', 'vegetarian', 'plant-eater', 'علفخواران']
+  },
+  'birds-group': {
+    id: 'birds-group',
+    type: 'library',
+    libraryIcon: 'Bird',
+    label: 'Birds',
+    labelFa: 'پرندگان',
+    category: 'Animals',
+    description: 'Flying birds',
+    keywords: ['bird', 'fly', 'wings', 'پرندگان']
+  },
+  'aquatics-group': {
+    id: 'aquatics-group',
+    type: 'library',
+    libraryIcon: 'Fish',
+    label: 'Aquatic Animals',
+    labelFa: 'آبزیان',
+    category: 'Animals',
+    description: 'Water-dwelling creatures',
+    keywords: ['fish', 'aquatic', 'water', 'sea', 'آبزیان']
+  },
+  
+  // === LIVING BEINGS ===
+  'living-beings': {
+    id: 'living-beings',
+    type: 'emoji',
+    emoji: '🌱',
+    label: 'Living Beings',
+    labelFa: 'موجودات زنده',
+    category: 'Nature',
+    description: 'All living organisms',
+    keywords: ['life', 'organism', 'living', 'موجودات', 'زنده']
+  },
+  
+  // === AGRICULTURE ===
+  'ranch-group': {
+    id: 'ranch-group',
+    type: 'emoji',
+    emoji: '🐄',
+    label: 'Livestock',
+    labelFa: 'دام',
+    category: 'Agriculture',
+    description: 'Farm animals for ranching',
+    keywords: ['livestock', 'ranch', 'farm', 'دامداری']
+  },
+  'farming-group': {
+    id: 'farming-group',
+    type: 'library',
+    libraryIcon: 'Sprout',
+    label: 'Farming',
+    labelFa: 'زراعت',
+    category: 'Agriculture',
+    description: 'Crop cultivation',
+    keywords: ['farming', 'crops', 'agriculture', 'زراعت']
+  },
+  'tools-group': {
+    id: 'tools-group',
+    type: 'library',
+    libraryIcon: 'Wrench',
+    label: 'Tools',
+    labelFa: 'ابزار',
+    category: 'Agriculture',
+    description: 'Farming and work tools',
+    keywords: ['tools', 'equipment', 'ابزار']
+  },
+  'jobs-group': {
+    id: 'jobs-group',
+    type: 'library',
+    libraryIcon: 'Briefcase',
+    label: 'Jobs',
+    labelFa: 'مشاغل',
+    category: 'Professions',
+    description: 'Various professions',
+    keywords: ['job', 'profession', 'career', 'work', 'مشاغل']
+  },
+  
+  // === NATURE ===
+  'nature-group': {
+    id: 'nature-group',
+    type: 'library',
+    libraryIcon: 'TreePine',
+    label: 'Nature',
+    labelFa: 'طبیعت',
+    category: 'Nature',
+    description: 'Natural landscapes',
+    keywords: ['nature', 'landscape', 'outdoor', 'طبیعت']
+  },
+  
+  // === MUSIC ===
+  'music-group': {
+    id: 'music-group',
+    type: 'library',
+    libraryIcon: 'Music',
+    label: 'Music',
+    labelFa: 'موسیقی',
+    category: 'Music',
+    description: 'Musical instruments and music',
+    keywords: ['music', 'instrument', 'sound', 'موسیقی']
+  },
+  
+  // === FOOD ===
+  'fruits-group': {
+    id: 'fruits-group',
+    type: 'library',
+    libraryIcon: 'Apple',
+    label: 'Fruits',
+    labelFa: 'میوه‌ها',
+    category: 'Food',
+    description: 'Fresh fruits',
+    keywords: ['fruit', 'fresh', 'healthy', 'میوه']
+  },
+  'vegetables-group': {
+    id: 'vegetables-group',
+    type: 'library',
+    libraryIcon: 'Carrot',
+    label: 'Vegetables',
+    labelFa: 'سبزیجات',
+    category: 'Food',
+    description: 'Fresh vegetables',
+    keywords: ['vegetable', 'fresh', 'healthy', 'سبزیجات']
+  },
+  
+  // === WEATHER ===
+  'weather-group': {
+    id: 'weather-group',
+    type: 'library',
+    libraryIcon: 'CloudSun',
+    label: 'Weather',
+    labelFa: 'آب و هوا',
+    category: 'Weather',
+    description: 'Weather conditions',
+    keywords: ['weather', 'climate', 'آب', 'هوا']
+  },
+  
+  // === HOME & KITCHEN ===
+  'kitchen-group': {
+    id: 'kitchen-group',
+    type: 'library',
+    libraryIcon: 'CookingPot',
+    label: 'Kitchen',
+    labelFa: 'آشپزخانه',
+    category: 'Home',
+    description: 'Kitchen items and cookware',
+    keywords: ['kitchen', 'cooking', 'آشپزخانه']
+  },
+  
+  // === ELECTRONICS ===
+  'electronics-group': {
+    id: 'electronics-group',
+    type: 'library',
+    libraryIcon: 'Tv',
+    label: 'Electronics',
+    labelFa: 'لوازم الکترونیک',
+    category: 'Electronics',
+    description: 'Electronic devices',
+    keywords: ['electronics', 'device', 'technology', 'الکترونیک']
+  },
+  
+  // === TRANSPORTATION ===
+  'vehicles-group': {
+    id: 'vehicles-group',
+    type: 'library',
+    libraryIcon: 'Car',
+    label: 'Vehicles',
+    labelFa: 'وسایل نقلیه',
+    category: 'Transportation',
+    description: 'Transportation vehicles',
+    keywords: ['vehicle', 'transport', 'نقلیه']
+  },
+  
+  // === SCHOOL ===
+  'school-group': {
+    id: 'school-group',
+    type: 'library',
+    libraryIcon: 'Book',
+    label: 'School',
+    labelFa: 'مدرسه',
+    category: 'Education',
+    description: 'School supplies and education',
+    keywords: ['school', 'education', 'learning', 'مدرسه']
+  },
+  
+  // === SPORTS ===
+  'sports-group': {
+    id: 'sports-group',
+    type: 'library',
+    libraryIcon: 'Trophy',
+    label: 'Sports',
+    labelFa: 'ورزش‌ها',
+    category: 'Sports',
+    description: 'Sports and athletics',
+    keywords: ['sport', 'athletic', 'exercise', 'ورزش']
+  },
+  
+  // === PROFESSIONS ===
+  'medical-group': {
+    id: 'medical-group',
+    type: 'library',
+    libraryIcon: 'HeartPulse',
+    label: 'Medical',
+    labelFa: 'پزشکی',
+    category: 'Professions',
+    description: 'Medical and healthcare',
+    keywords: ['medical', 'health', 'doctor', 'پزشکی']
+  },
+  
+  // === COMMUNICATION ===
+  'communication-group': {
+    id: 'communication-group',
+    type: 'library',
+    libraryIcon: 'Smartphone',
+    label: 'Communication',
+    labelFa: 'ارتباطات',
+    category: 'Communication',
+    description: 'Communication methods',
+    keywords: ['communication', 'message', 'contact', 'ارتباطات']
+  },
+  
+  // === COLORS ===
+  'colors-group': {
+    id: 'colors-group',
+    type: 'library',
+    libraryIcon: 'Palette',
+    label: 'Colors',
+    labelFa: 'رنگ‌ها',
+    category: 'Abstract',
+    description: 'Color categories',
+    keywords: ['color', 'paint', 'رنگ']
+  },
+  
+  // === CLASSIFICATION ===
+  'classification-group': {
+    id: 'classification-group',
+    type: 'emoji',
+    emoji: '📊',
+    label: 'Classification',
+    labelFa: 'دسته‌بندی',
+    category: 'Abstract',
+    description: 'Category classification',
+    keywords: ['classification', 'category', 'group', 'دسته‌بندی']
+  }
+};
+
+// Legacy iconMap for backward compatibility (PascalCase names)
 export const iconMap: Record<string, LucideIcon> = {
   // Animals
   'Dog': Dog,
@@ -79,6 +382,7 @@ export const iconMap: Record<string, LucideIcon> = {
   'Snail': Snail,
   'Beef': Beef,
   'Egg': Egg,
+  'PawPrint': PawPrint,
   
   // Nature
   'TreePine': TreePine,
@@ -176,6 +480,7 @@ export const iconMap: Record<string, LucideIcon> = {
   'Gift': Gift,
   'Star': Star,
   'Sparkles': Sparkles,
+  'Wrench': Wrench,
   
   // Body
   'Brain': Brain,
@@ -208,6 +513,7 @@ export const iconMap: Record<string, LucideIcon> = {
   'Shield': Shield,
   'Swords': Swords,
   'Shapes': Shapes,
+  'Briefcase': Briefcase,
   
   // Default
   'CircleDot': CircleDot,
@@ -347,21 +653,74 @@ export const iconOptions: IconOption[] = [
   { name: 'Shield', label: 'Shield', labelFa: 'سپر', category: 'Abstract', component: Shield },
 ];
 
-// Helper to get icon component by name
+/**
+ * Get icon metadata by kebab-case ID
+ */
+export function getIconMetadata(iconId?: string | null): IconMetadata | null {
+  if (!iconId) return null;
+  return iconRegistry[iconId] || null;
+}
+
+/**
+ * Get Lucide icon component from icon metadata
+ * Returns null if not found or if type is emoji
+ */
+export function getIconComponent(iconId?: string | null): LucideIcon | null {
+  const metadata = getIconMetadata(iconId);
+  if (!metadata || metadata.type !== 'library' || !metadata.libraryIcon) {
+    return null;
+  }
+  return iconMap[metadata.libraryIcon] || null;
+}
+
+/**
+ * Legacy helper: Get icon component by PascalCase name
+ * @deprecated Use getIconComponent with kebab-case ID instead
+ */
 export function getIcon(iconName?: string): LucideIcon | null {
   if (!iconName) return null;
   return iconMap[iconName] || null;
 }
 
-// Helper to get categories for dropdown
+/**
+ * Get all icon metadata entries
+ */
+export function getAllIconMetadata(): IconMetadata[] {
+  return Object.values(iconRegistry);
+}
+
+/**
+ * Get icon categories
+ */
 export function getIconCategories(): string[] {
-  const categories = new Set(iconOptions.map(icon => icon.category));
+  const categories = new Set(
+    Object.values(iconRegistry).map(icon => icon.category)
+  );
   return Array.from(categories).sort();
 }
 
-// Helper to get icons by category
-export function getIconsByCategory(category: string): IconOption[] {
-  return iconOptions.filter(icon => icon.category === category);
+/**
+ * Get icons by category
+ */
+export function getIconsByCategory(category: string): IconMetadata[] {
+  return Object.values(iconRegistry).filter(icon => icon.category === category);
+}
+
+/**
+ * Search icons by keyword
+ */
+export function searchIcons(query: string): IconMetadata[] {
+  const lowerQuery = query.toLowerCase();
+  return Object.values(iconRegistry).filter(icon => 
+    icon.keywords.some(kw => kw.toLowerCase().includes(lowerQuery)) ||
+    icon.label.toLowerCase().includes(lowerQuery) ||
+    icon.labelFa.includes(query)
+  );
+}
+
+// Legacy helper for dropdown (backward compatibility)
+export function getIconOptions(): IconOption[] {
+  return iconOptions;
 }
 
 

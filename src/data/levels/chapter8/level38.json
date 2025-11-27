@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_8_3_emotions",
+    "chapter": 8,
+    "level_index": 38,
+    "version": "1.0.0",
+    "title": "احساسات (Emotions)",
+    "description": "Feel the words. Group by emotion.",
+    "difficulty": 3,
+    "tags": ["abstract", "feelings", "psychology"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_smile", "text": "لبخند", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_laugh", "text": "خنده", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_party", "text": "جشن", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_dance", "text": "رقص", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      
+      { "id": "t_tear", "text": "اشک", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_cry", "text": "گریه", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_grief", "text": "غصه", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_loss", "text": "فقدان", "type": "word", "visuals": { "color_hex": "#000080" } },
+      
+      { "id": "t_shout", "text": "فریاد", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_fist", "text": "مشت", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_rage", "text": "خشم", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_fight", "text": "دعوا", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      
+      { "id": "t_shiver", "text": "لرزش", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_scream", "text": "جیغ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_run", "text": "فرار", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_pale", "text": "رنگ‌پریدگی", "type": "word", "visuals": { "color_hex": "#F5F5F5" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_joy",
+        "display_name": "شادی (Joy)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_smile", "t_laugh", "t_party", "t_dance"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sadness",
+        "display_name": "غم (Sadness)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_tear", "t_cry", "t_grief", "t_loss"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_anger",
+        "display_name": "خشم (Anger)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_shout", "t_fist", "t_rage", "t_fight"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_fear",
+        "display_name": "ترس (Fear)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_shiver", "t_scream", "t_run", "t_pale"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_smile", "t_tear", "t_shout", "t_shiver"],
+      ["t_laugh", "t_cry", "t_fist", "t_scream"],
+      ["t_party", "t_grief", "t_rage", "t_run"],
+      ["t_dance", "t_loss", "t_fight", "t_pale"]
+    ]
+  }
+}

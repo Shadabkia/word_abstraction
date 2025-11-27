@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_10_2_mind",
+    "chapter": 10,
+    "level_index": 47,
+    "version": "1.0.0",
+    "title": "ذهن (The Mind)",
+    "description": "Logic vs Imagination. The duality of thought.",
+    "difficulty": 3,
+    "tags": ["universe", "psychology", "mind"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_math", "text": "ریاضی", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_formula", "text": "فرمول", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_logic", "text": "منطق", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_number", "text": "عدد", "type": "word", "visuals": { "color_hex": "#000000" } },
+      
+      { "id": "t_dream", "text": "رویا", "type": "word", "visuals": { "color_hex": "#9370DB" } },
+      { "id": "t_art", "text": "هنر", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_color", "text": "رنگ", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_poem", "text": "شعر", "type": "word", "visuals": { "color_hex": "#FF1493" } },
+      
+      { "id": "t_history", "text": "تاریخ", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_memory", "text": "خاطره", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_past", "text": "گذشته", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_remember", "text": "یادآوری", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      
+      { "id": "t_love", "text": "عشق", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_fear", "text": "ترس", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_hope", "text": "امید", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_soul", "text": "روح", "type": "word", "visuals": { "color_hex": "#F0F8FF" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_logic",
+        "display_name": "منطق (Logic)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_math", "t_formula", "t_logic", "t_number"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_imagination",
+        "display_name": "تخیل (Imagination)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_dream", "t_art", "t_color", "t_poem"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_memory",
+        "display_name": "حافظه (Memory)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_history", "t_memory", "t_past", "t_remember"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_emotion",
+        "display_name": "احساس (Emotion)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_love", "t_fear", "t_hope", "t_soul"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_math", "t_dream", "t_history", "t_love"],
+      ["t_formula", "t_art", "t_memory", "t_fear"],
+      ["t_logic", "t_color", "t_past", "t_hope"],
+      ["t_number", "t_poem", "t_remember", "t_soul"]
+    ]
+  }
+}

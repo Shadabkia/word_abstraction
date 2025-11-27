@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_9_2_compounds",
+    "chapter": 9,
+    "level_index": 42,
+    "version": "1.0.0",
+    "title": "کلمات مرکب (Compound Words)",
+    "description": "Shared roots. Group by suffix.",
+    "difficulty": 3,
+    "tags": ["abstract", "language", "morphology"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_golkhaneh", "text": "گلخانه", "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_ketabkhaneh", "text": "کتابخانه", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_ashpazkhaneh", "text": "آشپزخانه", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_karkhaneh", "text": "کارخانه", "type": "word", "visuals": { "color_hex": "#708090" } },
+      
+      { "id": "t_rooznameh", "text": "روزنامه", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_govahinameh", "text": "گواهینامه", "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_shenasnameh", "text": "شناسنامه", "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_salnameh", "text": "سالنامه", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      
+      { "id": "t_daneshgah", "text": "دانشگاه", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_foroodgah", "text": "فرودگاه", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_arayeshgah", "text": "آرایشگاه", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_istgah", "text": "ایستگاه", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_baghban", "text": "باغبان", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_negahban", "text": "نگهبان", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_darban", "text": "دربان", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_mizban", "text": "میزبان", "type": "word", "visuals": { "color_hex": "#DAA520" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_khaneh",
+        "display_name": "خانه (House/Place)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_golkhaneh", "t_ketabkhaneh", "t_ashpazkhaneh", "t_karkhaneh"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_nameh",
+        "display_name": "نامه (Letter/Doc)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_rooznameh", "t_govahinameh", "t_shenasnameh", "t_salnameh"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_gah",
+        "display_name": "گاه (Place/Time)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_daneshgah", "t_foroodgah", "t_arayeshgah", "t_istgah"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_ban",
+        "display_name": "بان (Keeper)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_baghban", "t_negahban", "t_darban", "t_mizban"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_golkhaneh", "t_rooznameh", "t_daneshgah", "t_baghban"],
+      ["t_ketabkhaneh", "t_govahinameh", "t_foroodgah", "t_negahban"],
+      ["t_ashpazkhaneh", "t_shenasnameh", "t_arayeshgah", "t_darban"],
+      ["t_karkhaneh", "t_salnameh", "t_istgah", "t_mizban"]
+    ]
+  }
+}

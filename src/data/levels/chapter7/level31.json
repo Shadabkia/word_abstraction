@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "id": "lvl_7_1_day",
+    "chapter": 7,
+    "level_index": 31,
+    "version": "1.0.0",
+    "title": "شبانه روز (The Day)",
+    "description": "From sunrise to sunset. Cycle of the day.",
+    "difficulty": 3,
+    "tags": ["time", "chronology", "daily_life"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_sunrise", "text": "طلوع", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_breakfast", "text": "صبحانه", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_rooster", "text": "خروس", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_wakeup", "text": "بیدار شدن", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      
+      { "id": "t_noon", "text": "ظهر", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_lunch", "text": "ناهار", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_sun_high", "text": "آفتاب", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_work", "text": "کار", "type": "word", "visuals": { "color_hex": "#808080" } },
+      
+      { "id": "t_sunset", "text": "غروب", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_evening", "text": "عصر", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_tea_time", "text": "عصرانه", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_shadow", "text": "سایه", "type": "word", "visuals": { "color_hex": "#696969" } },
+      
+      { "id": "t_night", "text": "شب", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_dinner", "text": "شام", "type": "word", "visuals": { "color_hex": "#483D8B" } },
+      { "id": "t_moon", "text": "ماه", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_sleep", "text": "خواب", "type": "word", "visuals": { "color_hex": "#000080" } },
+
+      { "id": "t_morning", "text": "صبح", "type": "word", "visuals": { "color_hex": "#87CEFA" } },
+      { "id": "t_midday", "text": "نیمروز", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_dusk", "text": "سرشب", "type": "word", "visuals": { "color_hex": "#FF7F50" } },
+      { "id": "t_midnight", "text": "نیمه‌شب", "type": "word", "visuals": { "color_hex": "#000000" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_morning",
+        "display_name": "صبح (Morning)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_sunrise", "t_breakfast", "t_rooster", "t_wakeup"] },
+        "outcomes": { "reveal_ids": ["t_morning", "t_midday", "t_dusk", "t_midnight"] }
+      },
+      {
+        "id": "grp_noon",
+        "display_name": "ظهر (Noon)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_noon", "t_lunch", "t_sun_high", "t_work"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_evening",
+        "display_name": "عصر (Evening)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_sunset", "t_evening", "t_tea_time", "t_shadow"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_night",
+        "display_name": "شب (Night)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_night", "t_dinner", "t_moon", "t_sleep"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_times",
+        "display_name": "اوقات (Times)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_morning", "t_midday", "t_dusk", "t_midnight"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_sunrise", "t_noon", "t_sunset", "t_night"],
+      ["t_breakfast", "t_lunch", "t_evening", "t_dinner"],
+      ["t_rooster", "t_sun_high", "t_tea_time", "t_moon"],
+      ["t_wakeup", "t_work", "t_shadow", "t_sleep"]
+    ]
+  }
+}

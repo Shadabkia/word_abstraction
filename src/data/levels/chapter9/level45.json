@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_9_5_mirage",
+    "chapter": 9,
+    "level_index": 45,
+    "version": "1.0.0",
+    "title": "سراب (The Mirage)",
+    "description": "Nothing is what it seems. Dispel the illusions.",
+    "difficulty": 5,
+    "tags": ["boss", "abstract", "illusion", "reality"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_oasis", "text": "واحه", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_shade", "text": "سایه", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_water", "text": "آب", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_palm", "text": "نخل", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      
+      { "id": "t_monster", "text": "هیولا", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_fly", "text": "پرواز", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_gold", "text": "طلا", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_magic", "text": "جادو", "type": "word", "visuals": { "color_hex": "#9370DB" } },
+      
+      { "id": "t_hat", "text": "کلاه", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_wand", "text": "چوب‌دستی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_rabbit", "text": "خرگوش", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_card", "text": "کارت", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      
+      { "id": "t_face", "text": "صورت", "type": "word", "visuals": { "color_hex": "#FFE4C4" } },
+      { "id": "t_twin", "text": "دوقلو", "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      { "id": "t_echo", "text": "پژواک", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_reflection", "text": "انعکاس", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      
+      { "id": "t_sand", "text": "شن", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+      { "id": "t_heat", "text": "گرما", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_thirst", "text": "تشنگی", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
+      { "id": "t_sun", "text": "خورشید", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_dream", "text": "رویا", "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_sleep", "text": "خواب", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_bed", "text": "تخت", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_pillow", "text": "بالش", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      
+      { "id": "t_trick", "text": "حیله", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_hand", "text": "دست", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_smoke", "text": "دود", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_mirror", "text": "آینه", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      
+      { "id": "t_glass", "text": "شیشه", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_light", "text": "نور", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+      { "id": "t_sound", "text": "صدا", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_image", "text": "تصویر", "type": "word", "visuals": { "color_hex": "#FF00FF" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_mirage",
+        "display_name": "سراب (Mirage)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_oasis", "t_shade", "t_water", "t_palm"] },
+        "outcomes": { "reveal_ids": ["t_sand", "t_heat", "t_thirst", "t_sun"] }
+      },
+      {
+        "id": "grp_dream",
+        "display_name": "رویا (Dream)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_monster", "t_fly", "t_gold", "t_magic"] },
+        "outcomes": { "reveal_ids": ["t_dream", "t_sleep", "t_bed", "t_pillow"] }
+      },
+      {
+        "id": "grp_trick",
+        "display_name": "شعبده (Trick)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_hat", "t_wand", "t_rabbit", "t_card"] },
+        "outcomes": { "reveal_ids": ["t_trick", "t_hand", "t_smoke", "t_mirror"] }
+      },
+      {
+        "id": "grp_reflect",
+        "display_name": "انعکاس (Reflection)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_face", "t_twin", "t_echo", "t_reflection"] },
+        "outcomes": { "reveal_ids": ["t_glass", "t_light", "t_sound", "t_image"] }
+      },
+      {
+        "id": "grp_desert",
+        "display_name": "بیابان (Desert)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_sand", "t_heat", "t_thirst", "t_sun"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_reality",
+        "display_name": "واقعیت (Reality)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_dream", "t_sleep", "t_bed", "t_pillow"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_stage",
+        "display_name": "صحنه (Stage)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_trick", "t_hand", "t_smoke", "t_mirror"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_physics",
+        "display_name": "فیزیک (Physics)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_glass", "t_light", "t_sound", "t_image"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_oasis", "t_monster", "t_hat", "t_face"],
+      ["t_shade", "t_fly", "t_wand", "t_twin"],
+      ["t_water", "t_gold", "t_rabbit", "t_echo"],
+      ["t_palm", "t_magic", "t_card", "t_reflection"]
+    ]
+  }
+}

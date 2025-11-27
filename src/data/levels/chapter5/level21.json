@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_5_1_shahnameh",
+    "chapter": 5,
+    "level_index": 21,
+    "version": "1.0.0",
+    "title": "شاهنامه (The Shahnameh)",
+    "description": "Heroes, Demons, and Legends.",
+    "difficulty": 3,
+    "tags": ["culture", "mythology", "literature"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_rostam", "text": "رستم", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_sohrab", "text": "سهراب", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_zal", "text": "زال", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_siavash", "text": "سیاوش", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      
+      { "id": "t_div_sepid", "text": "دیو سفید", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_zahhak", "text": "ضحاک", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_afrasiyab", "text": "افراسیاب", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_akvan", "text": "اکوان دیو", "type": "word", "visuals": { "color_hex": "#000000" } },
+      
+      { "id": "t_simorgh", "text": "سیمرغ", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_rakhsh", "text": "رخش", "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_gorz", "text": "گرز گاو سر", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_shahnameh", "text": "شاهنامه", "type": "word", "visuals": { "color_hex": "#8B4513" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_heroes",
+        "display_name": "پهلوانان (Heroes)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_rostam", "t_sohrab", "t_zal", "t_siavash"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_villains",
+        "display_name": "ضد قهرمانان (Antagonists)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_div_sepid", "t_zahhak", "t_afrasiyab", "t_akvan"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_symbols",
+        "display_name": "نمادها (Symbols)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_simorgh", "t_rakhsh", "t_gorz", "t_shahnameh"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_rostam", "t_akvan", "t_simorgh", "t_sohrab"],
+      ["t_zahhak", "t_rakhsh", "t_zal", "t_div_sepid"],
+      ["t_gorz", "t_afrasiyab", "t_siavash", "t_shahnameh"]
+    ]
+  }
+}

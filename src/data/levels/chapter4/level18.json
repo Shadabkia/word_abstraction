@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "id": "lvl_4_3_geography",
+    "chapter": 4,
+    "level_index": 18,
+    "version": "1.0.0",
+    "title": "جغرافیا (Geography)",
+    "description": "Zoom out. From City to Continent.",
+    "difficulty": 3,
+    "tags": ["geography", "places", "zoom"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_tehran", "text": "تهران", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_paris", "text": "پاریس", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_cairo", "text": "قاهره", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_sydney", "text": "سیدنی", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      
+      { "id": "t_iran", "text": "ایران", "type": "word", "visuals": { "color_hex": "#008000" } },
+      { "id": "t_france", "text": "فرانسه", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      { "id": "t_egypt", "text": "مصر", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_australia", "text": "استرالیا", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_asia", "text": "آسیا", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_europe", "text": "اروپا", "type": "word", "visuals": { "color_hex": "#4169E1" } },
+      { "id": "t_africa", "text": "آفریقا", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_oceania", "text": "اقیانوسیه", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      
+      { "id": "t_map", "text": "نقشه", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_globe", "text": "کره جغرافیایی", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_compass", "text": "قطب‌نما", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_atlas", "text": "اطلس", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_mountain", "text": "کوه", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_river", "text": "رودخانه", "type": "word", "visuals": { "color_hex": "#0000FF" } },
+      { "id": "t_desert", "text": "کویر", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+      { "id": "t_ocean", "text": "اقیانوس", "type": "word", "visuals": { "color_hex": "#000080" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_cities",
+        "display_name": "شهرها (Cities)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_tehran", "t_paris", "t_cairo", "t_sydney"] },
+        "outcomes": { "reveal_ids": ["t_iran", "t_france", "t_egypt", "t_australia"] }
+      },
+      {
+        "id": "grp_countries",
+        "display_name": "کشورها (Countries)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_iran", "t_france", "t_egypt", "t_australia"] },
+        "outcomes": { "reveal_ids": ["t_asia", "t_europe", "t_africa", "t_oceania"] }
+      },
+      {
+        "id": "grp_continents",
+        "display_name": "قاره‌ها (Continents)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_asia", "t_europe", "t_africa", "t_oceania"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار (Tools)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_map", "t_globe", "t_compass", "t_atlas"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_features",
+        "display_name": "عوارض زمین (Features)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_mountain", "t_river", "t_desert", "t_ocean"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_tehran", "t_map", "t_mountain", "t_paris"],
+      ["t_cairo", "t_globe", "t_river", "t_sydney"],
+      ["t_compass", "t_desert", "t_atlas", "t_ocean"]
+    ]
+  }
+}

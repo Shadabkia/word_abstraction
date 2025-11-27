@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_9_3_paradox",
+    "chapter": 9,
+    "level_index": 43,
+    "version": "1.0.0",
+    "title": "تضاد (The Paradox)",
+    "description": "Things that are hidden. Things that deceive.",
+    "difficulty": 3,
+    "tags": ["abstract", "illusion", "trickery"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_card", "text": "کارت", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_coin", "text": "سکه", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_dove", "text": "کبوتر", "type": "word", "visuals": { "color_hex": "#F8F8FF" } },
+      { "id": "t_rabbit", "text": "خرگوش", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      
+      { "id": "t_chameleon", "text": "آفتاب‌پرست", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_stick", "text": "حشره چوبی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_moth", "text": "بید", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_tiger", "text": "ببر", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      
+      { "id": "t_mask", "text": "ماسک", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_wig", "text": "کلاه‌گیس", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_makeup", "text": "گریم", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_costume", "text": "لباس مبدل", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      
+      { "id": "t_code", "text": "کد", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_secret", "text": "راز", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_agent", "text": "مامور", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_wire", "text": "شنود", "type": "word", "visuals": { "color_hex": "#C0C0C0" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_magic",
+        "display_name": "شعبده (Magic)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_card", "t_coin", "t_dove", "t_rabbit"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_camo",
+        "display_name": "استتار (Camouflage)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_chameleon", "t_stick", "t_moth", "t_tiger"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_disguise",
+        "display_name": "تغییر چهره (Disguise)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_mask", "t_wig", "t_makeup", "t_costume"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_spy",
+        "display_name": "جاسوسی (Spying)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_code", "t_secret", "t_agent", "t_wire"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_card", "t_chameleon", "t_mask", "t_code"],
+      ["t_coin", "t_stick", "t_wig", "t_secret"],
+      ["t_dove", "t_moth", "t_makeup", "t_agent"],
+      ["t_rabbit", "t_tiger", "t_costume", "t_wire"]
+    ]
+  }
+}

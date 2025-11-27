@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "id": "lvl_3_4_construction",
+    "chapter": 3,
+    "level_index": 14,
+    "version": "1.0.0",
+    "title": "ساختمان (Construction Site)",
+    "description": "Lay the foundation. Build the city.",
+    "difficulty": 3,
+    "tags": ["production", "architecture", "hard_labor"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_brick", "text": "آجر", "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_cement", "text": "سیمان", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_beam", "text": "تیرآهن", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_stone", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#696969" } },
+      
+      { "id": "t_crane", "text": "جرثقیل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_helmet", "text": "کلاه ایمنی", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_wheelbarrow", "text": "فرغون", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_shovel", "text": "بیل", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      
+      { "id": "t_architect", "text": "معمار", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_worker", "text": "کارگر", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_engineer", "text": "مهندس", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_mason", "text": "بنا", "type": "word", "visuals": { "color_hex": "#8FBC8F" } },
+      
+      { "id": "t_wall", "text": "دیوار", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_roof", "text": "سقف", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
+      { "id": "t_window", "text": "پنجره", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_building", "text": "ساختمان", "type": "word", "visuals": { "color_hex": "#778899" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_materials",
+        "display_name": "مصالح (Materials)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_brick", "t_cement", "t_beam", "t_stone"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_wall", "t_roof", "t_window", "t_building"]
+        }
+      },
+      {
+        "id": "grp_equip",
+        "display_name": "تجهیزات (Equipment)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_crane", "t_helmet", "t_wheelbarrow", "t_shovel"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_team",
+        "display_name": "تیم ساخت (Crew)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_architect", "t_worker", "t_engineer", "t_mason"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_structure",
+        "display_name": "سازه (Structure)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_wall", "t_roof", "t_window", "t_building"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_brick", "t_crane", "t_architect", "t_cement"],
+      ["t_beam", "t_helmet", "t_worker", "t_stone"],
+      ["t_shovel", "t_engineer", "t_mason", "t_wheelbarrow"]
+    ]
+  }
+}

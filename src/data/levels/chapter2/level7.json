@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "id": "lvl_2_2_garden",
+    "chapter": 2,
+    "level_index": 2,
+    "version": "1.0.0",
+    "title": "باغچه (The Garden)",
+    "description": "Assemble the parts to identify the plants.",
+    "difficulty": 3,
+    "tags": ["plants", "botany", "parts_to_whole"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      
+      { "id": "t_root",     "text": "ریشه",      "type": "word", "visuals": { "color_hex": "#8B4513" } }, 
+      { "id": "t_trunk",    "text": "تنه",       "type": "word", "visuals": { "color_hex": "#A0522D" } }, 
+      { "id": "t_bark",     "text": "پوست‌درخت", "type": "word", "visuals": { "color_hex": "#D2691E" } }, 
+      { "id": "t_branch",   "text": "شاخه",      "type": "word", "visuals": { "color_hex": "#CD853F" } }, 
+
+      
+      { "id": "t_petal",    "text": "گلبرگ",     "type": "word", "visuals": { "color_hex": "#FF69B4" } }, 
+      { "id": "t_stem",     "text": "ساقه",      "type": "word", "visuals": { "color_hex": "#32CD32" } }, 
+      { "id": "t_bud",      "text": "غنچه",      "type": "word", "visuals": { "color_hex": "#FF1493" } }, 
+      { "id": "t_thorn",    "text": "خار",       "type": "word", "visuals": { "color_hex": "#006400" } }, 
+
+      
+      { "id": "t_bee",      "text": "زنبور",     "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_butterfly","text": "پروانه",    "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_ladybug",  "text": "کفشدوزک",   "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_ant",      "text": "مورچه",     "type": "word", "visuals": { "color_hex": "#8B4513" } },
+
+      
+      { "id": "t_shovel",   "text": "بیلچه",     "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_watercan", "text": "آبپاش",     "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_shears",   "text": "قیچی",      "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_pot",      "text": "گلدان",     "type": "word", "visuals": { "color_hex": "#B8860B" } },
+
+      
+      { "id": "t_icon_tree","text": "★ درخت",    "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_pine", "color_hex": "#228B22" } },
+      { "id": "t_pine",     "text": "کاج",       "type": "word", "visuals": { "color_hex": "#006400" } },
+      { "id": "t_oak",      "text": "بلوط",      "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_willow",   "text": "بید‌مجنون", "type": "word", "visuals": { "color_hex": "#556B2F" } },
+
+      
+      { "id": "t_icon_flwr","text": "★ گل",      "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_rose", "color_hex": "#FF00FF" } },
+      { "id": "t_rose",     "text": "رز",        "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_tulip",    "text": "لاله",      "type": "word", "visuals": { "color_hex": "#FF6347" } },
+      { "id": "t_narcissus","text": "نرگس",      "type": "word", "visuals": { "color_hex": "#FFFFE0" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_tree_parts",
+        "display_name": "اجزای درخت (Tree Parts)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_root", "t_trunk", "t_bark", "t_branch"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_tree", "t_pine", "t_oak", "t_willow"],
+          "sound_fx": "sfx_leaves_rustle"
+        },
+        "meta": { "hint": "What are the parts of a large plant?" }
+      },
+      {
+        "id": "grp_flower_parts",
+        "display_name": "اجزای گل (Flower Parts)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_petal", "t_stem", "t_bud", "t_thorn"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_flwr", "t_rose", "t_tulip", "t_narcissus"],
+          "sound_fx": "sfx_magic_sparkle"
+        },
+        "meta": { "hint": "Think of a Rose." }
+      },
+      {
+        "id": "grp_insects",
+        "display_name": "حشرات (Insects)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_bee", "t_butterfly", "t_ladybug", "t_ant"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار باغبانی (Garden Tools)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_shovel", "t_watercan", "t_shears", "t_pot"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_trees",
+        "display_name": "انواع درخت (Trees)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_tree", "t_pine", "t_oak", "t_willow"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_flowers",
+        "display_name": "انواع گل (Flowers)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_flwr", "t_rose", "t_tulip", "t_narcissus"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_root",    "t_shovel",  "t_bee",     "t_petal"],
+      ["t_bark",    "t_pot",     "t_ant",     "t_stem"],
+      ["t_trunk",   "t_shears",  "t_ladybug", "t_bud"],
+      ["t_branch",  "t_watercan","t_butterfly","t_thorn"]
+    ],
+    "comment": "Organized columns (Anatomy vs Tools vs Life) that need to be transposed to rows."
+  }
+}

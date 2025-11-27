@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "id": "lvl_4_4_chemistry",
+    "chapter": 4,
+    "level_index": 19,
+    "version": "1.0.0",
+    "title": "آزمایشگاه (Chemistry Lab)",
+    "description": "Heat it up. Solid to Liquid to Gas.",
+    "difficulty": 3,
+    "tags": ["science", "states_of_matter", "phase_change"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_ice", "text": "یخ", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_iron", "text": "آهن", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_stone", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_wood", "text": "چوب", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_water", "text": "آب", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_mercury", "text": "جیوه", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_oil", "text": "روغن", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_milk", "text": "شیر", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      
+      { "id": "t_steam", "text": "بخار", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_oxygen", "text": "اکسیژن", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_helium", "text": "هلیوم", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+      { "id": "t_co2", "text": "دی‌اکسید کربن", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      
+      { "id": "t_beaker", "text": "بشر", "type": "word", "visuals": { "color_hex": "#F0FFFF" } },
+      { "id": "t_microscope", "text": "میکروسکوپ", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_thermometer", "text": "دماسنج", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_goggles", "text": "عینک محافظ", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      
+      { "id": "t_chemist", "text": "شیمیدان", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_lab_coat", "text": "روپوش", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_formula", "text": "فرمول", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_experiment", "text": "آزمایش", "type": "word", "visuals": { "color_hex": "#32CD32" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_solids",
+        "display_name": "جامدات (Solids)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_ice", "t_iron", "t_stone", "t_wood"] },
+        "outcomes": { "reveal_ids": ["t_water", "t_mercury", "t_oil", "t_milk"] }
+      },
+      {
+        "id": "grp_liquids",
+        "display_name": "مایعات (Liquids)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_water", "t_mercury", "t_oil", "t_milk"] },
+        "outcomes": { "reveal_ids": ["t_steam", "t_oxygen", "t_helium", "t_co2"] }
+      },
+      {
+        "id": "grp_gases",
+        "display_name": "گازها (Gases)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_steam", "t_oxygen", "t_helium", "t_co2"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_equipment",
+        "display_name": "تجهیزات (Equipment)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_beaker", "t_microscope", "t_thermometer", "t_goggles"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_science",
+        "display_name": "دانش (Science)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_chemist", "t_lab_coat", "t_formula", "t_experiment"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_ice", "t_beaker", "t_chemist", "t_iron"],
+      ["t_stone", "t_microscope", "t_lab_coat", "t_wood"],
+      ["t_thermometer", "t_formula", "t_goggles", "t_experiment"]
+    ]
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_3_5_grand_bazaar",
+    "chapter": 3,
+    "level_index": 15,
+    "version": "1.0.0",
+    "title": "بازار بزرگ (The Grand Bazaar)",
+    "description": "The economy is complex. Everything is connected.",
+    "difficulty": 5,
+    "tags": ["boss", "production", "cross_dependency", "chaos"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_wheat", "text": "گندم", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_flour", "text": "آرد", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      { "id": "t_sugar", "text": "شکر", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_oil", "text": "روغن", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_wood", "text": "چوب", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_nail", "text": "میخ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_glue", "text": "چسب", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_paint", "text": "رنگ", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      
+      { "id": "t_cotton", "text": "پنبه", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      { "id": "t_thread", "text": "نخ", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_fabric", "text": "پارچه", "type": "word", "visuals": { "color_hex": "#DA70D6" } },
+      { "id": "t_button", "text": "دکمه", "type": "word", "visuals": { "color_hex": "#4169E1" } },
+      
+      { "id": "t_brick", "text": "آجر", "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_cement", "text": "سیمان", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_beam", "text": "تیرآهن", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_stone", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#696969" } },
+      
+      { "id": "t_bread", "text": "نان", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_cake", "text": "کیک", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_sweet", "text": "شیرینی", "type": "word", "visuals": { "color_hex": "#FFB6C1" } },
+      { "id": "t_cookie", "text": "کلوچه", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      
+      { "id": "t_chair", "text": "صندلی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_table", "text": "میز", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_shelf", "text": "قفسه", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_door", "text": "در", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      
+      { "id": "t_shirt", "text": "پیراهن", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_pants", "text": "شلوار", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_coat", "text": "کت", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_hat", "text": "کلاه", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      
+      { "id": "t_wall", "text": "دیوار", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_roof", "text": "سقف", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
+      { "id": "t_window", "text": "پنجره", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_building", "text": "ساختمان", "type": "word", "visuals": { "color_hex": "#778899" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_raw_food",
+        "display_name": "مواد غذایی (Raw Food)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_wheat", "t_flour", "t_sugar", "t_oil"] },
+        "outcomes": { "reveal_ids": ["t_bread", "t_chair", "t_shirt", "t_wall"] }
+      },
+      {
+        "id": "grp_raw_build",
+        "display_name": "مواد ساخت (Raw Build)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_wood", "t_nail", "t_glue", "t_paint"] },
+        "outcomes": { "reveal_ids": ["t_cake", "t_table", "t_pants", "t_roof"] }
+      },
+      {
+        "id": "grp_raw_cloth",
+        "display_name": "مواد پارچه (Raw Cloth)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_cotton", "t_thread", "t_fabric", "t_button"] },
+        "outcomes": { "reveal_ids": ["t_sweet", "t_shelf", "t_coat", "t_window"] }
+      },
+      {
+        "id": "grp_raw_house",
+        "display_name": "مصالح بنایی (Raw Materials)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_brick", "t_cement", "t_beam", "t_stone"] },
+        "outcomes": { "reveal_ids": ["t_cookie", "t_door", "t_hat", "t_building"] }
+      },
+      {
+        "id": "grp_final_bakery",
+        "display_name": "محصولات نانوایی (Bakery Products)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_bread", "t_cake", "t_sweet", "t_cookie"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_final_furn",
+        "display_name": "مبلمان (Furniture)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_chair", "t_table", "t_shelf", "t_door"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_final_cloth",
+        "display_name": "پوشاک (Clothing)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_shirt", "t_pants", "t_coat", "t_hat"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_final_realestate",
+        "display_name": "املاک (Real Estate)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_wall", "t_roof", "t_window", "t_building"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_wheat", "t_wood", "t_cotton", "t_brick"],
+      ["t_flour", "t_nail", "t_thread", "t_cement"],
+      ["t_sugar", "t_glue", "t_fabric", "t_beam"],
+      ["t_oil",   "t_paint","t_button", "t_stone"]
+    ]
+  }
+}

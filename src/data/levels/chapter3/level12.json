@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "id": "lvl_3_2_workshop",
+    "chapter": 3,
+    "level_index": 12,
+    "version": "1.0.0",
+    "title": "کارگاه (The Workshop)",
+    "description": "Build furniture from raw materials.",
+    "difficulty": 2,
+    "tags": ["production", "tools", "craft"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_wood", "text": "چوب", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_nail", "text": "میخ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_glue", "text": "چسب", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_paint", "text": "رنگ", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      
+      { "id": "t_saw", "text": "اره", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_hammer", "text": "چکش", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
+      { "id": "t_drill", "text": "دریل", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_ruler", "text": "متر", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      
+      { "id": "t_carpenter", "text": "نجار", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_workshop", "text": "کارگاه", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_sketch", "text": "نقشه", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_pencil", "text": "مداد", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      
+      { "id": "t_chair", "text": "صندلی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_table", "text": "میز", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_shelf", "text": "قفسه", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_door", "text": "در", "type": "word", "visuals": { "color_hex": "#D2691E" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_raw",
+        "display_name": "مواد اولیه (Raw Materials)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_wood", "t_nail", "t_glue", "t_paint"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_chair", "t_table", "t_shelf", "t_door"]
+        }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار (Tools)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_saw", "t_hammer", "t_drill", "t_ruler"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_craft",
+        "display_name": "طراحی (Design & Craft)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_carpenter", "t_workshop", "t_sketch", "t_pencil"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_furniture",
+        "display_name": "مبلمان (Furniture)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_chair", "t_table", "t_shelf", "t_door"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_wood", "t_saw", "t_carpenter", "t_drill"],
+      ["t_nail", "t_hammer", "t_workshop", "t_glue"],
+      ["t_paint", "t_ruler", "t_sketch", "t_pencil"]
+    ]
+  }
+}

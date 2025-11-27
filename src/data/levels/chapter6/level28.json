@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_6_3_tech",
+    "chapter": 6,
+    "level_index": 28,
+    "version": "1.0.0",
+    "title": "تکنولوژی (Technology)",
+    "description": "Hardware meets Software. Debug the system.",
+    "difficulty": 3,
+    "tags": ["city", "tech", "digital"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_mouse", "text": "موس", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_keyboard", "text": "کیبورد", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_monitor", "text": "مانیتور", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_printer", "text": "پرینتر", "type": "word", "visuals": { "color_hex": "#808080" } },
+      
+      { "id": "t_app", "text": "اپلیکیشن", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_windows", "text": "ویندوز", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_browser", "text": "مرورگر", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_android", "text": "اندروید", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      
+      { "id": "t_click", "text": "کلیک", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_scroll", "text": "اسکرول", "type": "word", "visuals": { "color_hex": "#9370DB" } },
+      { "id": "t_download", "text": "دانلود", "type": "word", "visuals": { "color_hex": "#008000" } },
+      { "id": "t_upload", "text": "آپلود", "type": "word", "visuals": { "color_hex": "#4169E1" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_hardware",
+        "display_name": "سخت‌افزار (Hardware)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_mouse", "t_keyboard", "t_monitor", "t_printer"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_software",
+        "display_name": "نرم‌افزار (Software)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_app", "t_windows", "t_browser", "t_android"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_actions",
+        "display_name": "عملیات (Actions)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_click", "t_scroll", "t_download", "t_upload"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_mouse", "t_app", "t_click", "t_keyboard"],
+      ["t_windows", "t_scroll", "t_monitor", "t_browser"],
+      ["t_printer", "t_download", "t_android", "t_upload"]
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "id": "lvl_1_5_spring_cleaning",
+    "chapter": 1,
+    "level_index": 5,
+    "version": "1.0.0",
+    "title": "خانه تکانی (Spring Cleaning)",
+    "description": "The house is a mess. Clean it up to see the result.",
+    "difficulty": 3,
+    "tags": ["boss", "cleaning", "verbs", "adjectives"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      
+      { "id": "t_bleach",     "text": "وایتکس",       "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_detergent",  "text": "مایع‌ظرفشویی", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_powder",     "text": "پودر‌رخت",     "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_glass_cln",  "text": "شیشه‌شور",     "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+
+      
+      { "id": "t_window",     "text": "پنجره",        "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_floor",      "text": "کف",           "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_wall",       "text": "دیوار",        "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_counter",    "text": "پیشخوان",      "type": "word", "visuals": { "color_hex": "#A0522D" } },
+
+      
+      { "id": "t_dust",       "text": "گرد‌و‌خاک",    "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_stain",      "text": "لکه",          "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_trash",      "text": "زباله",        "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_cobweb",     "text": "تار‌عنکبوت",   "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+
+      
+      { "id": "t_broom",      "text": "جارو",         "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_mop",        "text": "تی",           "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      { "id": "t_cloth",      "text": "دستمال",       "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_sponge",     "text": "اسفنج",        "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+
+      
+      { "id": "t_icon_act",   "text": "★ عمل",        "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_gear" } },
+      { "id": "t_sweeping",   "text": "جارو‌زدن",     "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_wiping",     "text": "دستمال‌کشی",   "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      { "id": "t_scrubbing",  "text": "ساییدن",       "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+
+      
+      { "id": "t_icon_res",   "text": "★ نتیجه",      "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_sparkle" } },
+      { "id": "t_clean",      "text": "تمیز",         "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_shiny",      "text": "براق",         "type": "word", "visuals": { "color_hex": "#F0FFFF" } },
+      { "id": "t_fresh",      "text": "معطر",         "type": "word", "visuals": { "color_hex": "#98FB98" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_mess",
+        "display_name": "آلودگی‌ها (The Mess)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_dust", "t_stain", "t_trash", "t_cobweb"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_res", "t_clean", "t_shiny", "t_fresh"],
+          "sound_fx": "sfx_magic_chime"
+        },
+        "meta": { "hint": "Get rid of the dirty things." }
+      },
+      {
+        "id": "grp_tools",
+        "display_name": "ابزار نظافت (Cleaning Tools)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_broom", "t_mop", "t_cloth", "t_sponge"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_act", "t_sweeping", "t_wiping", "t_scrubbing"],
+          "sound_fx": "sfx_work_noise"
+        },
+        "meta": { "hint": "Group the items you hold in your hand." }
+      },
+      {
+        "id": "grp_detergents",
+        "display_name": "شوینده‌ها (Detergents)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_bleach", "t_detergent", "t_powder", "t_glass_cln"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_surfaces",
+        "display_name": "سطوح (Surfaces)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_window", "t_floor", "t_wall", "t_counter"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_actions",
+        "display_name": "فعالیت‌ها (Actions)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_act", "t_sweeping", "t_wiping", "t_scrubbing"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_results",
+        "display_name": "نتیجه کار (Results)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_res", "t_clean", "t_shiny", "t_fresh"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_bleach",  "t_dust",    "t_broom",   "t_window"],
+      ["t_detergent","t_stain",   "t_mop",     "t_floor"],
+      ["t_powder",  "t_trash",   "t_cloth",   "t_wall"],
+      ["t_glass_cln","t_cobweb",  "t_sponge",  "t_counter"]
+    ],
+    "comment": "Vertical Columns pattern. Easy for the eye to scan, but requires moving everything to horizontal rows."
+  }
+}

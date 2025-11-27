@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "id": "lvl_1_1_breakfast",
+    "chapter": 1,
+    "level_index": 1,
+    "version": "1.1.0",
+    "title": "سفره صبحانه",
+    "description": "Start your day. Organize the breakfast table.",
+    "difficulty": 1,
+    "tags": ["tutorial", "food", "static"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cheese", "text": "پنیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_butter", "text": "کره", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_cream", "text": "خامه", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_milk",   "text": "شیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+
+      { "id": "t_sangak", "text": "نان سنگک", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_barbari","text": "نان بربری", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_toast",  "text": "نان تست", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_lavash", "text": "نان لواش", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+
+      { "id": "t_jam",    "text": "مربا", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_honey",  "text": "عسل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_tea",    "text": "چای شیرین", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sugar",  "text": "شکر", "type": "word", "visuals": { "color_hex": "#FFFFFF" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_dairy",
+        "display_name": "لبنیات (Dairy)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_cheese", "t_butter", "t_cream", "t_milk"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_breads",
+        "display_name": "نان‌ها (Breads)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_sangak", "t_barbari", "t_toast", "t_lavash"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sweet",
+        "display_name": "شیرینی‌جات (Sweets)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_jam", "t_honey", "t_tea", "t_sugar"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cheese",  "t_butter",  "t_cream",   "t_sangak"],
+      ["t_barbari", "t_toast",   "t_lavash",  "t_jam"],
+      ["t_honey",   "t_tea",     "t_sugar",   "t_milk"]
+    ],
+    "shuffle_logic": "Cyclic Displacement: Row 1 has 3 Dairy + 1 Bread. Row 2 has 3 Bread + 1 Sweet. Row 3 has 3 Sweet + 1 Dairy."
+  }
+}

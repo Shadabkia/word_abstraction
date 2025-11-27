@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "id": "lvl_6_1_transport",
+    "chapter": 6,
+    "level_index": 26,
+    "version": "1.0.0",
+    "title": "حمل و نقل (Transportation)",
+    "description": "Get around the city. Public vs Private.",
+    "difficulty": 3,
+    "tags": ["city", "transport", "urban"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_bus", "text": "اتوبوس", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_subway", "text": "مترو", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_taxi", "text": "تاکسی", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_train", "text": "قطار", "type": "word", "visuals": { "color_hex": "#708090" } },
+      
+      { "id": "t_car", "text": "ماشین شخصی", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_bicycle", "text": "دوچرخه", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_motorcycle", "text": "موتورسیکلت", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_scooter", "text": "اسکوتر", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      
+      { "id": "t_ticket", "text": "بلیط", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_station", "text": "ایستگاه", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_traffic_light", "text": "چراغ راهنمایی", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_bridge", "text": "پل عابر", "type": "word", "visuals": { "color_hex": "#A9A9A9" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_public",
+        "display_name": "حمل و نقل عمومی (Public)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_bus", "t_subway", "t_taxi", "t_train"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_private",
+        "display_name": "وسیله شخصی (Private)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_car", "t_bicycle", "t_motorcycle", "t_scooter"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_infra",
+        "display_name": "زیرساخت (Infrastructure)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_ticket", "t_station", "t_traffic_light", "t_bridge"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_bus", "t_car", "t_ticket", "t_motorcycle"],
+      ["t_subway", "t_bicycle", "t_station", "t_traffic_light"],
+      ["t_taxi", "t_train", "t_scooter", "t_bridge"]
+    ]
+  }
+}

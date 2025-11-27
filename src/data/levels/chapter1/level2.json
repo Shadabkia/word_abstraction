@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "id": "lvl_1_2_wardrobe",
+    "chapter": 1,
+    "level_index": 2,
+    "version": "1.0.0",
+    "title": "کمد لباس",
+    "description": "Sort the clothes by occasion and type.",
+    "difficulty": 1,
+    "tags": ["clothing", "static", "categorization"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      { "id": "t_suit",     "text": "کت‌شلوار", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_shirt",    "text": "پیراهن",   "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_tie",      "text": "کراوات",   "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_vest",     "text": "جلیقه",    "type": "word", "visuals": { "color_hex": "#708090" } },
+
+      { "id": "t_scarf",    "text": "شال‌گردن", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_hat",      "text": "کلاه",     "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_gloves",   "text": "دستکش",    "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_jacket",   "text": "کاپشن",    "type": "word", "visuals": { "color_hex": "#00008B" } },
+
+      { "id": "t_shoes",    "text": "کفش",      "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sneakers", "text": "کتونی",    "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_boots",    "text": "چکمه",     "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_sandals",  "text": "صندل",     "type": "word", "visuals": { "color_hex": "#D2B48C" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_formal",
+        "display_name": "لباس رسمی (Formal)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_suit", "t_shirt", "t_tie", "t_vest"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_winter",
+        "display_name": "لباس گرم (Winter)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_scarf", "t_hat", "t_gloves", "t_jacket"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_footwear",
+        "display_name": "پاپوش (Footwear)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_shoes", "t_sneakers", "t_boots", "t_sandals"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_suit",   "t_shirt",    "t_tie",      "t_boots"],
+      ["t_scarf",  "t_hat",      "t_gloves",   "t_vest"],
+      ["t_shoes",  "t_sneakers", "t_sandals",  "t_jacket"]
+    ],
+    "comment": "The Intruder Pattern again. Boots (Footwear) in Formal row. Vest (Formal) in Winter row. Jacket (Winter) in Footwear row."
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_10_5_unity",
+    "chapter": 10,
+    "level_index": 50,
+    "version": "1.0.0",
+    "title": "وحدت وجود (The Unity)",
+    "description": "The Final Boss. Existence, Nothingness, Life, Death.",
+    "difficulty": 5,
+    "tags": ["boss", "universe", "philosophy", "unity"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_quark", "text": "کوارک", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_photon", "text": "فوتون", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_gravity", "text": "گرانش", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_void", "text": "خلاء", "type": "word", "visuals": { "color_hex": "#111111" } },
+      
+      { "id": "t_cell", "text": "سلول", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_dna", "text": "دی‌ان‌ای", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      { "id": "t_pulse", "text": "تپش", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_breath", "text": "نفس", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      
+      { "id": "t_mind", "text": "ذهن", "type": "word", "visuals": { "color_hex": "#9370DB" } },
+      { "id": "t_soul", "text": "روح", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+      { "id": "t_thought", "text": "اندیشه", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_dream", "text": "رویا", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      
+      { "id": "t_decay", "text": "زوال", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_end", "text": "پایان", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_ruin", "text": "خرابه", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_silence", "text": "سکوت", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+
+      { "id": "t_nothingness", "text": "نیستی", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_empty", "text": "پوچ", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_null", "text": "صفر", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_abyss", "text": "مغاک", "type": "word", "visuals": { "color_hex": "#000000" } },
+
+      { "id": "t_life", "text": "زندگی", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_vitality", "text": "حیات", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_being", "text": "جان", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_alive", "text": "زنده", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+
+      { "id": "t_existence", "text": "هستی", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_reality", "text": "واقعیت", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_presence", "text": "حضور", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_is", "text": "بودن", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+
+      { "id": "t_death", "text": "مرگ", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_demise", "text": "وفات", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_gone", "text": "رفت", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_fini", "text": "تمام", "type": "word", "visuals": { "color_hex": "#808080" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_physics",
+        "display_name": "فیزیک (Physics)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_quark", "t_photon", "t_gravity", "t_void"] },
+        "outcomes": { "reveal_ids": ["t_nothingness", "t_empty", "t_null", "t_abyss"] }
+      },
+      {
+        "id": "grp_bio",
+        "display_name": "زیست (Biology)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_cell", "t_dna", "t_pulse", "t_breath"] },
+        "outcomes": { "reveal_ids": ["t_life", "t_vitality", "t_being", "t_alive"] }
+      },
+      {
+        "id": "grp_mind",
+        "display_name": "آگاهی (Consciousness)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_mind", "t_soul", "t_thought", "t_dream"] },
+        "outcomes": { "reveal_ids": ["t_existence", "t_reality", "t_presence", "t_is"] }
+      },
+      {
+        "id": "grp_entropy",
+        "display_name": "آنتروپی (Entropy)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_decay", "t_end", "t_ruin", "t_silence"] },
+        "outcomes": { "reveal_ids": ["t_death", "t_demise", "t_gone", "t_fini"] }
+      },
+      {
+        "id": "grp_final_nothing",
+        "display_name": "نیستی (Nothingness)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_nothingness", "t_empty", "t_null", "t_abyss"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_final_life",
+        "display_name": "زندگی (Life)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_life", "t_vitality", "t_being", "t_alive"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_final_exist",
+        "display_name": "هستی (Existence)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_existence", "t_reality", "t_presence", "t_is"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_final_death",
+        "display_name": "مرگ (Death)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_death", "t_demise", "t_gone", "t_fini"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_quark", "t_cell", "t_mind", "t_decay"],
+      ["t_photon", "t_dna", "t_soul", "t_end"],
+      ["t_gravity", "t_pulse", "t_thought", "t_ruin"],
+      ["t_void", "t_breath", "t_dream", "t_silence"]
+    ]
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_2_3_aviary",
+    "chapter": 2,
+    "level_index": 3,
+    "version": "1.0.0",
+    "title": "پرندگان (The Aviary)",
+    "description": "Listen to their songs. Separate the swimmers from the flyers.",
+    "difficulty": 4,
+    "tags": ["birds", "habitat", "sounds"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      { "id": "t_eagle",    "text": "عقاب",      "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_sparrow",  "text": "گنجشک",     "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_pigeon",   "text": "کبوتر",     "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_canary",   "text": "قناری",     "type": "word", "visuals": { "color_hex": "#FFD700" } },
+
+      { "id": "t_duck",     "text": "اردک",      "type": "word", "visuals": { "color_hex": "#008080" } },
+      { "id": "t_swan",     "text": "قو",        "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_goose",    "text": "غاز",       "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_pelican",  "text": "پلیکان",    "type": "word", "visuals": { "color_hex": "#FFDEAD" } },
+
+      { "id": "t_chirp",    "text": "چهچهه",     "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_caw",      "text": "قارقار",    "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_coo",      "text": "بغ‌بغ‌هو",  "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_quack",    "text": "کواک‌کواک", "type": "word", "visuals": { "color_hex": "#008080" } },
+
+      { "id": "t_nest",     "text": "لانه",      "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_cage",     "text": "قفس",       "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_coop",     "text": "مرغ‌دانی",  "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_hollow",   "text": "تنه درخت",  "type": "word", "visuals": { "color_hex": "#556B2F" } },
+
+      { "id": "t_icon_fly", "text": "★ پرواز",   "type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "icon_wing", "color_hex": "#87CEFA" } },
+      { "id": "t_wing",     "text": "بال",       "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#F0F8FF" } },
+      { "id": "t_sky",      "text": "آسمان",     "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_cloud",    "text": "ابر",       "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#FFFFFF" } },
+      
+      { "id": "t_icon_swim","text": "★ شنا",     "type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "icon_wave", "color_hex": "#40E0D0" } },
+      { "id": "t_webfoot",  "text": "پرده‌پا",   "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#FFA07A" } },
+      { "id": "t_pond",     "text": "برکه",      "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#20B2AA" } },
+      { "id": "t_rain",     "text": "باران",     "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#4682B4" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_flyers",
+        "display_name": "پرندگان پروازی (Flyers)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_eagle", "t_sparrow", "t_pigeon", "t_canary"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_fly", "t_wing", "t_sky", "t_cloud"],
+          "sound_fx": "sfx_wings_flap"
+        },
+        "meta": { "hint": "Birds that soar high." }
+      },
+      {
+        "id": "grp_swimmers",
+        "display_name": "پرندگان آبزی (Swimmers)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_duck", "t_swan", "t_goose", "t_pelican"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_swim", "t_webfoot", "t_pond", "t_rain"],
+          "sound_fx": "sfx_splash"
+        },
+        "meta": { "hint": "Birds that love the water." }
+      },
+      {
+        "id": "grp_sounds",
+        "display_name": "آوای پرندگان (Bird Sounds)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_chirp", "t_caw", "t_coo", "t_quack"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_homes",
+        "display_name": "خانه پرندگان (Habitats)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_nest", "t_cage", "t_coop", "t_hollow"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_flight",
+        "display_name": "مفهوم پرواز (Flight)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_fly", "t_wing", "t_sky", "t_cloud"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_swimming",
+        "display_name": "مفهوم شنا (Swimming)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_swim", "t_webfoot", "t_pond", "t_rain"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_eagle",   "t_nest",    "t_chirp",   "t_duck"],
+      ["t_caw",     "t_sparrow", "t_hollow",  "t_swan"], 
+      ["t_goose",   "t_cage",    "t_pigeon",  "t_coo"],
+      ["t_canary",  "t_quack",   "t_pelican", "t_coop"]
+    ],
+    "comment": "Note: 't_pond' (from Transform B) is NOT in initial_grid. This is a mistake in manual shuffle. Correcting to 't_hollow' (Static D)."
+  }
+}

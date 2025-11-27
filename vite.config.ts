@@ -56,7 +56,6 @@ export default defineConfig({
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          util: path.resolve(__dirname, 'util.html'),
         },
       },
     },
@@ -64,17 +63,5 @@ export default defineConfig({
       host: true,
       port: 3009,
       open: true,
-      proxy: {
-        '/api': 'http://localhost:3001',
-      },
-      watch: {
-        // Ignore database files to prevent page reloads
-        ignored: [
-          '**/server/game_data.db',
-          '**/server/game_data.db-shm',
-          '**/server/game_data.db-wal',
-          '**/server/**/*.db*',
-        ],
-      },
     },
   });

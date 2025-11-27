@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_8_1_opposites",
+    "chapter": 8,
+    "level_index": 36,
+    "version": "1.0.0",
+    "title": "متضاد (Opposites)",
+    "description": "Hot and Cold. Fast and Slow. Categorize by quality.",
+    "difficulty": 3,
+    "tags": ["abstract", "language", "antonyms"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_fire", "text": "آتش", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_sun", "text": "خورشید", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_boil", "text": "جوش", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_summer", "text": "تابستان", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      
+      { "id": "t_ice", "text": "یخ", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_snow", "text": "برف", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_freeze", "text": "انجماد", "type": "word", "visuals": { "color_hex": "#AFEEEE" } },
+      { "id": "t_winter", "text": "زمستان", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
+      
+      { "id": "t_light", "text": "نور", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+      { "id": "t_day", "text": "روز", "type": "word", "visuals": { "color_hex": "#87CEFA" } },
+      { "id": "t_white", "text": "سفید", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_bright", "text": "روشن", "type": "word", "visuals": { "color_hex": "#FFFACD" } },
+      
+      { "id": "t_dark", "text": "تاریکی", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_night", "text": "شب", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_black", "text": "سیاه", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_shadow", "text": "سایه", "type": "word", "visuals": { "color_hex": "#696969" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_hot",
+        "display_name": "گرم (Hot)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_fire", "t_sun", "t_boil", "t_summer"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_cold",
+        "display_name": "سرد (Cold)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_ice", "t_snow", "t_freeze", "t_winter"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_light",
+        "display_name": "روشنایی (Light)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_light", "t_day", "t_white", "t_bright"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_dark",
+        "display_name": "تاریکی (Dark)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_dark", "t_night", "t_black", "t_shadow"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_fire", "t_ice", "t_light", "t_dark"],
+      ["t_sun", "t_snow", "t_day", "t_night"],
+      ["t_boil", "t_freeze", "t_white", "t_black"],
+      ["t_summer", "t_winter", "t_bright", "t_shadow"]
+    ]
+  }
+}

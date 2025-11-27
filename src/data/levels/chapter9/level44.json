@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_9_4_jigsaw",
+    "chapter": 9,
+    "level_index": 44,
+    "version": "1.0.0",
+    "title": "پازل (The Jigsaw)",
+    "description": "Proverbs and Sayings. Complete the wisdom.",
+    "difficulty": 3,
+    "tags": ["abstract", "proverbs", "culture"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cat", "text": "گربه", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_mouse", "text": "موش", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_snake", "text": "مار", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_camel", "text": "شتر", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      
+      { "id": "t_mountain", "text": "کوه", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sea", "text": "دریا", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_wind", "text": "باد", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_drop", "text": "قطره", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      
+      { "id": "t_gold", "text": "طلا", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_treasure", "text": "گنج", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_pain", "text": "رنج", "type": "word", "visuals": { "color_hex": "#800000" } },
+      { "id": "t_gain", "text": "نابرده رنج", "type": "word", "visuals": { "color_hex": "#CD853F" } },
+      
+      { "id": "t_wall", "text": "دیوار", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_ear", "text": "گوش", "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      { "id": "t_pot", "text": "دیگ", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_lid", "text": "در دیگ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_animals",
+        "display_name": "حیوانات (Animals)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_cat", "t_mouse", "t_snake", "t_camel"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_nature",
+        "display_name": "طبیعت (Nature)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_mountain", "t_sea", "t_wind", "t_drop"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_wisdom",
+        "display_name": "حکمت (Wisdom)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_gold", "t_treasure", "t_pain", "t_gain"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_objects",
+        "display_name": "اشیاء (Objects)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_wall", "t_ear", "t_pot", "t_lid"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cat", "t_mountain", "t_gold", "t_wall"],
+      ["t_mouse", "t_sea", "t_treasure", "t_ear"],
+      ["t_snake", "t_wind", "t_pain", "t_pot"],
+      ["t_camel", "t_drop", "t_gain", "t_lid"]
+    ]
+  }
+}

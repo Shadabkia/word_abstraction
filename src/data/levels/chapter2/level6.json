@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "id": "lvl_2_1_zoo",
+    "chapter": 2,
+    "level_index": 1,
+    "version": "1.0.0",
+    "title": "باغ وحش (The Zoo)",
+    "description": "Predator and Prey. Separate the hunters from the grazers.",
+    "difficulty": 3,
+    "tags": ["animals", "biology", "opposites"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      
+      { "id": "t_lion",     "text": "شیر",      "type": "word", "visuals": { "color_hex": "#CD5C5C" } }, 
+      { "id": "t_tiger",    "text": "ببر",      "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_wolf",     "text": "گرگ",      "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+      { "id": "t_leopard",  "text": "پلنگ",     "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
+
+      
+      { "id": "t_zebra",    "text": "گورخر",    "type": "word", "visuals": { "color_hex": "#90EE90" } }, 
+      { "id": "t_deer",     "text": "آهو",      "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_sheep",    "text": "گوسفند",   "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_cow",      "text": "گاو",      "type": "word", "visuals": { "color_hex": "#90EE90" } },
+
+      
+      { "id": "t_eagle",    "text": "عقاب",     "type": "word", "visuals": { "color_hex": "#87CEEB" } }, 
+      { "id": "t_parrot",   "text": "طوطی",     "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_owl",      "text": "جغد",      "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_vulture",  "text": "کرکس",     "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+
+      
+      { "id": "t_shark",    "text": "کوسه",     "type": "word", "visuals": { "color_hex": "#00CED1" } }, 
+      { "id": "t_dolphin",  "text": "دلفین",    "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      { "id": "t_whale",    "text": "نهنگ",     "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      { "id": "t_octopus",  "text": "اختاپوس",  "type": "word", "visuals": { "color_hex": "#00CED1" } },
+
+      
+      { "id": "t_icon_pred","text": "★ درندگان","type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_claws", "color_hex": "#8B0000" } },
+      { "id": "t_claw",     "text": "پنجه",     "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_fang",     "text": "دندان‌تیز","type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_hunt",     "text": "شکار",     "type": "word", "visuals": { "color_hex": "#B22222" } },
+
+      
+      { "id": "t_icon_herb","text": "★ علفخوار","type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_leaf", "color_hex": "#006400" } },
+      { "id": "t_hoof",     "text": "سم",       "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_horn",     "text": "شاخ",      "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_graze",    "text": "چرا",      "type": "word", "visuals": { "color_hex": "#228B22" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_carnivores",
+        "display_name": "گوشتخواران (Carnivores)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_lion", "t_tiger", "t_wolf", "t_leopard"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_pred", "t_claw", "t_fang", "t_hunt"],
+          "sound_fx": "sfx_roar"
+        },
+        "meta": { "hint": "Animals that hunt other animals." }
+      },
+      {
+        "id": "grp_herbivores",
+        "display_name": "علفخواران (Herbivores)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_zebra", "t_deer", "t_sheep", "t_cow"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_icon_herb", "t_hoof", "t_horn", "t_graze"],
+          "sound_fx": "sfx_nature_ambience"
+        },
+        "meta": { "hint": "Animals that eat plants." }
+      },
+      {
+        "id": "grp_birds",
+        "display_name": "پرندگان (Birds)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_eagle", "t_parrot", "t_owl", "t_vulture"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_aquatics",
+        "display_name": "آبزیان (Aquatics)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_shark", "t_dolphin", "t_whale", "t_octopus"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_predator_traits",
+        "display_name": "ویژگی درندگان (Predator Traits)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_pred", "t_claw", "t_fang", "t_hunt"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_herbivore_traits",
+        "display_name": "ویژگی علفخواران (Herbivore Traits)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_icon_herb", "t_hoof", "t_horn", "t_graze"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_lion",  "t_zebra",   "t_eagle",   "t_shark"],
+      ["t_cow",   "t_tiger",   "t_dolphin", "t_parrot"],
+      ["t_wolf",  "t_deer",    "t_owl",     "t_whale"],
+      ["t_sheep", "t_leopard", "t_octopus", "t_vulture"]
+    ],
+    "comment": "Checkerboard shuffle. Every adjacent tile belongs to a different group."
+  }
+}

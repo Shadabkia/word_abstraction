@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "id": "lvl_5_4_poets",
+    "chapter": 5,
+    "level_index": 24,
+    "version": "1.0.0",
+    "title": "شاعران (The Poets)",
+    "description": "Words that echo through time.",
+    "difficulty": 3,
+    "tags": ["culture", "literature", "poetry"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_hafez", "text": "حافظ", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_rumi", "text": "مولوی", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_saadi", "text": "سعدی", "type": "word", "visuals": { "color_hex": "#008080" } },
+      { "id": "t_ferdowsi", "text": "فردوسی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_divan", "text": "دیوان حافظ", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_masnavi_book", "text": "مثنوی معنوی", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_golestan", "text": "گلستان", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_shahnameh", "text": "شاهنامه", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
+      
+      { "id": "t_lesan", "text": "لسان‌الغیب", "type": "word", "visuals": { "color_hex": "#483D8B" } },
+      { "id": "t_mowlana", "text": "مولانا", "type": "word", "visuals": { "color_hex": "#B8860B" } },
+      { "id": "t_sheikh", "text": "شیخ اجل", "type": "word", "visuals": { "color_hex": "#556B2F" } },
+      { "id": "t_hakim", "text": "حکیم توس", "type": "word", "visuals": { "color_hex": "#800000" } },
+      
+      { "id": "t_eshgh", "text": "عشق", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_erfan", "text": "عرفان", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_hekmat", "text": "حکمت", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_hamaseh", "text": "حماسه", "type": "word", "visuals": { "color_hex": "#FF4500" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_poets",
+        "display_name": "شاعران (Poets)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_hafez", "t_rumi", "t_saadi", "t_ferdowsi"] },
+        "outcomes": { "reveal_ids": ["t_divan", "t_masnavi_book", "t_golestan", "t_shahnameh"] }
+      },
+      {
+        "id": "grp_books",
+        "display_name": "آثار (Books)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_divan", "t_masnavi_book", "t_golestan", "t_shahnameh"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_epithets",
+        "display_name": "القاب (Titles)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_lesan", "t_mowlana", "t_sheikh", "t_hakim"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_themes",
+        "display_name": "مضامین (Themes)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_eshgh", "t_erfan", "t_hekmat", "t_hamaseh"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 3,
+    "cols": 4,
+    "initial_grid": [
+      ["t_hafez", "t_lesan", "t_eshgh", "t_rumi"],
+      ["t_mowlana", "t_erfan", "t_saadi", "t_sheikh"],
+      ["t_hekmat", "t_ferdowsi", "t_hakim", "t_hamaseh"]
+    ]
+  }
+}

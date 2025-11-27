@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "lvl_5_5_calendar",
+    "chapter": 5,
+    "level_index": 25,
+    "version": "1.0.0",
+    "title": "تقویم (The Calendar)",
+    "description": "Mark the dates. Celebrate the traditions.",
+    "difficulty": 5,
+    "tags": ["boss", "culture", "festivals", "traditions"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_sib", "text": "سیب", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_sabzeh", "text": "سبزه", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_samanu", "text": "سمنو", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_senjed", "text": "سنجد", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      
+      { "id": "t_anar", "text": "انار", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_hendvaneh", "text": "هندوانه", "type": "word", "visuals": { "color_hex": "#006400" } },
+      { "id": "t_ajil", "text": "آجیل", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+      { "id": "t_hafez_book", "text": "دیوان حافظ", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      
+      { "id": "t_atash", "text": "آتش", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_buteh", "text": "بوته", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_toraghe", "text": "ترقه", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_ghashogh", "text": "قاشق‌زنی", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      
+      { "id": "t_kahu", "text": "کاهو", "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_sekanjebin", "text": "سکنجبین", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
+      { "id": "t_tabiat", "text": "طبیعت", "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_gereh", "text": "گره سبزه", "type": "word", "visuals": { "color_hex": "#008000" } },
+      
+      { "id": "t_noruz", "text": "نوروز", "type": "word", "visuals": { "color_hex": "#00FF00" } },
+      { "id": "t_eidi", "text": "عیدی", "type": "word", "visuals": { "color_hex": "#FF1493" } },
+      { "id": "t_haji", "text": "حاجی فیروز", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_spring", "text": "بهار", "type": "word", "visuals": { "color_hex": "#ADFF2F" } },
+      
+      { "id": "t_yalda", "text": "یلدا", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_winter", "text": "زمستان", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_night", "text": "شب چله", "type": "word", "visuals": { "color_hex": "#191970" } },
+      { "id": "t_korsee", "text": "کرسی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      
+      { "id": "t_suri", "text": "چهارشنبه‌سوری", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_sorxi", "text": "سرخی تو از من", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_jump", "text": "پریدن از آتش", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_ash", "text": "آش رشته", "type": "word", "visuals": { "color_hex": "#556B2F" } },
+      
+      { "id": "t_sizdah", "text": "سیزده‌بدر", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_picnic", "text": "پیک‌نیک", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_river", "text": "رودخانه", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_lie", "text": "دروغ سیزده", "type": "word", "visuals": { "color_hex": "#800080" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_haftsin",
+        "display_name": "هفت‌سین (Haft-Sin)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_sib", "t_sabzeh", "t_samanu", "t_senjed"] },
+        "outcomes": { "reveal_ids": ["t_noruz", "t_eidi", "t_haji", "t_spring"] }
+      },
+      {
+        "id": "grp_yalda_items",
+        "display_name": "خوراکی یلدا (Yalda Treats)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_anar", "t_hendvaneh", "t_ajil", "t_hafez_book"] },
+        "outcomes": { "reveal_ids": ["t_yalda", "t_winter", "t_night", "t_korsee"] }
+      },
+      {
+        "id": "grp_suri_items",
+        "display_name": "آداب سوری (Suri Customs)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_atash", "t_buteh", "t_toraghe", "t_ghashogh"] },
+        "outcomes": { "reveal_ids": ["t_suri", "t_sorxi", "t_jump", "t_ash"] }
+      },
+      {
+        "id": "grp_sizdah_items",
+        "display_name": "آداب سیزده (Sizdah Customs)",
+        "behavior": "transform",
+        "requirements": { "trigger_ids": ["t_kahu", "t_sekanjebin", "t_tabiat", "t_gereh"] },
+        "outcomes": { "reveal_ids": ["t_sizdah", "t_picnic", "t_river", "t_lie"] }
+      },
+      {
+        "id": "grp_noruz",
+        "display_name": "جشن نوروز (Nowruz)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_noruz", "t_eidi", "t_haji", "t_spring"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_yalda",
+        "display_name": "شب یلدا (Yalda Night)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_yalda", "t_winter", "t_night", "t_korsee"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_suri",
+        "display_name": "چهارشنبه‌سوری (Chaharshanbe Suri)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_suri", "t_sorxi", "t_jump", "t_ash"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sizdah",
+        "display_name": "سیزده‌بدر (Sizdah Bedar)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_sizdah", "t_picnic", "t_river", "t_lie"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_sib", "t_anar", "t_atash", "t_kahu"],
+      ["t_sabzeh", "t_hendvaneh", "t_buteh", "t_sekanjebin"],
+      ["t_samanu", "t_ajil", "t_toraghe", "t_tabiat"],
+      ["t_senjed", "t_hafez_book", "t_ghashogh", "t_gereh"]
+    ]
+  }
+}

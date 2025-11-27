@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "id": "lvl_8_2_synonyms",
+    "chapter": 8,
+    "level_index": 37,
+    "version": "1.0.0",
+    "title": "مترادف (Synonyms)",
+    "description": "Different words, same meaning.",
+    "difficulty": 3,
+    "tags": ["abstract", "language", "synonyms"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+  "dictionary": {
+    "tiles": [
+      { "id": "t_happy", "text": "شادی", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_joy", "text": "خوشحالی", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_glad", "text": "سرور", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+      { "id": "t_cheer", "text": "نشاط", "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      
+      { "id": "t_friend", "text": "دوست", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_buddy", "text": "رفیق", "type": "word", "visuals": { "color_hex": "#90EE90" } },
+      { "id": "t_pal", "text": "یار", "type": "word", "visuals": { "color_hex": "#98FB98" } },
+      { "id": "t_mate", "text": "همدم", "type": "word", "visuals": { "color_hex": "#00FF7F" } },
+      
+      { "id": "t_smart", "text": "باهوش", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_clever", "text": "زیرک", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+      { "id": "t_wise", "text": "دانا", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_sharp", "text": "هوشمند", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      
+      { "id": "t_big", "text": "بزرگ", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_huge", "text": "عظیم", "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_giant", "text": "غول‌پیکر", "type": "word", "visuals": { "color_hex": "#FF6347" } },
+      { "id": "t_large", "text": "کلان", "type": "word", "visuals": { "color_hex": "#FF4500" } }
+    ]
+  },
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_happy",
+        "display_name": "شادی (Happiness)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_happy", "t_joy", "t_glad", "t_cheer"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_friend",
+        "display_name": "دوستی (Friendship)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_friend", "t_buddy", "t_pal", "t_mate"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_smart",
+        "display_name": "هوش (Intelligence)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_smart", "t_clever", "t_wise", "t_sharp"] },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_big",
+        "display_name": "بزرگی (Size)",
+        "behavior": "final",
+        "requirements": { "trigger_ids": ["t_big", "t_huge", "t_giant", "t_large"] },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+  "layout": {
+    "rows": 4,
+    "cols": 4,
+    "initial_grid": [
+      ["t_happy", "t_friend", "t_smart", "t_big"],
+      ["t_joy", "t_buddy", "t_clever", "t_huge"],
+      ["t_glad", "t_pal", "t_wise", "t_giant"],
+      ["t_cheer", "t_mate", "t_sharp", "t_large"]
+    ]
+  }
+}
