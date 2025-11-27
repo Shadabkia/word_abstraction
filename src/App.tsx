@@ -370,6 +370,18 @@ export default function App() {
       }
     }
 
+    // FIX: Ensure the subcategory tile has the same category as the revealed words
+    // This fixes potential mismatches where the hierarchy info and hidden word categories differ
+    if (wordsToAdd.length > 0) {
+      const consensusCategory = wordsToAdd[0].category;
+      const allSame = wordsToAdd.every(w => w.category === consensusCategory);
+      
+      if (allSame && consensusCategory !== subcategoryWord.category) {
+        console.warn(`Category mismatch detected! Subcategory tile: ${subcategoryWord.category}, Revealed words: ${consensusCategory}. Syncing to revealed words.`);
+        subcategoryWord.category = consensusCategory;
+      }
+    }
+
     // Create new row: 1 subcategory tile + 3 revealed words
     const newRow: Word[] = [subcategoryWord, ...wordsToAdd];
     
@@ -393,23 +405,20 @@ export default function App() {
   };
 
   const handleHint = () => {
-    // Get all words currently visible in the grid
-    const currentWords = new Set<string>();
-    gridRows.forEach(row => {
-      if (row.type === 'words' && row.words) {
-        row.words.forEach(word => currentWords.add(word.id));
-      }
-    });
-
-    // Find all possible categories that haven't been completed
+    // Build category map directly from visible grid words
     const categoryToWords = new Map<string, string[]>();
     
-    LEVEL_DATA.forEach(word => {
-      if (currentWords.has(word.id)) {
-        if (!categoryToWords.has(word.category)) {
-          categoryToWords.set(word.category, []);
-        }
-        categoryToWords.get(word.category)!.push(word.id);
+    gridRows.forEach(row => {
+      if (row.type === 'words' && row.words) {
+        row.words.forEach(word => {
+          // Skip empty placeholders
+          if (word.category === 'empty') return;
+
+          if (!categoryToWords.has(word.category)) {
+            categoryToWords.set(word.category, []);
+          }
+          categoryToWords.get(word.category)!.push(word.id);
+        });
       }
     });
 
@@ -437,22 +446,20 @@ export default function App() {
   };
 
   const handleSearchHint = () => {
-    // Get all words currently visible in the grid
-    const currentWords = new Set<string>();
+    // Build category map directly from visible grid words
+    const categoryToWords = new Map<string, string[]>();
+    
     gridRows.forEach(row => {
       if (row.type === 'words' && row.words) {
-        row.words.forEach(word => currentWords.add(word.id));
-      }
-    });
-
-    // Check which categories are fully present (4 words)
-    const categoryToWords = new Map<string, string[]>();
-    LEVEL_DATA.forEach(word => {
-      if (currentWords.has(word.id)) {
-        if (!categoryToWords.has(word.category)) {
-           categoryToWords.set(word.category, []);
-        }
-        categoryToWords.get(word.category)!.push(word.id);
+        row.words.forEach(word => {
+          // Skip empty placeholders
+          if (word.category === 'empty') return;
+          
+          if (!categoryToWords.has(word.category)) {
+            categoryToWords.set(word.category, []);
+          }
+          categoryToWords.get(word.category)!.push(word.id);
+        });
       }
     });
 
