@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "id": "lvl_1_0_combined",
+    "chapter": 1,
+    "level_index": 0,
+    "version": "1.0.0",
+    "title": "صبحانه و کمد",
+    "description": "Combine breakfast and wardrobe. Organize both food and clothing items.",
+    "difficulty": 1,
+    "tags": ["tutorial", "food", "clothing", "static", "combined"],
+    "constraints": {
+      "no_initial_matches": true
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cheese", "text": "پنیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_butter", "text": "کره", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_cream", "text": "خامه", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_milk",   "text": "شیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+
+      { "id": "t_sangak", "text": "نان سنگک", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_barbari","text": "نان بربری", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_toast",  "text": "نان تست", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_lavash", "text": "نان لواش", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+
+      { "id": "t_jam",    "text": "مربا", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_honey",  "text": "عسل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_tea",    "text": "چای شیرین", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sugar",  "text": "شکر", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+
+      { "id": "t_suit",     "text": "کت‌شلوار", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_shirt",    "text": "پیراهن",   "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_tie",      "text": "کراوات",   "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_vest",     "text": "جلیقه",    "type": "word", "visuals": { "color_hex": "#708090" } },
+
+      { "id": "t_scarf",    "text": "شال‌گردن", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_hat",      "text": "کلاه",     "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_gloves",   "text": "دستکش",    "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_jacket",   "text": "کاپشن",    "type": "word", "visuals": { "color_hex": "#00008B" } },
+
+      { "id": "t_shoes",    "text": "کفش",      "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sneakers", "text": "کتونی",    "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_boots",    "text": "چکمه",     "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_sandals",  "text": "صندل",     "type": "word", "visuals": { "color_hex": "#D2B48C" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_dairy",
+        "display_name": "لبنیات (Dairy)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_cheese", "t_butter", "t_cream", "t_milk"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_breads",
+        "display_name": "نان‌ها (Breads)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_sangak", "t_barbari", "t_toast", "t_lavash"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sweet",
+        "display_name": "شیرینی‌جات (Sweets)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_jam", "t_honey", "t_tea", "t_sugar"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_formal",
+        "display_name": "لباس رسمی (Formal)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_suit", "t_shirt", "t_tie", "t_vest"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_winter",
+        "display_name": "لباس گرم (Winter)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_scarf", "t_hat", "t_gloves", "t_jacket"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_footwear",
+        "display_name": "پاپوش (Footwear)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_shoes", "t_sneakers", "t_boots", "t_sandals"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 4,
+    "cols": 6,
+    "initial_grid": [
+      ["t_cheese",  "t_butter",  "t_cream",   "t_sangak",  "t_barbari", "t_toast"],
+      ["t_lavash",  "t_jam",     "t_honey",   "t_tea",     "t_sugar",   "t_milk"],
+      ["t_suit",    "t_shirt",   "t_tie",     "t_boots",   "t_scarf",   "t_hat"],
+      ["t_gloves",  "t_vest",    "t_shoes",   "t_sneakers", "t_sandals", "t_jacket"]
+    ],
+    "comment": "Combined level with breakfast items (rows 1-2) and clothing items (rows 3-4). Mixed layout to prevent initial matches."
+  }
+}
+

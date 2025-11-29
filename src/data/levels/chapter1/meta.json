@@ -3,6 +3,7 @@
   "name": "The Hearth (خانه و کاشانه)",
   "description": "The Hearth is the safe zone. The theme is Domesticity. We use words that every player, regardless of age or education, encounters every morning. There are no abstractions here, only tangible objects.",
   "levels": [
+    "level0.json",
     "level1.json",
     "level2.json",
     "level3.json",
