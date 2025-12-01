@@ -38,7 +38,7 @@ export default function App() {
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
   // Track hinted words and their color (yellow for lightbulb, green for search)
-  const [hintedWords, setHintedWords] = useState<Map<string, 'yellow' | 'green'>>(new Map());
+  const [hintedWords, setHintedWords] = useState<Map<string, string>>(new Map());
   
   // Level data state
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
@@ -363,10 +363,27 @@ export default function App() {
     
     // Find and add the specific words that match wordsToReveal (by ID)
     for (const wordId of subcategoryInfo.wordsToReveal) {
-      const wordIndex = newHiddenPool.findIndex(w => w.id === wordId);
-      if (wordIndex !== -1) {
-        wordsToAdd.push(newHiddenPool[wordIndex]);
-        newHiddenPool.splice(wordIndex, 1);
+      let word = newHiddenPool.find(w => w.id === wordId);
+      let fromPool = true;
+
+      if (!word) {
+        console.warn(`Word ${wordId} not found in hidden pool! Falling back to level data.`);
+        // Fallback: try to find in global level data
+        word = LEVEL_DATA.find((w: Word) => w.id === wordId);
+        fromPool = false;
+      }
+
+      if (word) {
+        // Create a clean copy of the word
+        // Ensure hidden is false so it shows up
+        wordsToAdd.push({ ...word, hidden: false });
+        
+        if (fromPool) {
+          const wordIndex = newHiddenPool.findIndex(w => w.id === wordId);
+          if (wordIndex !== -1) {
+            newHiddenPool.splice(wordIndex, 1);
+          }
+        }
       }
     }
 
@@ -463,19 +480,23 @@ export default function App() {
       }
     });
 
-    // Find a category with 4 words
-    let foundGroupIds: string[] = [];
+    // Find ALL categories with 4 words and assign different colors
+    const colors = ['green', 'blue', 'purple', 'orange', 'pink', 'cyan', 'red'];
+    let colorIndex = 0;
+    const newHints = new Map(hintedWords);
+    let foundAny = false;
+
     for (const [, wordIds] of categoryToWords.entries()) {
       if (wordIds.length === 4) {
-        foundGroupIds = wordIds;
-        break;
+        const color = colors[colorIndex % colors.length];
+        wordIds.forEach(id => newHints.set(id, color));
+        colorIndex++;
+        foundAny = true;
       }
     }
 
-    if (foundGroupIds.length === 4) {
-       // Show search hint animation (green)
-       const newHints = new Map(hintedWords);
-       foundGroupIds.forEach(id => newHints.set(id, 'green'));
+    if (foundAny) {
+       // Show search hint animation (colors)
        setHintedWords(newHints);
        soundManager.playMerge();
     } else {

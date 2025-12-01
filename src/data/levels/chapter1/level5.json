@@ -40,13 +40,13 @@
       { "id": "t_sponge",     "text": "اسفنج",        "type": "word", "visuals": { "color_hex": "#FFFF00" } },
 
       
-      { "id": "t_icon_act",   "text": "★ عمل",        "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_gear" } },
+      { "id": "t_icon_act",   "text": "★ عمل",        "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "tools-group" } },
       { "id": "t_sweeping",   "text": "جارو‌زدن",     "type": "word", "visuals": { "color_hex": "#FFA500" } },
       { "id": "t_wiping",     "text": "دستمال‌کشی",   "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
       { "id": "t_scrubbing",  "text": "ساییدن",       "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
 
       
-      { "id": "t_icon_res",   "text": "★ نتیجه",      "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_sparkle" } },
+      { "id": "t_icon_res",   "text": "★ نتیجه",      "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "results-group" } },
       { "id": "t_clean",      "text": "تمیز",         "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
       { "id": "t_shiny",      "text": "براق",         "type": "word", "visuals": { "color_hex": "#F0FFFF" } },
       { "id": "t_fresh",      "text": "معطر",         "type": "word", "visuals": { "color_hex": "#98FB98" } }
@@ -63,7 +63,7 @@
           "trigger_ids": ["t_dust", "t_stain", "t_trash", "t_cobweb"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_res", "t_clean", "t_shiny", "t_fresh"],
+          "reveal_ids": ["t_icon_res", "t_glass_cln", "t_shiny", "t_fresh"],
           "sound_fx": "sfx_magic_chime"
         },
         "meta": { "hint": "Get rid of the dirty things." }
@@ -76,7 +76,7 @@
           "trigger_ids": ["t_broom", "t_mop", "t_cloth", "t_sponge"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_act", "t_sweeping", "t_wiping", "t_scrubbing"],
+          "reveal_ids": ["t_icon_act", "t_counter", "t_wiping", "t_scrubbing"],
           "sound_fx": "sfx_work_noise"
         },
         "meta": { "hint": "Group the items you hold in your hand." }
@@ -127,7 +127,7 @@
       ["t_bleach",  "t_dust",    "t_broom",   "t_window"],
       ["t_detergent","t_stain",   "t_mop",     "t_floor"],
       ["t_powder",  "t_trash",   "t_cloth",   "t_wall"],
-      ["t_glass_cln","t_cobweb",  "t_sponge",  "t_counter"]
+      ["t_clean",   "t_cobweb",  "t_sponge",  "t_sweeping"]
     ],
     "comment": "Vertical Columns pattern. Easy for the eye to scan, but requires moving everything to horizontal rows."
   }

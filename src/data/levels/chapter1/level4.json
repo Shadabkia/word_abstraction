@@ -38,9 +38,9 @@
       { "id": "t_remote",     "text": "کنترل",     "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
       { "id": "t_antenna",    "text": "آنتن",      "type": "word", "visuals": { "color_hex": "#696969" } },
       { "id": "t_cable",      "text": "کابل",      "type": "word", "visuals": { "color_hex": "#708090" } },
-
       
-      { "id": "t_media_icon", "text": "★ رسانه",   "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_media" } },
+      
+      { "id": "t_media_icon", "text": "★ رسانه",   "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "electronics-group" } },
       { "id": "t_news",       "text": "اخبار",     "type": "word", "visuals": { "color_hex": "#00008B" } },
       { "id": "t_film",       "text": "فیلم",      "type": "word", "visuals": { "color_hex": "#8B008B" } },
       { "id": "t_serial",     "text": "سریال",     "type": "word", "visuals": { "color_hex": "#4B0082" } }
@@ -57,7 +57,7 @@
           "trigger_ids": ["t_tv", "t_remote", "t_antenna", "t_cable"]
         },
         "outcomes": {
-          "reveal_ids": ["t_media_icon", "t_news", "t_film", "t_serial"],
+          "reveal_ids": ["t_media_icon", "t_cushion", "t_film", "t_serial"],
           "sound_fx": "sfx_tv_static_intro"
         },
         "meta": { "hint": "Look for the black screens and wires." }
@@ -107,7 +107,7 @@
     "initial_grid": [
       ["t_sofa",     "t_remote",     "t_carpet",    "t_bulb"],
       ["t_chandelier","t_tv",        "t_curtain",   "t_chair"],
-      ["t_cushion",  "t_armchair",   "t_cable",     "t_wall_lamp"],
+      ["t_news",     "t_armchair",   "t_cable",     "t_wall_lamp"],
       ["t_antenna",  "t_rug",        "t_ottoman",   "t_lampshade"]
     ],
     "comment": "Maximum Entropy. The Electronics are placed on the diagonal (0,1), (1,1), (2,2), (3,0) to break visual clusters."

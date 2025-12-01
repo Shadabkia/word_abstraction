@@ -31,24 +31,24 @@
       { "id": "t_eagle",    "text": "عقاب",     "type": "word", "visuals": { "color_hex": "#87CEEB" } }, 
       { "id": "t_parrot",   "text": "طوطی",     "type": "word", "visuals": { "color_hex": "#87CEEB" } },
       { "id": "t_owl",      "text": "جغد",      "type": "word", "visuals": { "color_hex": "#87CEEB" } },
-      { "id": "t_vulture",  "text": "کرکس",     "type": "word", "visuals": { "color_hex": "#87CEEB" } },
+      { "id": "t_vulture",  "text": "کرکس",     "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#87CEEB" } },
 
       
       { "id": "t_shark",    "text": "کوسه",     "type": "word", "visuals": { "color_hex": "#00CED1" } }, 
       { "id": "t_dolphin",  "text": "دلفین",    "type": "word", "visuals": { "color_hex": "#00CED1" } },
       { "id": "t_whale",    "text": "نهنگ",     "type": "word", "visuals": { "color_hex": "#00CED1" } },
-      { "id": "t_octopus",  "text": "اختاپوس",  "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      { "id": "t_octopus",  "text": "اختاپوس",  "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#00CED1" } },
 
       
-      { "id": "t_icon_pred","text": "★ درندگان","type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_claws", "color_hex": "#8B0000" } },
+      { "id": "t_icon_pred","text": "★ درندگان","type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "predators-group", "color_hex": "#8B0000" } },
       { "id": "t_claw",     "text": "پنجه",     "type": "word", "visuals": { "color_hex": "#B22222" } },
-      { "id": "t_fang",     "text": "دندان‌تیز","type": "word", "visuals": { "color_hex": "#B22222" } },
-      { "id": "t_hunt",     "text": "شکار",     "type": "word", "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_fang",     "text": "دندان‌تیز","type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#B22222" } },
+      { "id": "t_hunt",     "text": "شکار",     "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#B22222" } },
 
       
-      { "id": "t_icon_herb","text": "★ علفخوار","type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_leaf", "color_hex": "#006400" } },
-      { "id": "t_hoof",     "text": "سم",       "type": "word", "visuals": { "color_hex": "#228B22" } },
-      { "id": "t_horn",     "text": "شاخ",      "type": "word", "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_icon_herb","text": "★ علفخوار","type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "herbivores-group", "color_hex": "#006400" } },
+      { "id": "t_hoof",     "text": "سم",       "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#228B22" } },
+      { "id": "t_horn",     "text": "شاخ",      "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#228B22" } },
       { "id": "t_graze",    "text": "چرا",      "type": "word", "visuals": { "color_hex": "#228B22" } }
     ]
   },
@@ -63,7 +63,7 @@
           "trigger_ids": ["t_lion", "t_tiger", "t_wolf", "t_leopard"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_pred", "t_claw", "t_fang", "t_hunt"],
+          "reveal_ids": ["t_icon_pred", "t_octopus", "t_fang", "t_hunt"],
           "sound_fx": "sfx_roar"
         },
         "meta": { "hint": "Animals that hunt other animals." }
@@ -76,7 +76,7 @@
           "trigger_ids": ["t_zebra", "t_deer", "t_sheep", "t_cow"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_herb", "t_hoof", "t_horn", "t_graze"],
+          "reveal_ids": ["t_icon_herb", "t_vulture", "t_horn", "t_hoof"],
           "sound_fx": "sfx_nature_ambience"
         },
         "meta": { "hint": "Animals that eat plants." }
@@ -127,8 +127,8 @@
       ["t_lion",  "t_zebra",   "t_eagle",   "t_shark"],
       ["t_cow",   "t_tiger",   "t_dolphin", "t_parrot"],
       ["t_wolf",  "t_deer",    "t_owl",     "t_whale"],
-      ["t_sheep", "t_leopard", "t_octopus", "t_vulture"]
+      ["t_sheep", "t_leopard", "t_claw",    "t_graze"]
     ],
-    "comment": "Checkerboard shuffle. Every adjacent tile belongs to a different group."
+    "comment": "Checkerboard shuffle. Every adjacent tile belongs to a different group. Claw and Graze are from Traits but placed on grid."
   }
 }

@@ -34,7 +34,7 @@
       { "id": "t_onion",  "text": "پیاز",   "type": "word", "visuals": { "color_hex": "#DA70D6" } },
 
       
-      { "id": "t_food_icon", "text": "★ غذا", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_meal", "color_hex": "#FF4500" } },
+      { "id": "t_food_icon", "text": "★ غذا", "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "kitchen-group", "color_hex": "#FF4500" } },
       { "id": "t_pot",       "text": "قابلمه", "type": "word", "visuals": { "color_hex": "#778899" } },
       { "id": "t_stove",     "text": "اجاق",   "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
       { "id": "t_steam",     "text": "بخار",   "type": "word", "visuals": { "color_hex": "#D3D3D3" } }

@@ -1,89 +1,136 @@
 {
   "meta": {
-    "id": "lvl_3_4_construction",
+    "id": "lvl_3_14_highrise",
     "chapter": 3,
     "level_index": 14,
-    "version": "1.0.0",
-    "title": "ساختمان (Construction Site)",
-    "description": "Lay the foundation. Build the city.",
+    "version": "3.0.0",
+    "title": "برج‌سازی (High-Rise)",
+    "description": "Construct a modern skyscraper.",
     "difficulty": 3,
-    "tags": ["production", "architecture", "hard_labor"],
+    "tags": ["construction", "structure", "finishing"],
     "constraints": {
-      "no_initial_matches": true
+      "no_initial_matches": false
     }
   },
   "dictionary": {
     "tiles": [
-      { "id": "t_brick", "text": "آجر", "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
-      { "id": "t_cement", "text": "سیمان", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
-      { "id": "t_beam", "text": "تیرآهن", "type": "word", "visuals": { "color_hex": "#708090" } },
-      { "id": "t_stone", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#696969" } },
-      
-      { "id": "t_crane", "text": "جرثقیل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
-      { "id": "t_helmet", "text": "کلاه ایمنی", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
-      { "id": "t_wheelbarrow", "text": "فرغون", "type": "word", "visuals": { "color_hex": "#8B4513" } },
-      { "id": "t_shovel", "text": "بیل", "type": "word", "visuals": { "color_hex": "#A0522D" } },
-      
-      { "id": "t_architect", "text": "معمار", "type": "word", "visuals": { "color_hex": "#000080" } },
-      { "id": "t_worker", "text": "کارگر", "type": "word", "visuals": { "color_hex": "#4682B4" } },
-      { "id": "t_engineer", "text": "مهندس", "type": "word", "visuals": { "color_hex": "#191970" } },
-      { "id": "t_mason", "text": "بنا", "type": "word", "visuals": { "color_hex": "#8FBC8F" } },
-      
-      { "id": "t_wall", "text": "دیوار", "type": "word", "visuals": { "color_hex": "#DEB887" } },
-      { "id": "t_roof", "text": "سقف", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
-      { "id": "t_window", "text": "پنجره", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
-      { "id": "t_building", "text": "ساختمان", "type": "word", "visuals": { "color_hex": "#778899" } }
+      { "id": "t_steel_beam", "text": "تیرآهن", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_concrete_slab", "text": "دال بتنی", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_crane_tower", "text": "تاور کرین", "type": "word", "visuals": { "color_hex": "#FFA500" } },
+      { "id": "t_welder", "text": "جوشکار", "type": "word", "visuals": { "color_hex": "#B22222" } },
+
+      { "id": "t_frame_section", "text": "اسکلت فلزی", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_floor_deck", "text": "سقف عرشه", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_core_wall", "text": "دیوار برشی", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_stairs", "text": "راه پله", "type": "word", "visuals": { "color_hex": "#808080" } },
+
+      { "id": "t_glass_pane", "text": "شیشه نما", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_drywall", "text": "کناف", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
+      { "id": "t_paint_bucket", "text": "سطل رنگ", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_tiles", "text": "کاشی سرامیک", "type": "word", "visuals": { "color_hex": "#F0FFFF" } },
+
+      { "id": "t_window", "text": "پنجره", "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_wall_panel", "text": "دیوار پوش", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
+      { "id": "t_painted_room", "text": "اتاق رنگ شده", "type": "word", "visuals": { "color_hex": "#FFFAFA" } },
+      { "id": "t_tiled_floor", "text": "کف سرامیک", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+
+      { "id": "t_bolt", "text": "پیچ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_wrench", "text": "آچار", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_hardhat", "text": "کلاه ایمنی", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
+
+      { "id": "t_cement_mix", "text": "ملات", "type": "word", "visuals": { "color_hex": "#D2B48C" } },
+      { "id": "t_trowel", "text": "ماله", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_level", "text": "تراز", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+
+      { "id": "t_suction_cup", "text": "قاپک شیشه", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_sealant", "text": "چسب آکواریوم", "type": "word", "visuals": { "color_hex": "#F5F5F5" } },
+      { "id": "t_lift", "text": "بالابر", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+
+      { "id": "t_screw", "text": "پیچ سرمته", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_drill", "text": "دریل", "type": "word", "visuals": { "color_hex": "#008080" } },
+      { "id": "t_tape", "text": "متر", "type": "word", "visuals": { "color_hex": "#FFFFE0" } }
     ]
   },
   "mechanics": {
     "groups": [
       {
-        "id": "grp_materials",
-        "display_name": "مصالح (Materials)",
+        "id": "grp_structural",
+        "display_name": "سازه (Structural)",
         "behavior": "transform",
         "requirements": {
-          "trigger_ids": ["t_brick", "t_cement", "t_beam", "t_stone"]
+          "trigger_ids": ["t_steel_beam", "t_concrete_slab", "t_crane_tower", "t_welder"]
         },
         "outcomes": {
-          "reveal_ids": ["t_wall", "t_roof", "t_window", "t_building"]
+          "reveal_ids": ["t_frame_section", "t_floor_deck", "t_core_wall", "t_stairs"]
         }
       },
       {
-        "id": "grp_equip",
-        "display_name": "تجهیزات (Equipment)",
+        "id": "grp_finishing",
+        "display_name": "نازک‌کاری (Finishing)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_glass_pane", "t_drywall", "t_paint_bucket", "t_tiles"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_window", "t_wall_panel", "t_painted_room", "t_tiled_floor"]
+        }
+      },
+      {
+        "id": "grp_steel_work",
+        "display_name": "اسکلت‌بندی (Steel Work)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_crane", "t_helmet", "t_wheelbarrow", "t_shovel"]
+          "trigger_ids": ["t_frame_section", "t_bolt", "t_wrench", "t_hardhat"]
         },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_team",
-        "display_name": "تیم ساخت (Crew)",
+        "id": "grp_flooring",
+        "display_name": "کف‌سازی (Flooring)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_architect", "t_worker", "t_engineer", "t_mason"]
+          "trigger_ids": ["t_floor_deck", "t_cement_mix", "t_trowel", "t_level"]
         },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_structure",
-        "display_name": "سازه (Structure)",
+        "id": "grp_glazing",
+        "display_name": "نماسازی (Glazing)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_wall", "t_roof", "t_window", "t_building"]
+          "trigger_ids": ["t_window", "t_suction_cup", "t_sealant", "t_lift"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_interior",
+        "display_name": "دیوارچینی (Interior)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_wall_panel", "t_screw", "t_drill", "t_tape"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_inspection",
+        "display_name": "بازرسی (Inspection)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_core_wall", "t_stairs", "t_painted_room", "t_tiled_floor"]
         },
         "outcomes": { "action": "lock_row" }
       }
     ]
   },
   "layout": {
-    "rows": 3,
+    "rows": 5,
     "cols": 4,
     "initial_grid": [
-      ["t_brick", "t_crane", "t_architect", "t_cement"],
-      ["t_beam", "t_helmet", "t_worker", "t_stone"],
-      ["t_shovel", "t_engineer", "t_mason", "t_wheelbarrow"]
+      ["t_steel_beam",    "t_glass_pane",     "t_bolt",        "t_cement_mix"],
+      ["t_concrete_slab", "t_drywall",        "t_wrench",      "t_trowel"],
+      ["t_crane_tower",   "t_paint_bucket",   "t_hardhat",     "t_level"],
+      ["t_welder",        "t_tiles",          "t_suction_cup", "t_screw"],
+      ["t_sealant",       "t_lift",           "t_drill",       "t_tape"]
     ]
   }
 }

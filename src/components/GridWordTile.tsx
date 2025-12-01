@@ -25,9 +25,33 @@ interface GridWordTileProps {
   onSwap: (word: Word, targetRowIndex: number, targetColIndex: number) => void;
   isSubcategoryGlow?: boolean;
   isMerging?: boolean;
-  hintColor?: 'yellow' | 'green';
-  isDisabled?: boolean; // FIX: Add prop to disable dragging during processing
+  hintColor?: string;
+  isDisabled?: boolean;
 }
+
+// Map hint colors to their specific styling classes
+const getHintStyles = (color: string) => {
+  switch (color) {
+    case 'yellow':
+      return 'ring-4 ring-yellow-300 border-yellow-400 z-20 shadow-[0_0_15px_rgba(253,224,71,0.6)]';
+    case 'green':
+      return 'ring-4 ring-green-400 border-green-500 z-20 shadow-[0_0_15px_rgba(74,222,128,0.6)]';
+    case 'blue':
+      return 'ring-4 ring-blue-400 border-blue-500 z-20 shadow-[0_0_15px_rgba(96,165,250,0.6)]';
+    case 'purple':
+      return 'ring-4 ring-purple-400 border-purple-500 z-20 shadow-[0_0_15px_rgba(192,132,252,0.6)]';
+    case 'orange':
+      return 'ring-4 ring-orange-400 border-orange-500 z-20 shadow-[0_0_15px_rgba(251,146,60,0.6)]';
+    case 'pink':
+      return 'ring-4 ring-pink-400 border-pink-500 z-20 shadow-[0_0_15px_rgba(244,114,182,0.6)]';
+    case 'cyan':
+      return 'ring-4 ring-cyan-400 border-cyan-500 z-20 shadow-[0_0_15px_rgba(34,211,238,0.6)]';
+    case 'red':
+      return 'ring-4 ring-red-400 border-red-500 z-20 shadow-[0_0_15px_rgba(248,113,113,0.6)]';
+    default:
+      return '';
+  }
+};
 
 export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGlow = false, isMerging = false, hintColor, isDisabled = false }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
@@ -232,8 +256,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         }
         ${isOver && canDrop ? 'translate-y-[4px] sm:translate-y-[5px] brightness-95' : 'hover:-translate-y-[1px]'}
         ${isSubcategoryGlow ? 'ring-4 ring-yellow-300 border-yellow-400 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
-        ${hintColor === 'yellow' ? 'ring-4 ring-yellow-300 border-yellow-400 z-20 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
-        ${hintColor === 'green' ? 'ring-4 ring-green-400 border-green-500 z-20 shadow-[0_0_15px_rgba(74,222,128,0.6)]' : ''}
+        ${hintColor ? getHintStyles(hintColor) : ''}
       `}>
         
         {/* Inner shine for extra polish */}
