@@ -1,89 +1,137 @@
 {
   "meta": {
-    "id": "lvl_3_3_boutique",
+    "id": "lvl_3_13_fashion",
     "chapter": 3,
     "level_index": 13,
-    "version": "1.0.0",
-    "title": "خیاطی (The Boutique)",
-    "description": "Design and sew. From fabric to fashion.",
+    "version": "3.0.0",
+    "title": "مزون لباس (Fashion Studio)",
+    "description": "Design and create high fashion garments.",
     "difficulty": 3,
-    "tags": ["production", "fashion", "chain"],
+    "tags": ["fashion", "design", "sewing"],
     "constraints": {
-      "no_initial_matches": true
+      "no_initial_matches": false
     }
   },
   "dictionary": {
     "tiles": [
-      { "id": "t_cotton", "text": "پنبه", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
-      { "id": "t_thread", "text": "نخ", "type": "word", "visuals": { "color_hex": "#DC143C" } },
-      { "id": "t_needle", "text": "سوزن", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
-      { "id": "t_fabric", "text": "پارچه", "type": "word", "visuals": { "color_hex": "#DA70D6" } },
+      { "id": "t_sketchbook", "text": "دفتر طراحی", "type": "word", "visuals": { "color_hex": "#FFB6C1" } },
+      { "id": "t_pencil_color", "text": "مداد رنگی", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_ruler_curve", "text": "خط‌کش منحنی", "type": "word", "visuals": { "color_hex": "#D8BFD8" } },
+      { "id": "t_eraser", "text": "پاک‌کن", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+
+      { "id": "t_sewing_machine", "text": "چرخ خیاطی", "type": "word", "visuals": { "color_hex": "#00CED1" } },
+      { "id": "t_thread_spool", "text": "قرقره نخ", "type": "word", "visuals": { "color_hex": "#20B2AA" } },
+      { "id": "t_thimble", "text": "انگشتانه", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_needle_cushion", "text": "جا سوزنی", "type": "word", "visuals": { "color_hex": "#FF6347" } },
+
+      { "id": "t_handbag", "text": "کیف دستی", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_heels", "text": "کفش پاشنه‌دار", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_necklace", "text": "گردنبند", "type": "word", "visuals": { "color_hex": "#F0E68C" } },
+      { "id": "t_perfume", "text": "عطر", "type": "word", "visuals": { "color_hex": "#E6E6FA" } },
+
+      { "id": "t_pattern_gown", "text": "الگو لباس شب", "type": "word", "visuals": { "color_hex": "#FF1493" } },
+      { "id": "t_pattern_suit", "text": "الگو کت‌شلوار", "type": "word", "visuals": { "color_hex": "#000080" } },
+      { "id": "t_pattern_dress", "text": "الگو پیراهن", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_pattern_coat", "text": "الگو پالتو", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+
+      { "id": "t_fabric_cut_1", "text": "برش ابریشم", "type": "word", "visuals": { "color_hex": "#FFC0CB" } },
+      { "id": "t_fabric_cut_2", "text": "برش فاستونی", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_fabric_cut_3", "text": "برش نخی", "type": "word", "visuals": { "color_hex": "#98FB98" } },
+      { "id": "t_fabric_cut_4", "text": "برش چرم", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+
+      { "id": "t_silk_roll", "text": "طاقه ابریشم", "type": "word", "visuals": { "color_hex": "#FF00FF" } },
+      { "id": "t_lace_trim", "text": "نوار گیپور", "type": "word", "visuals": { "color_hex": "#FFF0F5" } },
       
-      { "id": "t_scissors", "text": "قیچی", "type": "word", "visuals": { "color_hex": "#708090" } },
-      { "id": "t_button", "text": "دکمه", "type": "word", "visuals": { "color_hex": "#4169E1" } },
-      { "id": "t_zipper", "text": "زیپ", "type": "word", "visuals": { "color_hex": "#FFD700" } },
-      { "id": "t_tape", "text": "متر خیاطی", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_wool_fabric", "text": "پارچه پشمی", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_button_set", "text": "دکمه", "type": "word", "visuals": { "color_hex": "#000000" } },
       
-      { "id": "t_tailor", "text": "خیاط", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
-      { "id": "t_mannequin", "text": "مانکن", "type": "word", "visuals": { "color_hex": "#FFE4E1" } },
-      { "id": "t_iron", "text": "اتو", "type": "word", "visuals": { "color_hex": "#778899" } },
-      { "id": "t_hanger", "text": "چوب‌لباسی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_cotton_print", "text": "پارچه نخی", "type": "word", "visuals": { "color_hex": "#32CD32" } },
+      { "id": "t_zipper", "text": "زیپ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
       
-      { "id": "t_shirt", "text": "پیراهن", "type": "word", "visuals": { "color_hex": "#000080" } },
-      { "id": "t_pants", "text": "شلوار", "type": "word", "visuals": { "color_hex": "#4B0082" } },
-      { "id": "t_coat", "text": "کت", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
-      { "id": "t_hat", "text": "کلاه", "type": "word", "visuals": { "color_hex": "#8B0000" } }
+      { "id": "t_leather", "text": "چرم", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_buckle", "text": "سگک", "type": "word", "visuals": { "color_hex": "#D2691E" } }
     ]
   },
   "mechanics": {
     "groups": [
       {
-        "id": "grp_make",
-        "display_name": "دوخت و دوز (Sewing)",
+        "id": "grp_design",
+        "display_name": "طراحی (Design)",
         "behavior": "transform",
         "requirements": {
-          "trigger_ids": ["t_cotton", "t_thread", "t_needle", "t_fabric"]
+          "trigger_ids": ["t_sketchbook", "t_pencil_color", "t_ruler_curve", "t_eraser"]
         },
         "outcomes": {
-          "reveal_ids": ["t_shirt", "t_pants", "t_coat", "t_hat"]
+          "reveal_ids": ["t_pattern_gown", "t_pattern_suit", "t_pattern_dress", "t_pattern_coat"]
+        }
+      },
+      {
+        "id": "grp_sewing",
+        "display_name": "خیاطی (Sewing)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_sewing_machine", "t_thread_spool", "t_thimble", "t_needle_cushion"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_fabric_cut_1", "t_fabric_cut_2", "t_fabric_cut_3", "t_fabric_cut_4"]
         }
       },
       {
         "id": "grp_accessories",
-        "display_name": "لوازم (Accessories)",
+        "display_name": "اکسسوری (Accessories)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_scissors", "t_button", "t_zipper", "t_tape"]
+          "trigger_ids": ["t_handbag", "t_heels", "t_necklace", "t_perfume"]
         },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_shop",
-        "display_name": "مزون (Boutique)",
+        "id": "grp_gown",
+        "display_name": "لباس شب (Gown)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_tailor", "t_mannequin", "t_iron", "t_hanger"]
+          "trigger_ids": ["t_pattern_gown", "t_fabric_cut_1", "t_silk_roll", "t_lace_trim"]
         },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_clothes",
-        "display_name": "لباس‌ها (Clothes)",
+        "id": "grp_suit",
+        "display_name": "کت‌شلوار (Suit)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_shirt", "t_pants", "t_coat", "t_hat"]
+          "trigger_ids": ["t_pattern_suit", "t_fabric_cut_2", "t_wool_fabric", "t_button_set"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_dress",
+        "display_name": "پیراهن (Dress)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_pattern_dress", "t_fabric_cut_3", "t_cotton_print", "t_zipper"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_coat",
+        "display_name": "پالتو (Coat)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_pattern_coat", "t_fabric_cut_4", "t_leather", "t_buckle"]
         },
         "outcomes": { "action": "lock_row" }
       }
     ]
   },
   "layout": {
-    "rows": 3,
+    "rows": 5,
     "cols": 4,
     "initial_grid": [
-      ["t_cotton", "t_scissors", "t_tailor", "t_thread"],
-      ["t_needle", "t_button", "t_mannequin", "t_fabric"],
-      ["t_zipper", "t_iron", "t_hanger", "t_tape"]
+      ["t_sketchbook",     "t_sewing_machine", "t_silk_roll",    "t_wool_fabric"],
+      ["t_pencil_color",   "t_thread_spool",   "t_lace_trim",    "t_button_set"],
+      ["t_ruler_curve",    "t_thimble",        "t_cotton_print", "t_leather"],
+      ["t_eraser",         "t_needle_cushion", "t_zipper",       "t_buckle"],
+      ["t_handbag",        "t_heels",          "t_necklace",     "t_perfume"]
     ]
   }
 }

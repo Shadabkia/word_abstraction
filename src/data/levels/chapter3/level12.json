@@ -1,89 +1,136 @@
 {
   "meta": {
-    "id": "lvl_3_2_workshop",
+    "id": "lvl_3_12_factory",
     "chapter": 3,
     "level_index": 12,
-    "version": "1.0.0",
-    "title": "کارگاه (The Workshop)",
-    "description": "Build furniture from raw materials.",
-    "difficulty": 2,
-    "tags": ["production", "tools", "craft"],
+    "version": "3.0.0",
+    "title": "خط تولید (Assembly Line)",
+    "description": "Operate the automotive assembly line.",
+    "difficulty": 3,
+    "tags": ["factory", "cars", "assembly"],
     "constraints": {
-      "no_initial_matches": true
+      "no_initial_matches": false
     }
   },
   "dictionary": {
     "tiles": [
-      { "id": "t_wood", "text": "چوب", "type": "word", "visuals": { "color_hex": "#8B4513" } },
-      { "id": "t_nail", "text": "میخ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
-      { "id": "t_glue", "text": "چسب", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
-      { "id": "t_paint", "text": "رنگ", "type": "word", "visuals": { "color_hex": "#FF0000" } },
-      
-      { "id": "t_saw", "text": "اره", "type": "word", "visuals": { "color_hex": "#708090" } },
-      { "id": "t_hammer", "text": "چکش", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
-      { "id": "t_drill", "text": "دریل", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
-      { "id": "t_ruler", "text": "متر", "type": "word", "visuals": { "color_hex": "#FFD700" } },
-      
-      { "id": "t_carpenter", "text": "نجار", "type": "word", "visuals": { "color_hex": "#D2691E" } },
-      { "id": "t_workshop", "text": "کارگاه", "type": "word", "visuals": { "color_hex": "#CD853F" } },
-      { "id": "t_sketch", "text": "نقشه", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
-      { "id": "t_pencil", "text": "مداد", "type": "word", "visuals": { "color_hex": "#FFFF00" } },
-      
-      { "id": "t_chair", "text": "صندلی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
-      { "id": "t_table", "text": "میز", "type": "word", "visuals": { "color_hex": "#A0522D" } },
-      { "id": "t_shelf", "text": "قفسه", "type": "word", "visuals": { "color_hex": "#DEB887" } },
-      { "id": "t_door", "text": "در", "type": "word", "visuals": { "color_hex": "#D2691E" } }
+      { "id": "t_molten_steel", "text": "فولاد مذاب", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_cast_mold", "text": "قالب", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_furnace", "text": "کوره", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_ladle", "text": "پاتیل", "type": "word", "visuals": { "color_hex": "#A0522D" } },
+
+      { "id": "t_sheet_metal", "text": "ورق فلزی", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_press_machine", "text": "پرس", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_die_cut", "text": "قالب برش", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_hydraulic", "text": "هیدرولیک", "type": "word", "visuals": { "color_hex": "#000080" } },
+
+      { "id": "t_engine_block", "text": "بلوک سیلندر", "type": "word", "visuals": { "color_hex": "#778899" } },
+      { "id": "t_piston", "text": "پیستون", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
+      { "id": "t_crankshaft", "text": "میل‌لنگ", "type": "word", "visuals": { "color_hex": "#808080" } },
+      { "id": "t_valve", "text": "سوپاپ", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+
+      { "id": "t_door_panel", "text": "پنل در", "type": "word", "visuals": { "color_hex": "#4682B4" } },
+      { "id": "t_hood_panel", "text": "کاپوت", "type": "word", "visuals": { "color_hex": "#4169E1" } },
+      { "id": "t_roof_panel", "text": "سقف", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_trunk_panel", "text": "صندوق", "type": "word", "visuals": { "color_hex": "#00BFFF" } },
+
+      { "id": "t_wrench_torque", "text": "آچار گشتاور", "type": "word", "visuals": { "color_hex": "#DAA520" } },
+      { "id": "t_oil_can", "text": "روغن‌دان", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_mechanic", "text": "مکانیک", "type": "word", "visuals": { "color_hex": "#F4A460" } },
+
+      { "id": "t_ring_compress", "text": "رینگ‌جمع‌کن", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_pin_lock", "text": "خار پیستون", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_rod_connect", "text": "شاتون", "type": "word", "visuals": { "color_hex": "#B0C4DE" } },
+
+      { "id": "t_hinge", "text": "لولا", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_handle", "text": "دستگیره", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
+      { "id": "t_window_glass", "text": "شیشه", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+
+      { "id": "t_latch", "text": "ضامن", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_prop_rod", "text": "جک کاپوت", "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_insulation", "text": "عایق", "type": "word", "visuals": { "color_hex": "#808000" } }
     ]
   },
   "mechanics": {
     "groups": [
       {
-        "id": "grp_raw",
-        "display_name": "مواد اولیه (Raw Materials)",
+        "id": "grp_foundry",
+        "display_name": "ریخته‌گری (Foundry)",
         "behavior": "transform",
         "requirements": {
-          "trigger_ids": ["t_wood", "t_nail", "t_glue", "t_paint"]
+          "trigger_ids": ["t_molten_steel", "t_cast_mold", "t_furnace", "t_ladle"]
         },
         "outcomes": {
-          "reveal_ids": ["t_chair", "t_table", "t_shelf", "t_door"]
+          "reveal_ids": ["t_engine_block", "t_piston", "t_crankshaft", "t_valve"]
         }
       },
       {
-        "id": "grp_tools",
-        "display_name": "ابزار (Tools)",
+        "id": "grp_press",
+        "display_name": "پرس‌کاری (Press Shop)",
+        "behavior": "transform",
+        "requirements": {
+          "trigger_ids": ["t_sheet_metal", "t_press_machine", "t_die_cut", "t_hydraulic"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_door_panel", "t_hood_panel", "t_roof_panel", "t_trunk_panel"]
+        }
+      },
+      {
+        "id": "grp_engine_assy",
+        "display_name": "مونتاژ موتور (Engine Assy)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_saw", "t_hammer", "t_drill", "t_ruler"]
+          "trigger_ids": ["t_engine_block", "t_wrench_torque", "t_oil_can", "t_mechanic"]
         },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_craft",
-        "display_name": "طراحی (Design & Craft)",
+        "id": "grp_piston_fit",
+        "display_name": "نصب پیستون (Piston Fit)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_carpenter", "t_workshop", "t_sketch", "t_pencil"]
+          "trigger_ids": ["t_piston", "t_ring_compress", "t_pin_lock", "t_rod_connect"]
         },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_furniture",
-        "display_name": "مبلمان (Furniture)",
+        "id": "grp_door_mount",
+        "display_name": "نصب در (Door Mount)",
         "behavior": "final",
         "requirements": {
-          "trigger_ids": ["t_chair", "t_table", "t_shelf", "t_door"]
+          "trigger_ids": ["t_door_panel", "t_hinge", "t_handle", "t_window_glass"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_hood_install",
+        "display_name": "نصب کاپوت (Hood Install)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_hood_panel", "t_latch", "t_prop_rod", "t_insulation"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_inventory",
+        "display_name": "انبار قطعات (Parts Inventory)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_crankshaft", "t_valve", "t_roof_panel", "t_trunk_panel"]
         },
         "outcomes": { "action": "lock_row" }
       }
     ]
   },
   "layout": {
-    "rows": 3,
+    "rows": 5,
     "cols": 4,
     "initial_grid": [
-      ["t_wood", "t_saw", "t_carpenter", "t_drill"],
-      ["t_nail", "t_hammer", "t_workshop", "t_glue"],
-      ["t_paint", "t_ruler", "t_sketch", "t_pencil"]
+      ["t_molten_steel", "t_sheet_metal",     "t_wrench_torque", "t_ring_compress"],
+      ["t_cast_mold",    "t_press_machine",   "t_oil_can",       "t_pin_lock"],
+      ["t_furnace",      "t_die_cut",         "t_mechanic",      "t_rod_connect"],
+      ["t_ladle",        "t_hydraulic",       "t_hinge",         "t_latch"],
+      ["t_handle",       "t_window_glass",    "t_prop_rod",      "t_insulation"]
     ]
   }
 }

@@ -1,128 +1,136 @@
 {
   "meta": {
-    "id": "lvl_3_5_grand_bazaar",
+    "id": "lvl_3_15_logistics",
     "chapter": 3,
     "level_index": 15,
-    "version": "1.0.0",
-    "title": "بازار بزرگ (The Grand Bazaar)",
-    "description": "The economy is complex. Everything is connected.",
-    "difficulty": 5,
-    "tags": ["boss", "production", "cross_dependency", "chaos"],
+    "version": "3.0.0",
+    "title": "تجارت جهانی (Global Trade)",
+    "description": "Manage international imports and exports.",
+    "difficulty": 3,
+    "tags": ["logistics", "trade", "ports"],
     "constraints": {
-      "no_initial_matches": true
+      "no_initial_matches": false
     }
   },
   "dictionary": {
     "tiles": [
-      { "id": "t_wheat", "text": "گندم", "type": "word", "visuals": { "color_hex": "#F5DEB3" } },
-      { "id": "t_flour", "text": "آرد", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
-      { "id": "t_sugar", "text": "شکر", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
-      { "id": "t_oil", "text": "روغن", "type": "word", "visuals": { "color_hex": "#FFD700" } },
-      
-      { "id": "t_wood", "text": "چوب", "type": "word", "visuals": { "color_hex": "#8B4513" } },
-      { "id": "t_nail", "text": "میخ", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
-      { "id": "t_glue", "text": "چسب", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
-      { "id": "t_paint", "text": "رنگ", "type": "word", "visuals": { "color_hex": "#FF4500" } },
-      
-      { "id": "t_cotton", "text": "پنبه", "type": "word", "visuals": { "color_hex": "#FFFAF0" } },
-      { "id": "t_thread", "text": "نخ", "type": "word", "visuals": { "color_hex": "#DC143C" } },
-      { "id": "t_fabric", "text": "پارچه", "type": "word", "visuals": { "color_hex": "#DA70D6" } },
-      { "id": "t_button", "text": "دکمه", "type": "word", "visuals": { "color_hex": "#4169E1" } },
-      
-      { "id": "t_brick", "text": "آجر", "type": "word", "visuals": { "color_hex": "#CD5C5C" } },
-      { "id": "t_cement", "text": "سیمان", "type": "word", "visuals": { "color_hex": "#D3D3D3" } },
-      { "id": "t_beam", "text": "تیرآهن", "type": "word", "visuals": { "color_hex": "#708090" } },
-      { "id": "t_stone", "text": "سنگ", "type": "word", "visuals": { "color_hex": "#696969" } },
-      
-      { "id": "t_bread", "text": "نان", "type": "word", "visuals": { "color_hex": "#DEB887" } },
-      { "id": "t_cake", "text": "کیک", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
-      { "id": "t_sweet", "text": "شیرینی", "type": "word", "visuals": { "color_hex": "#FFB6C1" } },
-      { "id": "t_cookie", "text": "کلوچه", "type": "word", "visuals": { "color_hex": "#D2691E" } },
-      
-      { "id": "t_chair", "text": "صندلی", "type": "word", "visuals": { "color_hex": "#8B4513" } },
-      { "id": "t_table", "text": "میز", "type": "word", "visuals": { "color_hex": "#A0522D" } },
-      { "id": "t_shelf", "text": "قفسه", "type": "word", "visuals": { "color_hex": "#DEB887" } },
-      { "id": "t_door", "text": "در", "type": "word", "visuals": { "color_hex": "#D2691E" } },
-      
-      { "id": "t_shirt", "text": "پیراهن", "type": "word", "visuals": { "color_hex": "#000080" } },
-      { "id": "t_pants", "text": "شلوار", "type": "word", "visuals": { "color_hex": "#4B0082" } },
-      { "id": "t_coat", "text": "کت", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
-      { "id": "t_hat", "text": "کلاه", "type": "word", "visuals": { "color_hex": "#8B0000" } },
-      
-      { "id": "t_wall", "text": "دیوار", "type": "word", "visuals": { "color_hex": "#DEB887" } },
-      { "id": "t_roof", "text": "سقف", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
-      { "id": "t_window", "text": "پنجره", "type": "word", "visuals": { "color_hex": "#87CEEB" } },
-      { "id": "t_building", "text": "ساختمان", "type": "word", "visuals": { "color_hex": "#778899" } }
+      { "id": "t_ship_east", "text": "کشتی شرقی", "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_container_red", "text": "کانتینر قرمز", "type": "word", "visuals": { "color_hex": "#FF0000" } },
+      { "id": "t_crane_dock", "text": "جرثقیل بندر", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_customs", "text": "گمرک", "type": "word", "visuals": { "color_hex": "#000080" } },
+
+      { "id": "t_ship_west", "text": "کشتی غربی", "type": "word", "visuals": { "color_hex": "#0000CD" } },
+      { "id": "t_container_blue", "text": "کانتینر آبی", "type": "word", "visuals": { "color_hex": "#1E90FF" } },
+      { "id": "t_forklift", "text": "لیفتراک", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_truck", "text": "تریلی", "type": "word", "visuals": { "color_hex": "#708090" } },
+
+      { "id": "t_silk", "text": "ابریشم", "type": "word", "visuals": { "color_hex": "#D8BFD8" } },
+      { "id": "t_spice", "text": "ادویه", "type": "word", "visuals": { "color_hex": "#D2691E" } },
+      { "id": "t_tea", "text": "چای", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_jade", "text": "یشم", "type": "word", "visuals": { "color_hex": "#006400" } },
+
+      { "id": "t_steel", "text": "فولاد", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_glass", "text": "شیشه", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_engine", "text": "موتور", "type": "word", "visuals": { "color_hex": "#696969" } },
+      { "id": "t_plastic", "text": "پلاستیک", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+
+      { "id": "t_pattern", "text": "الگو", "type": "word", "visuals": { "color_hex": "#FFB6C1" } },
+      { "id": "t_scissors", "text": "قیچی", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_mannequin", "text": "مانکن", "type": "word", "visuals": { "color_hex": "#FFE4E1" } },
+
+      { "id": "t_pot", "text": "قابلمه", "type": "word", "visuals": { "color_hex": "#708090" } },
+      { "id": "t_chef", "text": "آشپز", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_plate", "text": "بشقاب", "type": "word", "visuals": { "color_hex": "#F0FFF0" } },
+
+      { "id": "t_beam", "text": "تیرآهن", "type": "word", "visuals": { "color_hex": "#A9A9A9" } },
+      { "id": "t_crane", "text": "تاور کرین", "type": "word", "visuals": { "color_hex": "#FF4500" } },
+      { "id": "t_bolt", "text": "پیچ", "type": "word", "visuals": { "color_hex": "#696969" } },
+
+      { "id": "t_chip", "text": "تراشه", "type": "word", "visuals": { "color_hex": "#008000" } },
+      { "id": "t_wire", "text": "سیم", "type": "word", "visuals": { "color_hex": "#B8860B" } },
+      { "id": "t_screen", "text": "صفحه نمایش", "type": "word", "visuals": { "color_hex": "#000000" } }
     ]
   },
   "mechanics": {
     "groups": [
       {
-        "id": "grp_raw_food",
-        "display_name": "مواد غذایی (Raw Food)",
+        "id": "grp_port_east",
+        "display_name": "بندر شرق (East Port)",
         "behavior": "transform",
-        "requirements": { "trigger_ids": ["t_wheat", "t_flour", "t_sugar", "t_oil"] },
-        "outcomes": { "reveal_ids": ["t_bread", "t_chair", "t_shirt", "t_wall"] }
+        "requirements": {
+          "trigger_ids": ["t_ship_east", "t_container_red", "t_crane_dock", "t_customs"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_silk", "t_spice", "t_tea", "t_jade"]
+        }
       },
       {
-        "id": "grp_raw_build",
-        "display_name": "مواد ساخت (Raw Build)",
+        "id": "grp_port_west",
+        "display_name": "بندر غرب (West Port)",
         "behavior": "transform",
-        "requirements": { "trigger_ids": ["t_wood", "t_nail", "t_glue", "t_paint"] },
-        "outcomes": { "reveal_ids": ["t_cake", "t_table", "t_pants", "t_roof"] }
+        "requirements": {
+          "trigger_ids": ["t_ship_west", "t_container_blue", "t_forklift", "t_truck"]
+        },
+        "outcomes": {
+          "reveal_ids": ["t_steel", "t_glass", "t_engine", "t_plastic"]
+        }
       },
       {
-        "id": "grp_raw_cloth",
-        "display_name": "مواد پارچه (Raw Cloth)",
-        "behavior": "transform",
-        "requirements": { "trigger_ids": ["t_cotton", "t_thread", "t_fabric", "t_button"] },
-        "outcomes": { "reveal_ids": ["t_sweet", "t_shelf", "t_coat", "t_window"] }
-      },
-      {
-        "id": "grp_raw_house",
-        "display_name": "مصالح بنایی (Raw Materials)",
-        "behavior": "transform",
-        "requirements": { "trigger_ids": ["t_brick", "t_cement", "t_beam", "t_stone"] },
-        "outcomes": { "reveal_ids": ["t_cookie", "t_door", "t_hat", "t_building"] }
-      },
-      {
-        "id": "grp_final_bakery",
-        "display_name": "محصولات نانوایی (Bakery Products)",
+        "id": "grp_textile",
+        "display_name": "نساجی (Textile)",
         "behavior": "final",
-        "requirements": { "trigger_ids": ["t_bread", "t_cake", "t_sweet", "t_cookie"] },
+        "requirements": {
+          "trigger_ids": ["t_silk", "t_pattern", "t_scissors", "t_mannequin"]
+        },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_final_furn",
-        "display_name": "مبلمان (Furniture)",
+        "id": "grp_restaurant",
+        "display_name": "رستوران (Restaurant)",
         "behavior": "final",
-        "requirements": { "trigger_ids": ["t_chair", "t_table", "t_shelf", "t_door"] },
+        "requirements": {
+          "trigger_ids": ["t_spice", "t_pot", "t_chef", "t_plate"]
+        },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_final_cloth",
-        "display_name": "پوشاک (Clothing)",
+        "id": "grp_construction",
+        "display_name": "ساختمان (Construction)",
         "behavior": "final",
-        "requirements": { "trigger_ids": ["t_shirt", "t_pants", "t_coat", "t_hat"] },
+        "requirements": {
+          "trigger_ids": ["t_steel", "t_beam", "t_crane", "t_bolt"]
+        },
         "outcomes": { "action": "lock_row" }
       },
       {
-        "id": "grp_final_realestate",
-        "display_name": "املاک (Real Estate)",
+        "id": "grp_tech",
+        "display_name": "فناوری (Tech)",
         "behavior": "final",
-        "requirements": { "trigger_ids": ["t_wall", "t_roof", "t_window", "t_building"] },
+        "requirements": {
+          "trigger_ids": ["t_glass", "t_chip", "t_wire", "t_screen"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_market",
+        "display_name": "بازار (Market)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_tea", "t_jade", "t_engine", "t_plastic"]
+        },
         "outcomes": { "action": "lock_row" }
       }
     ]
   },
   "layout": {
-    "rows": 4,
+    "rows": 5,
     "cols": 4,
     "initial_grid": [
-      ["t_wheat", "t_wood", "t_cotton", "t_brick"],
-      ["t_flour", "t_nail", "t_thread", "t_cement"],
-      ["t_sugar", "t_glue", "t_fabric", "t_beam"],
-      ["t_oil",   "t_paint","t_button", "t_stone"]
+      ["t_ship_east",     "t_ship_west",      "t_pattern",   "t_pot"],
+      ["t_container_red", "t_container_blue", "t_scissors",  "t_chef"],
+      ["t_crane_dock",    "t_forklift",       "t_mannequin", "t_plate"],
+      ["t_customs",       "t_truck",          "t_beam",      "t_chip"],
+      ["t_crane",         "t_bolt",           "t_wire",      "t_screen"]
     ]
   }
 }

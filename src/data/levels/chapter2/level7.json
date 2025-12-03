@@ -25,7 +25,7 @@
       { "id": "t_petal",    "text": "گلبرگ",     "type": "word", "visuals": { "color_hex": "#FF69B4" } }, 
       { "id": "t_stem",     "text": "ساقه",      "type": "word", "visuals": { "color_hex": "#32CD32" } }, 
       { "id": "t_bud",      "text": "غنچه",      "type": "word", "visuals": { "color_hex": "#FF1493" } }, 
-      { "id": "t_thorn",    "text": "خار",       "type": "word", "visuals": { "color_hex": "#006400" } }, 
+      { "id": "t_thorn",    "text": "خار",       "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#006400" } }, 
 
       
       { "id": "t_bee",      "text": "زنبور",     "type": "word", "visuals": { "color_hex": "#FFD700" } },
@@ -40,13 +40,13 @@
       { "id": "t_pot",      "text": "گلدان",     "type": "word", "visuals": { "color_hex": "#B8860B" } },
 
       
-      { "id": "t_icon_tree","text": "★ درخت",    "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_pine", "color_hex": "#228B22" } },
+      { "id": "t_icon_tree","text": "★ درخت",    "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "trees-group", "color_hex": "#228B22" } },
       { "id": "t_pine",     "text": "کاج",       "type": "word", "visuals": { "color_hex": "#006400" } },
       { "id": "t_oak",      "text": "بلوط",      "type": "word", "visuals": { "color_hex": "#8B4513" } },
       { "id": "t_willow",   "text": "بید‌مجنون", "type": "word", "visuals": { "color_hex": "#556B2F" } },
 
       
-      { "id": "t_icon_flwr","text": "★ گل",      "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "icon_rose", "color_hex": "#FF00FF" } },
+      { "id": "t_icon_flwr","text": "★ گل",      "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "flowers-group", "color_hex": "#FF00FF" } },
       { "id": "t_rose",     "text": "رز",        "type": "word", "visuals": { "color_hex": "#DC143C" } },
       { "id": "t_tulip",    "text": "لاله",      "type": "word", "visuals": { "color_hex": "#FF6347" } },
       { "id": "t_narcissus","text": "نرگس",      "type": "word", "visuals": { "color_hex": "#FFFFE0" } }
@@ -63,7 +63,7 @@
           "trigger_ids": ["t_root", "t_trunk", "t_bark", "t_branch"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_tree", "t_pine", "t_oak", "t_willow"],
+          "reveal_ids": ["t_icon_tree", "t_thorn", "t_oak", "t_willow"],
           "sound_fx": "sfx_leaves_rustle"
         },
         "meta": { "hint": "What are the parts of a large plant?" }
@@ -76,7 +76,7 @@
           "trigger_ids": ["t_petal", "t_stem", "t_bud", "t_thorn"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_flwr", "t_rose", "t_tulip", "t_narcissus"],
+          "reveal_ids": ["t_icon_flwr", "t_pine", "t_tulip", "t_narcissus"],
           "sound_fx": "sfx_magic_sparkle"
         },
         "meta": { "hint": "Think of a Rose." }
@@ -127,7 +127,7 @@
       ["t_root",    "t_shovel",  "t_bee",     "t_petal"],
       ["t_bark",    "t_pot",     "t_ant",     "t_stem"],
       ["t_trunk",   "t_shears",  "t_ladybug", "t_bud"],
-      ["t_branch",  "t_watercan","t_butterfly","t_thorn"]
+      ["t_branch",  "t_watercan","t_butterfly","t_rose"]
     ],
     "comment": "Organized columns (Anatomy vs Tools vs Life) that need to be transposed to rows."
   }

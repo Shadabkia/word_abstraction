@@ -52,8 +52,8 @@ import {
   Moon, CloudMoon, Sunrise, Sunset,
   
   // Abstract Concepts - مفاهیم انتزاعی
-  Lightbulb, Crown, Shield, Swords, Shapes, Briefcase,
-  
+  Lightbulb, Crown, Shield, Swords, Shapes, Briefcase, Recycle,
+
   type LucideIcon
 } from 'lucide-react';
 
@@ -365,6 +365,108 @@ export const iconRegistry: Record<string, IconMetadata> = {
     category: 'Abstract',
     description: 'Category classification',
     keywords: ['classification', 'category', 'group', 'دسته‌بندی']
+  },
+
+  // === NEW GROUPS ===
+  'trees-group': {
+    id: 'trees-group',
+    type: 'library',
+    libraryIcon: 'Trees',
+    label: 'Trees',
+    labelFa: 'درختان',
+    category: 'Nature',
+    description: 'Various types of trees',
+    keywords: ['trees', 'forest', 'wood', 'درخت']
+  },
+  'flowers-group': {
+    id: 'flowers-group',
+    type: 'library',
+    libraryIcon: 'Flower',
+    label: 'Flowers',
+    labelFa: 'گل‌ها',
+    category: 'Nature',
+    description: 'Various types of flowers',
+    keywords: ['flowers', 'garden', 'bloom', 'گل']
+  },
+  'sun-group': {
+    id: 'sun-group',
+    type: 'library',
+    libraryIcon: 'Sun',
+    label: 'Sun',
+    labelFa: 'خورشید',
+    category: 'Weather',
+    description: 'Sun and solar energy',
+    keywords: ['sun', 'solar', 'light', 'خورشید']
+  },
+  'producers-group': {
+    id: 'producers-group',
+    type: 'library',
+    libraryIcon: 'Leaf',
+    label: 'Producers',
+    labelFa: 'تولیدکنندگان',
+    category: 'Biology',
+    description: 'Biological producers (plants)',
+    keywords: ['producers', 'plants', 'biology', 'تولیدکننده']
+  },
+  'consumers-group': {
+    id: 'consumers-group',
+    type: 'library',
+    libraryIcon: 'PawPrint',
+    label: 'Consumers',
+    labelFa: 'مصرف‌کنندگان',
+    category: 'Biology',
+    description: 'Biological consumers (animals)',
+    keywords: ['consumers', 'animals', 'biology', 'مصرف‌کننده']
+  },
+  'decomposers-group': {
+    id: 'decomposers-group',
+    type: 'library',
+    libraryIcon: 'Recycle',
+    label: 'Decomposers',
+    labelFa: 'تجزیه‌کنندگان',
+    category: 'Biology',
+    description: 'Biological decomposers',
+    keywords: ['decomposers', 'recycle', 'biology', 'تجزیه‌کننده']
+  },
+  'results-group': {
+    id: 'results-group',
+    type: 'library',
+    libraryIcon: 'Sparkles',
+    label: 'Results',
+    labelFa: 'نتایج',
+    category: 'Abstract',
+    description: 'Outcomes and results',
+    keywords: ['results', 'sparkles', 'outcome', 'نتیجه']
+  },
+  'mammals-group': {
+    id: 'mammals-group',
+    type: 'library',
+    libraryIcon: 'Dog',
+    label: 'Mammals',
+    labelFa: 'پستانداران',
+    category: 'Animals',
+    description: 'Mammals',
+    keywords: ['mammals', 'animals', 'dog', 'پستاندار']
+  },
+  'crustaceans-group': {
+    id: 'crustaceans-group',
+    type: 'library',
+    libraryIcon: 'Turtle',
+    label: 'Crustaceans',
+    labelFa: 'سخت‌پوستان',
+    category: 'Animals',
+    description: 'Crustaceans and shelled animals',
+    keywords: ['crustaceans', 'shell', 'turtle', 'سخت‌پوست']
+  },
+  'swim-group': {
+    id: 'swim-group',
+    type: 'library',
+    libraryIcon: 'Waves',
+    label: 'Swimming',
+    labelFa: 'شنا',
+    category: 'Activities',
+    description: 'Swimming and water activities',
+    keywords: ['swim', 'water', 'waves', 'شنا']
   }
 };
 
@@ -514,6 +616,7 @@ export const iconMap: Record<string, LucideIcon> = {
   'Swords': Swords,
   'Shapes': Shapes,
   'Briefcase': Briefcase,
+  'Recycle': Recycle,
   
   // Default
   'CircleDot': CircleDot,

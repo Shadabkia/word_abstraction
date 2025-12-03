@@ -34,13 +34,13 @@
       { "id": "t_cage",     "text": "قفس",       "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
       { "id": "t_coop",     "text": "مرغ‌دانی",  "type": "word", "visuals": { "color_hex": "#DEB887" } },
       { "id": "t_hollow",   "text": "تنه درخت",  "type": "word", "visuals": { "color_hex": "#556B2F" } },
-
-      { "id": "t_icon_fly", "text": "★ پرواز",   "type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "icon_wing", "color_hex": "#87CEFA" } },
+      
+      { "id": "t_icon_fly", "text": "★ پرواز",   "type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "birds-group", "color_hex": "#87CEFA" } },
       { "id": "t_wing",     "text": "بال",       "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#F0F8FF" } },
       { "id": "t_sky",      "text": "آسمان",     "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#00BFFF" } },
       { "id": "t_cloud",    "text": "ابر",       "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#FFFFFF" } },
       
-      { "id": "t_icon_swim","text": "★ شنا",     "type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "icon_wave", "color_hex": "#40E0D0" } },
+      { "id": "t_icon_swim","text": "★ شنا",     "type": "meta_group", "meta": { "is_hidden_at_start": true }, "visuals": { "icon_enabled": true, "icon_id": "swim-group", "color_hex": "#40E0D0" } },
       { "id": "t_webfoot",  "text": "پرده‌پا",   "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#FFA07A" } },
       { "id": "t_pond",     "text": "برکه",      "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#20B2AA" } },
       { "id": "t_rain",     "text": "باران",     "type": "word", "meta": { "is_hidden_at_start": true }, "visuals": { "color_hex": "#4682B4" } }
@@ -57,7 +57,7 @@
           "trigger_ids": ["t_eagle", "t_sparrow", "t_pigeon", "t_canary"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_fly", "t_wing", "t_sky", "t_cloud"],
+          "reveal_ids": ["t_icon_fly", "t_rain", "t_sky", "t_cloud"],
           "sound_fx": "sfx_wings_flap"
         },
         "meta": { "hint": "Birds that soar high." }
@@ -70,7 +70,7 @@
           "trigger_ids": ["t_duck", "t_swan", "t_goose", "t_pelican"]
         },
         "outcomes": {
-          "reveal_ids": ["t_icon_swim", "t_webfoot", "t_pond", "t_rain"],
+          "reveal_ids": ["t_icon_swim", "t_webfoot", "t_pond", "t_wing"],
           "sound_fx": "sfx_splash"
         },
         "meta": { "hint": "Birds that love the water." }

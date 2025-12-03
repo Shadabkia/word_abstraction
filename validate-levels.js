@@ -119,6 +119,13 @@ class LevelValidator {
             this.report.error_layer = "SCHEMA";
             return this.report;
         }
+        
+        // New constraint check
+        if (!this._checkChainReactions()) {
+            this.report.status = "INVALID";
+            this.report.error_layer = "CONSTRAINT";
+            return this.report;
+        }
 
         const economyResult = this._checkEconomy();
         if (economyResult !== SUCCESS) {
@@ -230,6 +237,36 @@ class LevelValidator {
             }
         }
 
+        return true;
+    }
+
+    _checkChainReactions() {
+        const groups = this.data.mechanics.groups;
+        const transformGroups = groups.filter(g => g.behavior === "transform");
+        
+        for (const tGroup of transformGroups) {
+            const revealed = new Set(tGroup.outcomes?.reveal_ids || []);
+            if (revealed.size === 0) continue;
+
+            for (const otherGroup of groups) {
+                if (tGroup.id === otherGroup.id) continue;
+                
+                const triggers = new Set(otherGroup.requirements?.trigger_ids || []);
+                if (triggers.size === 0) continue;
+
+                // Constraint: Revealed tiles must not form a complete trigger set for another group
+                // This prevents instant auto-matches upon transformation
+                if ([...triggers].every(id => revealed.has(id))) {
+                    this.report.message = `Constraint Violation: Group '${tGroup.id}' reveals exactly the triggers for '${otherGroup.id}'. This causes an instant auto-match which is bad design.`;
+                    this.report.details = {
+                        source_group: tGroup.id,
+                        target_group: otherGroup.id,
+                        problematic_tiles: [...triggers]
+                    };
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -357,12 +394,60 @@ class LevelValidator {
                 if (!visitedStates.has(newStateSignature)) {
                     visitedStates.add(newStateSignature);
                     const moveName = `${move.type.charAt(0).toUpperCase() + move.type.slice(1)}: ${move.name}`;
-                    queue.push({ bag: newBag, history: [...history, moveName] });
+                    const moveEntry = { id: move.id, description: moveName };
+                    queue.push({ bag: newBag, history: [...history, moveEntry] });
                 }
             }
         }
 
         return [ERROR_UNSOLVABLE_DEADLOCK, [], {}];
+    }
+
+    printTrace(history) {
+        console.log(`\nTrace for ${this.report.file}:`);
+        const grid = this.data.layout.initial_grid;
+        let bag = grid.flat().sort();
+        
+        const formatBag = (b) => {
+            // Format into rows of 4 for readability
+            const rows = [];
+            for (let i = 0; i < b.length; i += 4) {
+                rows.push(b.slice(i, i + 4).join(", "));
+            }
+            return rows.map(r => `  [ ${r} ]`).join("\n");
+        };
+
+        console.log("Initial State:");
+        console.log(formatBag(bag));
+
+        const groups = this.data.mechanics.groups;
+        const ruleMap = new Map(groups.map(g => [g.id, g]));
+
+        history.forEach((step, index) => {
+            const rule = ruleMap.get(step.id);
+            console.log(`\nStep ${index + 1}: ${step.description}`);
+            console.log(`  Trigger: [${rule.requirements.trigger_ids.join(', ')}]`);
+            if (rule.behavior === 'transform') {
+                console.log(`  Reveal:  [${rule.outcomes.reveal_ids.join(', ')}]`);
+            }
+
+            // Apply move
+            const bagCounter = new Counter(bag);
+            bagCounter.subtract(new Counter(rule.requirements.trigger_ids));
+            if (rule.behavior === 'transform') {
+                bagCounter.update(rule.outcomes.reveal_ids);
+            }
+            bag = bagCounter.elements();
+
+            console.log("State:");
+            console.log(formatBag(bag));
+        });
+        
+        if (bag.length === 0) {
+            console.log("\nResult: CLEARED");
+        } else {
+            console.log("\nResult: REMAINING TILES", bag);
+        }
     }
 }
 
@@ -397,6 +482,7 @@ function validateMeta(metaPath) {
 function main() {
     const args = process.argv.slice(2);
     const jsonOutput = args.includes('--json');
+    const trace = args.includes('--trace');
     
     const specificLevel = args.find(arg => arg.startsWith('--level='))?.split('=')[1];
     const specificChapter = args.find(arg => arg.startsWith('--chapter='))?.split('=')[1];
@@ -486,6 +572,9 @@ function main() {
             if (report.status === "VALID") {
                 const s = report.stats;
                 console.log(`✅ ${name.padEnd(15)} [${s.grid}, ${s.words}w] Trans: ${s.transforms}, Final: ${s.finals}, Steps: ${s.min_steps}`);
+                if (trace) {
+                    validator.printTrace(report.solution_path);
+                }
             } else {
                 console.log(`❌ ${name}: ${report.message || 'Unknown Error'}`);
                 if (report.details && Object.keys(report.details).length > 0) {
