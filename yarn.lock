@@ -47,6 +47,11 @@
   "resolved" "https://registry.npmjs.org/@capacitor/haptics/-/haptics-6.0.0.tgz"
   "version" "6.0.0"
 
+"@capacitor/preferences@^6.0.4":
+  "integrity" "sha512-ziauSI1pgdyl+gduvvf8lInvzF3Wdyu/ok+u7NlnhKp8XOj9plJgtnXZWFiR8CiCK5wMvo+gFaNh3zhMyEUwpA=="
+  "resolved" "https://registry.npmjs.org/@capacitor/preferences/-/preferences-6.0.4.tgz"
+  "version" "6.0.4"
+
 "@capgo/capacitor-updater@^6.27.11":
   "integrity" "sha512-8wJUj7ySvfo6NnAtIYGmqwvO4apVZK3s8y5FDQCJYuDXBMf+vNJGG3xqg7A02vGxcGpNmvjqbI6Lo0aYFVNOrw=="
   "resolved" "https://registry.npmjs.org/@capgo/capacitor-updater/-/capacitor-updater-6.27.11.tgz"

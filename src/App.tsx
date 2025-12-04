@@ -16,6 +16,7 @@ import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/lev
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { gameStorage } from './utils/gameStorage';
 
 interface CompletedCategory {
   name: string;
@@ -60,6 +61,18 @@ export default function App() {
   // FIX: Track when game is processing to prevent race conditions
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Load saved game state on mount (restore last played level)
+  useEffect(() => {
+    gameStorage.getCurrentLevel().then(savedLevel => {
+      if (savedLevel && savedLevel > 0) {
+        console.log(`Restoring saved level: ${savedLevel}`);
+        setLevel(savedLevel);
+      }
+    }).catch(error => {
+      console.error('Failed to restore saved level:', error);
+    });
+  }, []);
+
   // Load available levels and metadata on mount
   useEffect(() => {
     Promise.all([
@@ -84,8 +97,21 @@ export default function App() {
     setMergedSubcategoriesCount(0);
     setHintedWords(new Map());
     
-    loadLevel(level).then(data => {
+    // Save current level
+    gameStorage.saveCurrentLevel(level);
+    
+    loadLevel(level).then(async data => {
       setCurrentLevelData(data);
+      
+      // Try to restore saved progress for this level
+      const savedProgress = await gameStorage.getLevelProgress(level);
+      if (savedProgress && savedProgress.gridRows && savedProgress.gridRows.length > 0) {
+        console.log(`Restoring saved progress for level ${level}`);
+        setGridRows(savedProgress.gridRows);
+        setHiddenPool(savedProgress.hiddenPool || []);
+        setMergedSubcategoriesCount(savedProgress.mergedSubcategoriesCount || 0);
+      }
+      
       setIsLoading(false);
     }).catch(error => {
       console.error('Failed to load level:', error);
@@ -319,6 +345,16 @@ export default function App() {
             completed: { name: categoryName, words }
           };
           setGridRows(newGridRows);
+          
+          // Save progress after regular category completion
+          const newCompletedCount = newGridRows.filter(r => r.type === 'completed').length;
+          gameStorage.saveLevelProgress(
+            level,
+            newGridRows,
+            hiddenPool,
+            mergedSubcategoriesCount,
+            newCompletedCount
+          );
         }
         
         // Reset merging state after grid update
@@ -431,7 +467,18 @@ export default function App() {
     setHiddenPool(newHiddenPool);
     
     // Increment merged subcategories count (each merge counts as 1 step)
-    setMergedSubcategoriesCount(prev => prev + 1);
+    const newMergedCount = mergedSubcategoriesCount + 1;
+    setMergedSubcategoriesCount(newMergedCount);
+    
+    // Save progress after subcategory merge
+    const completedCount = newGridRows.filter(r => r.type === 'completed').length;
+    gameStorage.saveLevelProgress(
+      level,
+      newGridRows,
+      newHiddenPool,
+      newMergedCount,
+      completedCount
+    );
   };
 
   const handleHint = () => {
