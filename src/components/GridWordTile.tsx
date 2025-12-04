@@ -80,6 +80,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         __previewHeight: rect?.height ?? undefined,
         __offsetX: offset.x,
         __offsetY: offset.y,
+        __rowIndex: rowIndex, // Inject row index for dynamic offset calculation
       };
     },
     end: () => {

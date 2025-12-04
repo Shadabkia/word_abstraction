@@ -60,8 +60,9 @@ export default defineConfig({
       },
     },
     server: {
-      host: true,
-      port: 3009,
+      host: '0.0.0.0', // Explicitly bind to all network interfaces
+      port: 3010,
+      strictPort: false, // Try next available port if 3010 is taken
       open: true,
     },
   });

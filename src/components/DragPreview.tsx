@@ -19,16 +19,19 @@ interface Word {
   __previewHeight?: number;
   __offsetX?: number;
   __offsetY?: number;
+  __rowIndex?: number;
 }
 
-function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offsetY: number = 0): React.CSSProperties {
+function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offsetY: number = 0, rowIndex: number = 0): React.CSSProperties {
   if (!currentOffset) {
     return { display: "none" };
   }
   const { x, y } = currentOffset;
   
-  // Move it up slightly above the touch point (60px above finger)
-  const upwardOffset = 60;  
+  // Calculate dynamic upward offset based on row index
+  // 20px for row 0, +10px for each subsequent row
+  // Row 0: 20px, Row 1: 30px, Row 2: 40px, ... Row 5: 70px
+  const upwardOffset = 25 + (rowIndex * 7);  
    
   const transform = `translate(${x - offsetX}px, ${y - offsetY - upwardOffset}px)`;
   return {
@@ -68,13 +71,14 @@ export function DragPreview() {
   const height = item.__previewHeight;
   const offsetX = item.__offsetX ?? (width ? width / 2 : 0);
   const offsetY = item.__offsetY ?? (height ? height / 2 : 0);
+  const rowIndex = item.__rowIndex ?? 0;
 
   const IconComponent = item.icon?.iconName ? getIcon(item.icon.iconName) : null;
   
   // Check if item has icon and determine display type
   const hasIcon = item.icon && (item.icon.type === 'library' || item.icon.type === 'emoji');
-  const hasEmoji = hasIcon && item.icon.type === 'emoji' && item.icon.emoji;
-  const hasLibraryIcon = hasIcon && item.icon.type === 'library' && IconComponent;
+  const hasEmoji = hasIcon && item.icon?.type === 'emoji' && item.icon?.emoji;
+  const hasLibraryIcon = hasIcon && item.icon?.type === 'library' && IconComponent;
   const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon;
   
   const displayText = item.icon?.label || item.text;
@@ -95,7 +99,7 @@ export function DragPreview() {
     >
       <div
         style={{
-          ...getItemStyles(currentOffset, offsetX, offsetY),
+          ...getItemStyles(currentOffset, offsetX, offsetY, rowIndex),
           width: width ?? undefined,
           height: height ?? undefined,
         }}
