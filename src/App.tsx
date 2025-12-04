@@ -15,6 +15,7 @@ import { Word, LevelData, LevelJSON } from './data/types';
 import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 interface CompletedCategory {
   name: string;
@@ -29,6 +30,16 @@ interface GridRow {
 
 const isTouchDevice = () => {
   return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+};
+
+// Helper function to trigger vibration on supported devices
+const triggerHapticFeedback = async () => {
+  try {
+    await Haptics.impact({ style: ImpactStyle.Medium });
+  } catch (error) {
+    // Silently fail on web or unsupported platforms
+    console.log('Haptics not available:', error);
+  }
 };
 
 export default function App() {
@@ -295,6 +306,7 @@ export default function App() {
         } else {
           // Regular category - show as completed row
           soundManager.playSuccess();
+          triggerHapticFeedback(); // Vibrate on merge completion
           confetti({
             particleCount: 50,
             spread: 50,
@@ -347,6 +359,7 @@ export default function App() {
     setGlowingSubcategoryId(subcategoryWord.id);
     
     soundManager.playMerge();
+    triggerHapticFeedback(); // Vibrate on subcategory merge
     confetti({
       particleCount: 100,
       spread: 70,

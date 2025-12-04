@@ -31,7 +31,7 @@ function getItemStyles(currentOffset: XYCoord | null, offsetX: number = 0, offse
   // Calculate dynamic upward offset based on row index
   // 20px for row 0, +10px for each subsequent row
   // Row 0: 20px, Row 1: 30px, Row 2: 40px, ... Row 5: 70px
-  const upwardOffset = 25 + (rowIndex * 7);  
+  const upwardOffset = 30 + (rowIndex * 7);  
    
   const transform = `translate(${x - offsetX}px, ${y - offsetY - upwardOffset}px)`;
   return {

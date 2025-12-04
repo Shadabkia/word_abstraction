@@ -42,6 +42,11 @@
   dependencies:
     "tslib" "^2.1.0"
 
+"@capacitor/haptics@^6.0.0":
+  "integrity" "sha512-z2TmB+pTbd98Il2I1xpZGClCFwORxxP2m9f1a0rh70c2ubj2atVyZctgxrx1fuoExZTNGSxHaylWfrmjmtelVg=="
+  "resolved" "https://registry.npmjs.org/@capacitor/haptics/-/haptics-6.0.0.tgz"
+  "version" "6.0.0"
+
 "@capgo/capacitor-updater@^6.27.11":
   "integrity" "sha512-8wJUj7ySvfo6NnAtIYGmqwvO4apVZK3s8y5FDQCJYuDXBMf+vNJGG3xqg7A02vGxcGpNmvjqbI6Lo0aYFVNOrw=="
   "resolved" "https://registry.npmjs.org/@capgo/capacitor-updater/-/capacitor-updater-6.27.11.tgz"
