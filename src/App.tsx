@@ -287,13 +287,10 @@ export default function App() {
     
     setGridRows(newGridRows);
     
-    // FIX: Check matches immediately to prevent state inconsistency
-    // The visual delay should be handled by animations, not setTimeout
+    // FIX: Check matches sequentially - destination row first, then source row
+    // This ensures both animations play when two rows match in one swap
     requestAnimationFrame(() => {
-      checkRowForMatch(newGridRows, sourceRowIndex);
-      if (targetRowIndex !== sourceRowIndex) {
-        checkRowForMatch(newGridRows, targetRowIndex);
-      }
+      checkRowForMatchSequential(newGridRows, sourceRowIndex, targetRowIndex, sourceRowIndex !== targetRowIndex);
     });
   };
 
@@ -363,6 +360,146 @@ export default function App() {
         setIsProcessing(false);
       }, 1000);
     }
+  };
+
+  // FIX: Sequential match checking for when both source and target rows match
+  // This ensures both animations play in order: destination row first, then source row
+  const checkRowForMatchSequential = (
+    rows: GridRow[], 
+    sourceRowIndex: number, 
+    targetRowIndex: number,
+    checkBothRows: boolean
+  ) => {
+    const checkMatch = (rowIndex: number): boolean => {
+      const row = rows[rowIndex];
+      if (row.type !== 'words' || !row.words || row.words.length !== 4) return false;
+      
+      const validWords = row.words.filter(w => w && w.category && w.category !== 'empty');
+      if (validWords.length !== 4) return false;
+      
+      const categories = validWords.map(w => w.category);
+      return categories.every(cat => cat === categories[0]);
+    };
+
+    const sourceMatches = checkMatch(sourceRowIndex);
+    const targetMatches = checkBothRows && checkMatch(targetRowIndex);
+
+    if (sourceMatches && targetMatches) {
+      // Both rows match - process destination (target) first, then source
+      console.log('Both rows match - processing destination row first, then source row');
+      setIsProcessing(true);
+      setMergingRow(targetRowIndex);
+
+      // Process destination row after animation
+      setTimeout(() => {
+        processMatchedRowAndContinue(rows, targetRowIndex, sourceRowIndex);
+      }, 1000);
+    } else if (sourceMatches) {
+      // Only source row matches
+      checkRowForMatch(rows, sourceRowIndex);
+    } else if (targetMatches) {
+      // Only target row matches
+      checkRowForMatch(rows, targetRowIndex);
+    }
+  };
+
+  // Helper function to process a matched row (extracted from checkRowForMatch)
+  const processMatchedRow = (rows: GridRow[], rowIndex: number) => {
+    const row = rows[rowIndex];
+    if (row.type !== 'words' || !row.words) return;
+    
+    const validWords = row.words.filter(w => w && w.category && w.category !== 'empty');
+    const categories = validWords.map(w => w.category);
+    const matchedCategory = categories[0];
+    const categoryName = CATEGORY_NAMES[matchedCategory] || matchedCategory;
+    const words = validWords.map(w => w.text);
+    
+    // Check if this is a subcategory that should merge
+    const subcategories = HIERARCHY?.subcategories || (HIERARCHY?.subcategory ? [HIERARCHY.subcategory] : []);
+    const matchingSubcategory = subcategories.find(sub => sub.category === matchedCategory);
+    
+    if (matchingSubcategory) {
+      // This is a subcategory - merge into single tile
+      handleSubcategoryCompletion(rows, rowIndex, matchingSubcategory);
+    } else {
+      // Regular category - show as completed row
+      soundManager.playSuccess();
+      triggerHapticFeedback();
+      confetti({
+        particleCount: 50,
+        spread: 50,
+        origin: { y: 0.6 },
+        colors: ['#6C5DD3', '#FFA2C0']
+      });
+      
+      const newGridRows = [...rows];
+      newGridRows[rowIndex] = {
+        type: 'completed',
+        completed: { name: categoryName, words }
+      };
+      setGridRows(newGridRows);
+      
+      // Save progress after regular category completion
+      const newCompletedCount = newGridRows.filter(r => r.type === 'completed').length;
+      gameStorage.saveLevelProgress(
+        level,
+        newGridRows,
+        hiddenPool,
+        mergedSubcategoriesCount,
+        newCompletedCount
+      );
+    }
+  };
+
+  // Helper function to process destination row then continue with source row
+  const processMatchedRowAndContinue = (rows: GridRow[], destinationRowIndex: number, sourceRowIndex: number) => {
+    // Process destination row first
+    processMatchedRow(rows, destinationRowIndex);
+    
+    // Wait for state to update, then process source row
+    setTimeout(() => {
+      setGridRows(currentRows => {
+        // Check if source row still matches after destination row was processed
+        const sourceRow = currentRows[sourceRowIndex];
+        if (sourceRow.type !== 'words' || !sourceRow.words || sourceRow.words.length !== 4) {
+          // Source row is no longer valid, clean up and exit
+          setMergingRow(null);
+          setIsProcessing(false);
+          return currentRows;
+        }
+        
+        const validWords = sourceRow.words.filter(w => w && w.category && w.category !== 'empty');
+        if (validWords.length !== 4) {
+          // Source row no longer has 4 valid words, clean up and exit
+          setMergingRow(null);
+          setIsProcessing(false);
+          return currentRows;
+        }
+        
+        const categories = validWords.map(w => w.category);
+        const allSame = categories.every(cat => cat === categories[0]);
+        
+        if (allSame) {
+          // Source row still matches - start its animation
+          setMergingRow(sourceRowIndex);
+          
+          // Process source row after animation
+          setTimeout(() => {
+            processMatchedRow(currentRows, sourceRowIndex);
+            
+            // Clean up after both rows are processed
+            setMergingRow(null);
+            setIsProcessing(false);
+          }, 1000);
+        } else {
+          // Source row no longer matches after destination row completed
+          setMergingRow(null);
+          setIsProcessing(false);
+        }
+        
+        return currentRows;
+      });
+    }, 100); // Small delay to ensure destination row's state update completes
   };
 
   const handleSubcategoryCompletion = (
