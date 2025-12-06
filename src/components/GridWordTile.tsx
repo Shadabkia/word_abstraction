@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { getIcon } from '@/utils/iconMapper';
 import { soundManager } from '../utils/soundManager';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 interface Word {
   id: string;
@@ -109,6 +110,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
       if (item.id !== word.id) {
         soundManager.playPop(); // Sound for successful drop/swap
+        // Light haptic feedback for tile swap
+        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {
+          // Silently fail on web or unsupported platforms
+        });
         onSwap(item, rowIndex, colIndex);
       }
     },
