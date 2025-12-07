@@ -148,75 +148,90 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   // FIX #3: Dynamic random rotation for playfulness (use word.id for stability)
   const rotation = React.useMemo(() => word.isMergedGroup ? 0 : Math.random() * 2 - 1, [word.id, word.isMergedGroup]);
 
-  // Get icon component if icon is provided (stable memoization)
+  // OPTIMIZATION: Memoize icon component lookup
   const iconName = word.icon?.iconName;
   const IconComponent = React.useMemo(() => 
     iconName ? getIcon(iconName) : null, 
     [iconName]
   );
   
-  // Check if word has icon and it should be displayed
-  const hasIcon = word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
-  const hasEmoji = hasIcon && word.icon.type === 'emoji' && word.icon.emoji;
-  const hasLibraryIcon = hasIcon && word.icon.type === 'library' && IconComponent;
-  const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon; // Show "*" if icon not found
-  
-  const displayText = word.icon?.label || word.text;
+  // OPTIMIZATION: Memoize icon display logic to prevent recalculation
+  const iconDisplay = React.useMemo(() => {
+    const hasIcon = word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
+    const hasEmoji = hasIcon && word.icon.type === 'emoji' && word.icon.emoji;
+    const hasLibraryIcon = hasIcon && word.icon.type === 'library' && IconComponent;
+    const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon;
+    const displayText = word.icon?.label || word.text;
+    
+    return { hasEmoji, hasLibraryIcon, showFallbackIcon, displayText };
+  }, [word.icon, word.text, IconComponent]);
 
-  // Simplified, visually distinct merge animation
-  const mergeAnimation = isMerging ? {
-    scale: [1, 1.1, 0], // Pulse then disappear
-    opacity: [1, 1, 0],
-    rotate: [0, 5, -5, 0], // Jiggle
-    filter: "brightness(1.5)", // Flash bright
-    transition: {
-      duration: 0.6,
-      ease: "easeInOut",
-      delay: colIndex * 0.1 // Staggered disappearance
-    }
-  } : {};
+  // OPTIMIZATION: Memoize merge animation to prevent recreation on every render
+  const mergeAnimation = React.useMemo(() => 
+    isMerging ? {
+      scale: [1, 1.1, 0],
+      opacity: [1, 1, 0],
+      rotate: [0, 5, -5, 0],
+      filter: "brightness(1.5)",
+      transition: {
+        duration: 0.6,
+        ease: "easeInOut",
+        delay: colIndex * 0.1
+      }
+    } : {},
+    [isMerging, colIndex]
+  );
 
-  // Simplified hint animation (just subtle scale/pulse)
-  const hintAnimation = hintColor ? {
-    scale: [1, 1.05, 1],
-    filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
-    zIndex: 20,
-    opacity: 1,
-    transition: {
-      duration: 1.5,
-      ease: "easeInOut",
-      repeat: Infinity,
-    }
-  } : {};
+  // OPTIMIZATION: Memoize hint animation to prevent recreation on every render
+  const hintAnimation = React.useMemo(() =>
+    hintColor ? {
+      scale: [1, 1.05, 1],
+      filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
+      zIndex: 20,
+      opacity: 1,
+      transition: {
+        duration: 1.5,
+        ease: "easeInOut",
+        repeat: Infinity,
+      }
+    } : {},
+    [hintColor]
+  );
+
+  // OPTIMIZATION: Memoize animation state to prevent unnecessary recalculations
+  const animateState = React.useMemo(() => {
+    if (isMerging) return mergeAnimation;
+    if (hintColor && !isDragging) return hintAnimation;
+    return { 
+      opacity: isDragging ? 0.5 : 1, 
+      scale: 1, 
+      x: 0,
+      y: 0,
+      rotate: 0,
+      filter: "brightness(1)",
+      zIndex: isDragging ? 100 : 10 
+    };
+  }, [isMerging, hintColor, isDragging, mergeAnimation, hintAnimation]);
+
+  // OPTIMIZATION: Memoize transition config
+  const transitionConfig = React.useMemo(() => 
+    (isMerging || hintColor) ? {} : { 
+      type: "spring", 
+      stiffness: 350, 
+      damping: 25,
+      layout: { duration: 0.2 },
+      repeat: 0
+    },
+    [isMerging, hintColor]
+  );
 
   return (
     <motion.div
       layoutId={word.id}
       layout={!isDragging} // FIX: Disable layout animation during drag
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={
-        isMerging ? mergeAnimation : 
-        (hintColor && !isDragging) ? hintAnimation :
-        { 
-          opacity: isDragging ? 0.5 : 1, 
-          scale: 1, 
-          x: 0,
-          y: 0,
-          rotate: 0,
-          filter: "brightness(1)",
-          zIndex: isDragging ? 100 : 10 
-        }
-      }
-      transition={
-        isMerging || hintColor ? {} : 
-        { 
-          type: "spring", 
-          stiffness: 350, 
-          damping: 25,
-          layout: { duration: 0.2 },
-          repeat: 0 // Explicitly stop repeating
-        }
-      }
+      animate={animateState}
+      transition={transitionConfig}
       ref={(node) => {
         tileRef.current = node;
         drag(drop(node));
@@ -233,7 +248,8 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       `}
       style={{ 
         touchAction: 'none',
-        rotate: rotation
+        rotate: rotation,
+        willChange: isDragging ? 'transform, opacity' : 'auto', // OPTIMIZATION: Hint browser during drag
       }}
       dir="rtl"
       whileTap={{ scale: 0.95 }}
@@ -271,7 +287,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         {/* Content */}
         <div className="flex flex-col items-center justify-center gap-0.5 z-10">
           {/* Show icon from Lucide library */}
-          {hasLibraryIcon && IconComponent && (
+          {iconDisplay.hasLibraryIcon && IconComponent && (
             <IconComponent 
               className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-600' : 'text-slate-600'}`}
               strokeWidth={2.5}
@@ -279,12 +295,12 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           )}
           
           {/* Show emoji if type is emoji */}
-          {hasEmoji && (
+          {iconDisplay.hasEmoji && (
             <span className="text-lg sm:text-xl drop-shadow-sm filter">{word.icon!.emoji}</span>
           )}
           
           {/* Show fallback "*" if icon not found */}
-          {showFallbackIcon && (
+          {iconDisplay.showFallbackIcon && (
             <span className="text-lg sm:text-xl font-bold drop-shadow-sm filter">*</span>
           )}
           
@@ -293,7 +309,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
             drop-shadow-sm
             ${word.isMergedGroup ? 'text-purple-800' : 'text-slate-700'}
           `}>
-            {displayText}
+            {iconDisplay.displayText}
           </span>
         </div>
       </div>
