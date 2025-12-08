@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { getIcon } from '@/utils/iconMapper';
 import { soundManager } from '../utils/soundManager';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { toast } from 'sonner';
 import { useDragContext } from '../contexts/DragContext';
 
 interface Word {
@@ -68,6 +67,26 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   const canStartDrag = React.useRef<boolean>(false);
   const dropTargetRef = React.useRef<{ row: number; col: number } | null>(null);
 
+  const getDropTarget = React.useCallback((x: number, y: number) => {
+    const elementsAtPoint = document.elementsFromPoint(x, y);
+    const tileElement = elementsAtPoint.find(
+      (el): el is HTMLElement =>
+        el instanceof HTMLElement && el.hasAttribute('data-word-id')
+    );
+
+    if (!tileElement) return null;
+
+    const targetWordId = tileElement.getAttribute('data-word-id');
+    const targetRow = parseInt(tileElement.getAttribute('data-row-index') || '-1', 10);
+    const targetCol = parseInt(tileElement.getAttribute('data-col-index') || '-1', 10);
+
+    if (targetWordId === word.id || targetRow < 0 || targetCol < 0) {
+      return null;
+    }
+
+    return { row: targetRow, col: targetCol };
+  }, [word.id]);
+
   const isDragging = dragState.isDragging && dragState.draggedWord?.id === word.id;
   const isOver = dragState.isDragging && 
     dropTargetRef.current?.row === rowIndex && 
@@ -77,10 +96,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   // Long press handler
   const handleLongPress = () => {
     console.log('🔥 LONG PRESS DETECTED - Ready to drag:', word.text);
-    toast.success(`Ready to drag: ${word.text}`, {
-      duration: 1500,
-      position: 'top-center',
-    });
     canStartDrag.current = true;
   };
 
@@ -167,19 +182,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         updateDragPosition({ x: currentX, y: currentY });
         
         // Find drop target
-        const elementsAtPoint = document.elementsFromPoint(currentX, currentY);
-        const tileElement = elementsAtPoint.find(el => el.getAttribute('data-word-id'));
-        
-        if (tileElement) {
-          const targetWordId = tileElement.getAttribute('data-word-id');
-          const targetRow = parseInt(tileElement.getAttribute('data-row-index') || '-1');
-          const targetCol = parseInt(tileElement.getAttribute('data-col-index') || '-1');
-          
-          if (targetWordId !== word.id && targetRow >= 0 && targetCol >= 0) {
-            dropTargetRef.current = { row: targetRow, col: targetCol };
-          } else {
-            dropTargetRef.current = null;
-          }
+        dropTargetRef.current = getDropTarget(currentX, currentY);
+        // Clear target when pointer is not over any tile to avoid stale swaps
+        if (!dropTargetRef.current) {
+          dropTargetRef.current = null;
         }
       }
     }
@@ -188,11 +194,13 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     cancelTimers();
 
-    if (isDraggingThis.current && dropTargetRef.current) {
+    const finalTarget = getDropTarget(e.clientX, e.clientY);
+
+    if (isDraggingThis.current && finalTarget) {
       soundManager.playPop();
       Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
-      onSwap(word, dropTargetRef.current.row, dropTargetRef.current.col);
-      console.log('✅ DROP on row:', dropTargetRef.current.row, 'col:', dropTargetRef.current.col);
+      onSwap(word, finalTarget.row, finalTarget.col);
+      console.log('✅ DROP on row:', finalTarget.row, 'col:', finalTarget.col);
     }
 
     if (isDraggingThis.current) {
