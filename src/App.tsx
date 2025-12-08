@@ -1,22 +1,21 @@
 import { useState, useMemo, useEffect } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { TouchBackend } from 'react-dnd-touch-backend';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { Settings, Search, Lightbulb, Gift } from 'lucide-react';
 import { Button } from './components/ui/button';
-import { DragPreview } from './components/DragPreview';
+import { CustomDragPreview } from './components/CustomDragPreview';
 import { SettingsDialog } from './components/ui/dialogs/SettingsDialog';
 import { LevelSelector } from './components/LevelSelector';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { DragProvider } from './contexts/DragContext';
 import { Word, LevelData, LevelJSON } from './data/types';
 import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { gameStorage } from './utils/gameStorage';
+import { Toaster } from './components/ui/sonner';
 
 interface CompletedCategory {
   name: string;
@@ -28,10 +27,6 @@ interface GridRow {
   words?: Word[];
   completed?: CompletedCategory;
 }
-
-const isTouchDevice = () => {
-  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-};
 
 // Helper function to trigger vibration on supported devices
 const triggerHapticFeedback = async () => {
@@ -713,12 +708,9 @@ export default function App() {
 
   return (
     <LanguageProvider>
-      <DndProvider
-        backend={isTouchDevice() ? TouchBackend : HTML5Backend}
-        options={isTouchDevice() ? { enableTouchEvents: true, enableMouseEvents: true, delay: 0 } : undefined}
-      >
+      <DragProvider>
         <div className="min-h-screen bg-candy-bg bg-pattern-dots overflow-x-hidden font-display selection:bg-candy-secondary selection:text-white">
-          <DragPreview />
+          <CustomDragPreview />
           
           <div className="max-w-md mx-auto relative min-h-screen pb-28 sm:pb-32">
             {/* Floating Top Bar */}
@@ -776,7 +768,7 @@ export default function App() {
 
             {/* Game Grid */}
             {!isLoading && (
-            <div className="px-3 sm:px-4 space-y-2 sm:space-y-3">
+            <div className="px-3 sm:px-4 space-y-3 sm:space-y-4">
               {gridRows.map((row, rowIndex) => (
                 <div key={rowIndex} className="animate-pop-in" style={{ animationDelay: `${rowIndex * 0.1}s` }}>
                   {row.type === 'completed' && row.completed ? (
@@ -838,10 +830,13 @@ export default function App() {
             </div>
           </div>
         </div>
-      </DndProvider>
 
-      {/* Settings dialog */}
-      <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
+        {/* Settings dialog */}
+        <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
+        
+        {/* Toast notifications */}
+        <Toaster />
+      </DragProvider>
     </LanguageProvider>
   );
 }

@@ -126,6 +126,20 @@
     -webkit-user-select: none;
     -webkit-touch-callout: none;
   }
+
+  /* Prevent native context menu and haptic feedback on game tiles */
+  [data-word-id] {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* Prevent default touch behaviors globally on game area */
+  .min-h-screen {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
 }
 
 /* Keyframes */
