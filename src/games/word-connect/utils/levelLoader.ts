@@ -1,5 +1,5 @@
 import { LevelJSON, LevelData, Word, ChapterMeta, SubcategoryInfo } from '../data/types';
-import { getIconMetadata } from './iconMapper';
+import { getIconMetadata } from '../../../shared/utils/iconMapper';
 import { allGameData } from '../data/levels';
 
 console.log('[LevelLoader] Module loaded with bundled data');

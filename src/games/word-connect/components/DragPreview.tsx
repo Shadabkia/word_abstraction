@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDragLayer, XYCoord } from "react-dnd";
-import { getIcon } from '@/utils/iconMapper';
+import { getIcon } from '@/shared/utils/iconMapper';
 
 interface Word {
   id: string;

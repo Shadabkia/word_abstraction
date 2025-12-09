@@ -2,7 +2,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import * as React from "react";
 import { motion } from "framer-motion";
-import { getIcon } from '@/utils/iconMapper';
+import { getIcon } from '@/shared/utils/iconMapper';
 import { soundManager } from '../utils/soundManager';
 
 interface Word {

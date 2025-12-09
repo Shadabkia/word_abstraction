@@ -6,9 +6,9 @@ import {
   SelectValue,
   SelectGroup,
   SelectLabel,
-} from "./ui/select";
+} from "@/shared/ui/select";
 import { LevelJSON } from "../data/types";
-import { cn } from "./ui/utils";
+import { cn } from "@/shared/ui/utils";
 import { Lock, Star } from "lucide-react";
 import { useMemo } from "react";
 
