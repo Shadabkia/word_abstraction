@@ -1,20 +1,21 @@
 import { useState, useMemo, useEffect } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { TouchBackend } from 'react-dnd-touch-backend';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
-import { Settings, Search, Lightbulb, Gift } from 'lucide-react';
+import { CustomDragPreview } from './components/CustomDragPreview';
+import { Settings, Search, Lightbulb, X, Gift } from 'lucide-react';
 import { Button } from '../../shared/ui/button';
-import { DragPreview } from './components/DragPreview';
 import { SettingsDialog } from '../../shared/ui/dialogs/SettingsDialog';
 import { LevelSelector } from './components/LevelSelector';
 import { LanguageProvider } from '../../contexts/LanguageContext';
+import { DragProvider } from '../../contexts/DragContext';
 import { Word, LevelData, LevelJSON } from './data/types';
 import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
 import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { gameStorage } from './utils/gameStorage';
+import { Toaster } from '../../shared/ui/sonner';
 
 interface CompletedCategory {
   name: string;
@@ -27,12 +28,24 @@ interface GridRow {
   completed?: CompletedCategory;
 }
 
-const isTouchDevice = () => {
-  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+// Helper function to trigger vibration on supported devices
+const triggerHapticFeedback = async () => {
+  try {
+    await Haptics.impact({ style: ImpactStyle.Medium });
+  } catch (error) {
+    // Silently fail on web or unsupported platforms
+    console.log('Haptics not available:', error);
+  }
 };
 
-export default function App() {
-  const [level, setLevel] = useState(1);
+interface WordConnectGameProps {
+  onExit?: () => void;
+  onComplete?: (score: number) => void;
+  initialLevel?: number;
+}
+
+export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }: WordConnectGameProps) {
+  const [level, setLevel] = useState(initialLevel);
   const [coins] = useState(10);
   // hints state removed as requested - infinite hints now
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
@@ -48,6 +61,18 @@ export default function App() {
   
   // FIX: Track when game is processing to prevent race conditions
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Load saved game state on mount (restore last played level)
+  useEffect(() => {
+    gameStorage.getCurrentLevel().then(savedLevel => {
+      if (savedLevel && savedLevel > 0 && savedLevel !== initialLevel) {
+        console.log(`Restoring saved level: ${savedLevel}`);
+        setLevel(savedLevel);
+      }
+    }).catch(error => {
+      console.error('Failed to restore saved level:', error);
+    });
+  }, [initialLevel]);
 
   // Load available levels and metadata on mount
   useEffect(() => {
@@ -73,8 +98,21 @@ export default function App() {
     setMergedSubcategoriesCount(0);
     setHintedWords(new Map());
     
-    loadLevel(level).then(data => {
+    // Save current level
+    gameStorage.saveCurrentLevel(level);
+    
+    loadLevel(level).then(async data => {
       setCurrentLevelData(data);
+      
+      // Try to restore saved progress for this level
+      const savedProgress = await gameStorage.getLevelProgress(level);
+      if (savedProgress && savedProgress.gridRows && savedProgress.gridRows.length > 0) {
+        console.log(`Restoring saved progress for level ${level}`);
+        setGridRows(savedProgress.gridRows);
+        setHiddenPool(savedProgress.hiddenPool || []);
+        setMergedSubcategoriesCount(savedProgress.mergedSubcategoriesCount || 0);
+      }
+      
       setIsLoading(false);
     }).catch(error => {
       console.error('Failed to load level:', error);
@@ -295,6 +333,7 @@ export default function App() {
         } else {
           // Regular category - show as completed row
           soundManager.playSuccess();
+          triggerHapticFeedback();
           confetti({
             particleCount: 50,
             spread: 50,
@@ -307,6 +346,28 @@ export default function App() {
             completed: { name: categoryName, words }
           };
           setGridRows(newGridRows);
+          
+          // Save progress
+          gameStorage.saveLevelProgress(
+            level,
+            newGridRows,
+            hiddenPool,
+            mergedSubcategoriesCount,
+            newGridRows.filter(r => r.type === 'completed').length
+          );
+          
+          // Check for level completion
+          const newCompletedCount = newGridRows.filter(r => r.type === 'completed').length;
+          const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
+          
+          if (newTotalCompleted >= totalSteps) {
+            // Level complete!
+            setTimeout(() => {
+              if (onComplete) {
+                onComplete(1000); // Score/points could be calculated
+              }
+            }, 1500); // Give time for confetti/celebration
+          }
         }
         
         // Reset merging state after grid update
@@ -516,17 +577,22 @@ export default function App() {
 
   return (
     <LanguageProvider>
-      <DndProvider
-        backend={isTouchDevice() ? TouchBackend : HTML5Backend}
-        options={isTouchDevice() ? { enableTouchEvents: true, enableMouseEvents: true, delay: 0 } : undefined}
-      >
+      <DragProvider>
         <div className="min-h-screen bg-candy-bg bg-pattern-dots overflow-x-hidden font-display selection:bg-candy-secondary selection:text-white">
-          <DragPreview />
+          <CustomDragPreview />
           
           <div className="max-w-md mx-auto relative min-h-screen pb-28 sm:pb-32">
             {/* Floating Top Bar */}
             <div className="px-3 sm:px-4 pt-4 sm:pt-6 pb-2 sticky top-0 z-10 pointer-events-none">
               <div className="glass-panel rounded-full p-1.5 sm:p-2 flex items-center justify-between pointer-events-auto shadow-3d-sm">
+                
+                {/* Exit Button */}
+                {onExit && (
+                  <button onClick={onExit} className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-slate-500 hover:text-red-500 mr-2">
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+
                 <div className="flex items-center gap-1.5 sm:gap-2 pl-0.5 sm:pl-1">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-inner border-2 border-yellow-300 text-lg sm:text-xl animate-[bounceSlight_3s_infinite]">
                     ⭐
@@ -534,9 +600,6 @@ export default function App() {
                   <div className="bg-slate-100 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 shadow-inner font-bold text-slate-700 text-sm sm:text-base">
                     {coins}
                   </div>
-                  <button className="w-7 h-7 sm:w-8 sm:h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-md transition-colors font-bold text-base sm:text-lg btn-3d-sm">
-                    +
-                  </button>
                 </div>
                 
                 <div className="flex items-center gap-1.5 sm:gap-2 pr-0.5 sm:pr-1">
@@ -555,15 +618,17 @@ export default function App() {
               </div>
             </div>
 
-            {/* Level Selector */}
-            <div className="px-3 sm:px-4 mb-2">
-              <LevelSelector
-                currentLevel={level}
-                levels={levelMetadata}
-                onLevelSelect={setLevel}
-                availableLevels={availableLevels}
-              />
-            </div>
+            {/* Level Selector - Only show if not in embedded module mode (or we can always show it if desired) */}
+            {!onExit && (
+              <div className="px-3 sm:px-4 mb-2">
+                <LevelSelector
+                  currentLevel={level}
+                  levels={levelMetadata}
+                  onLevelSelect={setLevel}
+                  availableLevels={availableLevels}
+                />
+              </div>
+            )}
 
             {/* Game Header (Level & Progress) */}
             <div className="px-3 sm:px-4 mt-2 mb-3 sm:mb-4">
@@ -641,10 +706,13 @@ export default function App() {
             </div>
           </div>
         </div>
-      </DndProvider>
+      </DragProvider>
 
       {/* Settings dialog */}
       <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
+      
+      {/* Toast notifications */}
+      <Toaster />
     </LanguageProvider>
   );
 }

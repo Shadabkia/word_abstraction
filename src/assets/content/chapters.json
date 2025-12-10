@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "chapters": [
+    {
+      "id": "chapter_1",
+      "index": 1,
+      "title": "Tehran",
+      "description": "The Great Escape - Kian leaves his office job and begins his journey",
+      "city": "Tehran",
+      "coverImage": "",
+      "requiredLevelId": null
+    },
+    {
+      "id": "chapter_2",
+      "index": 2,
+      "title": "Kashan",
+      "description": "The Desert Road - Meeting the Darvish",
+      "city": "Kashan",
+      "coverImage": "",
+      "requiredLevelId": "level_10"
+    },
+    {
+      "id": "chapter_3",
+      "index": 3,
+      "title": "Isfahan",
+      "description": "The City of Bridges - Finding new perspectives",
+      "city": "Isfahan",
+      "coverImage": "",
+      "requiredLevelId": "level_20"
+    },
+    {
+      "id": "chapter_4",
+      "index": 4,
+      "title": "Yazd",
+      "description": "The Ancient City - Discovering roots",
+      "city": "Yazd",
+      "coverImage": "",
+      "requiredLevelId": "level_30"
+    }
+  ]
+}
+

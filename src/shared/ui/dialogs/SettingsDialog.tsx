@@ -2,6 +2,8 @@ import { X, Globe, Volume2 } from 'lucide-react';
 import { useState } from 'react';
 import { LanguageDialog } from './LanguageDialog';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import { useSettingsStore } from '../../../core/state/settingsStore';
+import { soundManager } from '../../../games/word-connect/utils/soundManager';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -10,8 +12,13 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   const { language, setLanguage, t } = useLanguage();
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const { soundEnabled, toggleSound } = useSettingsStore();
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
+  
+  const handleSoundToggle = () => {
+    const newState = toggleSound();
+    soundManager.setEnabled(newState);
+  };
 
   const getLanguageDisplayName = (code: string) => {
     return code === 'fa' ? t.persian : t.english;
@@ -143,7 +150,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
             </div>
             {/* Toggle button */}
             <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
+              onClick={handleSoundToggle}
               style={{
                 width: '48px',
                 height: '28px',

@@ -1,9 +1,9 @@
-import { useDrag, useDrop } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend';
 import * as React from "react";
 import { motion } from "framer-motion";
 import { getIcon } from '@/shared/utils/iconMapper';
 import { soundManager } from '../utils/soundManager';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { useDragContext } from '@/contexts/DragContext';
 
 interface Word {
   id: string;
@@ -11,6 +11,7 @@ interface Word {
   category: string;
   icon?: {
     id: string;
+    type?: 'library' | 'emoji';
     label?: string;
     emoji?: string;
     iconName?: string;
@@ -55,169 +56,283 @@ const getHintStyles = (color: string) => {
 
 export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGlow = false, isMerging = false, hintColor, isDisabled = false }: GridWordTileProps) {
   const tileRef = React.useRef<HTMLDivElement | null>(null);
-  const lastDropTimeRef = React.useRef<number>(0);
-  const touchOffsetRef = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const { dragState, startDrag, updateDragPosition, endDrag } = useDragContext();
   
-  // FIX #1: Freeze word data at drag start to prevent mid-drag mutations
-  const draggedWordRef = React.useRef<Word | null>(null);
+  // Long press and drag state
+  const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const dragTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const startPositionRef = React.useRef<{ x: number; y: number } | null>(null);
+  const hasMoved = React.useRef<boolean>(false);
+  const isDraggingThis = React.useRef<boolean>(false);
+  const canStartDrag = React.useRef<boolean>(false);
+  const dropTargetRef = React.useRef<{ row: number; col: number } | null>(null);
 
-  const isTouch =
-    typeof window !== 'undefined' &&
-    (('ontouchstart' in window) || (navigator as any).maxTouchPoints > 0);
+  const getDropTarget = React.useCallback((x: number, y: number) => {
+    const elementsAtPoint = document.elementsFromPoint(x, y);
+    const tileElement = elementsAtPoint.find(
+      (el): el is HTMLElement =>
+        el instanceof HTMLElement && el.hasAttribute('data-word-id')
+    );
 
-  const [{ isDragging }, drag, preview] = useDrag(() => ({
-    type: 'word',
-    canDrag: () => !isDisabled, // FIX: Disable dragging when processing
-    item: () => {
-      soundManager.playPickUp();
-      // Capture word data at drag start and freeze it
-      draggedWordRef.current = { ...word };
-      const rect = tileRef.current?.getBoundingClientRect();
-      const offset = touchOffsetRef.current;
-      return {
-        ...draggedWordRef.current,  // Use frozen word data
-        __previewWidth: rect?.width ?? undefined,
-        __previewHeight: rect?.height ?? undefined,
-        __offsetX: offset.x,
-        __offsetY: offset.y,
-      };
-    },
-    end: () => {
-      // Clear frozen data after drag ends
-      draggedWordRef.current = null;
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }), [word, isDisabled]);
+    if (!tileElement) return null;
 
-  React.useEffect(() => {
-    if (!isTouch) {
-      preview(getEmptyImage(), { captureDraggingState: true });
+    const targetWordId = tileElement.getAttribute('data-word-id');
+    const targetRow = parseInt(tileElement.getAttribute('data-row-index') || '-1', 10);
+    const targetCol = parseInt(tileElement.getAttribute('data-col-index') || '-1', 10);
+
+    if (targetWordId === word.id || targetRow < 0 || targetCol < 0) {
+      return null;
     }
-  }, [preview, isTouch]);
 
-  // FIX #2: Increase debounce and include word in dependencies
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    accept: 'word',
-    drop: (item: Word) => {
-      const now = Date.now();
-      // Increased debounce from 100ms to 200ms for better touch device support
-      if (now - lastDropTimeRef.current < 200) return;
-      lastDropTimeRef.current = now;
+    return { row: targetRow, col: targetCol };
+  }, [word.id]);
 
-      if (item.id !== word.id) {
-        soundManager.playPop(); // Sound for successful drop/swap
-        onSwap(item, rowIndex, colIndex);
+  const isDragging = dragState.isDragging && dragState.draggedWord?.id === word.id;
+  const isOver = dragState.isDragging && 
+    dropTargetRef.current?.row === rowIndex && 
+    dropTargetRef.current?.col === colIndex &&
+    dragState.draggedWord?.id !== word.id;
+
+  // Long press handler
+  const handleLongPress = () => {
+    console.log('🔥 LONG PRESS DETECTED - Ready to drag:', word.text);
+    canStartDrag.current = true;
+  };
+
+  const startLongPressTimer = () => {
+    cancelTimers();
+    canStartDrag.current = false;
+    longPressTimerRef.current = setTimeout(() => {
+      handleLongPress();
+    }, 500); // 500ms for long press
+  };
+
+  const cancelTimers = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    if (dragTimerRef.current) {
+      clearTimeout(dragTimerRef.current);
+      dragTimerRef.current = null;
+    }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDisabled) return;
+    
+    // Prevent default to stop context menu and native gestures
+    e.preventDefault();
+    e.stopPropagation();
+    
+    startPositionRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+    };
+    hasMoved.current = false;
+    isDraggingThis.current = false;
+    canStartDrag.current = false;
+    
+    startLongPressTimer();
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!startPositionRef.current || isDisabled) return;
+
+    e.preventDefault();
+
+    const currentX = e.clientX;
+    const currentY = e.clientY;
+    const dx = Math.abs(currentX - startPositionRef.current.x);
+    const dy = Math.abs(currentY - startPositionRef.current.y);
+    
+    // Check if moved enough to be considered movement
+    if (dx > 5 || dy > 5) {
+      if (!hasMoved.current) {
+        hasMoved.current = true;
+        // Cancel long press timer if moving (but don't prevent drag)
+        if (!canStartDrag.current) {
+          cancelTimers();
+        }
       }
-    },
-    canDrop: (item: Word) => item.id !== word.id,
-    collect: (monitor) => ({
-      isOver: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop(),
-    }),
-  }), [word, rowIndex, colIndex, onSwap]);
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (tileRef.current && e.touches.length > 0) {
-      const rect = tileRef.current.getBoundingClientRect();
-      const touch = e.touches[0];
-      touchOffsetRef.current = {
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top,
-      };
+      // Start drag if: 1) long press triggered, OR 2) user is moving (immediate drag)
+      if (!isDraggingThis.current) {
+        console.log('🚀 DRAG STARTED on:', word.text, canStartDrag.current ? '(after long press)' : '(immediate)');
+        soundManager.playPickUp();
+        
+        const rect = tileRef.current?.getBoundingClientRect();
+        if (rect) {
+          startDrag(
+            word,
+            {
+              x: startPositionRef.current.x - rect.left,
+              y: startPositionRef.current.y - rect.top,
+            },
+            { x: currentX, y: currentY },
+            { width: rect.width, height: rect.height },
+            { rowIndex, colIndex }
+          );
+          isDraggingThis.current = true;
+        }
+      }
+
+      // Update drag position if dragging
+      if (isDraggingThis.current) {
+        updateDragPosition({ x: currentX, y: currentY });
+        
+        // Find drop target
+        dropTargetRef.current = getDropTarget(currentX, currentY);
+        // Clear target when pointer is not over any tile to avoid stale swaps
+        if (!dropTargetRef.current) {
+          dropTargetRef.current = null;
+        }
+      }
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (tileRef.current) {
-      const rect = tileRef.current.getBoundingClientRect();
-      touchOffsetRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      };
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    cancelTimers();
+
+    const finalTarget = getDropTarget(e.clientX, e.clientY);
+
+    if (isDraggingThis.current && finalTarget) {
+      soundManager.playPop();
+      Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+      onSwap(word, finalTarget.row, finalTarget.col);
+      console.log('✅ DROP on row:', finalTarget.row, 'col:', finalTarget.col);
     }
+
+    if (isDraggingThis.current) {
+      endDrag();
+    }
+
+    startPositionRef.current = null;
+    hasMoved.current = false;
+    isDraggingThis.current = false;
+    canStartDrag.current = false;
+    dropTargetRef.current = null;
   };
 
-  // FIX #3: Dynamic random rotation for playfulness (use word.id for stability)
+  const handlePointerCancel = () => {
+    cancelTimers();
+    if (isDraggingThis.current) {
+      endDrag();
+    }
+    startPositionRef.current = null;
+    hasMoved.current = false;
+    isDraggingThis.current = false;
+    canStartDrag.current = false;
+    dropTargetRef.current = null;
+  };
+
+  // Dynamic random rotation for playfulness
   const rotation = React.useMemo(() => word.isMergedGroup ? 0 : Math.random() * 2 - 1, [word.id, word.isMergedGroup]);
 
-  // Get icon component if icon is provided (stable memoization)
+  // OPTIMIZATION: Memoize icon component lookup
   const iconName = word.icon?.iconName;
   const IconComponent = React.useMemo(() => 
     iconName ? getIcon(iconName) : null, 
     [iconName]
   );
   
-  // Check if word has icon and it should be displayed
-  const hasIcon = word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
-  const hasEmoji = hasIcon && word.icon.type === 'emoji' && word.icon.emoji;
-  const hasLibraryIcon = hasIcon && word.icon.type === 'library' && IconComponent;
-  const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon; // Show "*" if icon not found
-  
-  const displayText = word.icon?.label || word.text;
+  // OPTIMIZATION: Memoize icon display logic
+  const iconDisplay = React.useMemo(() => {
+    const hasIcon = word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
+    const hasEmoji = hasIcon && word.icon.type === 'emoji' && word.icon.emoji;
+    const hasLibraryIcon = hasIcon && word.icon.type === 'library' && IconComponent;
+    const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon;
+    const displayText = word.icon?.label || word.text;
+    
+    return { hasEmoji, hasLibraryIcon, showFallbackIcon, displayText };
+  }, [word.icon, word.text, IconComponent]);
 
-  // Simplified, visually distinct merge animation
-  const mergeAnimation = isMerging ? {
-    scale: [1, 1.1, 0], // Pulse then disappear
-    opacity: [1, 1, 0],
-    rotate: [0, 5, -5, 0], // Jiggle
-    filter: "brightness(1.5)", // Flash bright
-    transition: {
-      duration: 0.6,
-      ease: "easeInOut",
-      delay: colIndex * 0.1 // Staggered disappearance
-    }
-  } : {};
+  // OPTIMIZATION: Memoize merge animation
+  const mergeAnimation = React.useMemo(() => 
+    isMerging ? {
+      scale: [1, 1.1, 0],
+      opacity: [1, 1, 0],
+      rotate: [0, 5, -5, 0],
+      filter: "brightness(1.5)",
+      transition: {
+        duration: 0.6,
+        ease: "easeInOut",
+        delay: colIndex * 0.1
+      }
+    } : {},
+    [isMerging, colIndex]
+  );
 
-  // Simplified hint animation (just subtle scale/pulse)
-  const hintAnimation = hintColor ? {
-    scale: [1, 1.05, 1],
-    filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
-    zIndex: 20,
-    opacity: 1,
-    transition: {
-      duration: 1.5,
-      ease: "easeInOut",
-      repeat: Infinity,
-    }
-  } : {};
+  // OPTIMIZATION: Memoize hint animation
+  const hintAnimation = React.useMemo(() =>
+    hintColor ? {
+      scale: [1, 1.05, 1],
+      filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
+      zIndex: 20,
+      opacity: 1,
+      transition: {
+        duration: 1.5,
+        ease: "easeInOut",
+        repeat: Infinity,
+      }
+    } : {},
+    [hintColor]
+  );
+
+  // OPTIMIZATION: Memoize animation state
+  const animateState = React.useMemo(() => {
+    if (isMerging) return mergeAnimation;
+    if (hintColor && !isDragging) return hintAnimation;
+    return { 
+      opacity: isDragging ? 0.5 : 1, 
+      scale: 1, 
+      x: 0,
+      y: 0,
+      rotate: 0,
+      filter: "brightness(1)",
+      zIndex: isDragging ? 100 : 10 
+    };
+  }, [isMerging, hintColor, isDragging, mergeAnimation, hintAnimation]);
+
+  // OPTIMIZATION: Memoize transition config
+  const transitionConfig = React.useMemo(() => 
+    (isMerging || hintColor) ? {} : { 
+      type: "spring", 
+      stiffness: 350, 
+      damping: 25,
+      layout: { duration: 0.2 },
+      repeat: 0
+    },
+    [isMerging, hintColor]
+  );
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      cancelTimers();
+    };
+  }, []);
 
   return (
     <motion.div
       layoutId={word.id}
-      layout={!isDragging} // FIX: Disable layout animation during drag
+      layout={!isDragging}
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={
-        isMerging ? mergeAnimation : 
-        (hintColor && !isDragging) ? hintAnimation :
-        { 
-          opacity: isDragging ? 0.5 : 1, 
-          scale: 1, 
-          x: 0,
-          y: 0,
-          rotate: 0,
-          filter: "brightness(1)",
-          zIndex: isDragging ? 100 : 10 
-        }
-      }
-      transition={
-        isMerging || hintColor ? {} : 
-        { 
-          type: "spring", 
-          stiffness: 350, 
-          damping: 25,
-          layout: { duration: 0.2 },
-          repeat: 0 // Explicitly stop repeating
-        }
-      }
-      ref={(node) => {
-        tileRef.current = node;
-        drag(drop(node));
-      }}
+      animate={animateState}
+      transition={transitionConfig}
+      ref={tileRef}
       data-word-id={word.id}
-      onTouchStart={handleTouchStart}
-      onMouseDown={handleMouseDown}
+      data-row-index={rowIndex}
+      data-col-index={colIndex}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }}
       className={`
         relative group
         h-14 sm:h-16
@@ -227,12 +342,16 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       `}
       style={{ 
         touchAction: 'none',
-        rotate: rotation
+        rotate: rotation,
+        willChange: isDragging ? 'transform, opacity' : 'auto',
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
       }}
       dir="rtl"
       whileTap={{ scale: 0.95 }}
     >
-      {/* Shadow/Depth Layer (static background that gives 3D illusion) */}
+      {/* Shadow/Depth Layer */}
       <div className={`
         absolute inset-0 
         rounded-xl sm:rounded-2xl 
@@ -254,7 +373,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           ? 'bg-gradient-to-b from-purple-50 to-purple-100 border-purple-200 text-purple-700' 
           : 'bg-gradient-to-b from-white to-slate-50 border-white text-slate-700'
         }
-        ${isOver && canDrop ? 'translate-y-[4px] sm:translate-y-[5px] brightness-95' : 'hover:-translate-y-[1px]'}
+        ${isOver ? 'translate-y-[4px] sm:translate-y-[5px] brightness-95 ring-2 ring-blue-400' : 'hover:-translate-y-[1px]'}
         ${isSubcategoryGlow ? 'ring-4 ring-yellow-300 border-yellow-400 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
         ${hintColor ? getHintStyles(hintColor) : ''}
       `}>
@@ -265,7 +384,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         {/* Content */}
         <div className="flex flex-col items-center justify-center gap-0.5 z-10">
           {/* Show icon from Lucide library */}
-          {hasLibraryIcon && IconComponent && (
+          {iconDisplay.hasLibraryIcon && IconComponent && (
             <IconComponent 
               className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-600' : 'text-slate-600'}`}
               strokeWidth={2.5}
@@ -273,12 +392,12 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           )}
           
           {/* Show emoji if type is emoji */}
-          {hasEmoji && (
+          {iconDisplay.hasEmoji && (
             <span className="text-lg sm:text-xl drop-shadow-sm filter">{word.icon!.emoji}</span>
           )}
           
           {/* Show fallback "*" if icon not found */}
-          {showFallbackIcon && (
+          {iconDisplay.showFallbackIcon && (
             <span className="text-lg sm:text-xl font-bold drop-shadow-sm filter">*</span>
           )}
           
@@ -287,7 +406,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
             drop-shadow-sm
             ${word.isMergedGroup ? 'text-purple-800' : 'text-slate-700'}
           `}>
-            {displayText}
+            {iconDisplay.displayText}
           </span>
         </div>
       </div>

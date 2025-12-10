@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "threads": [
+    {
+      "id": "thread_mom",
+      "participantId": "npc_mom",
+      "messages": [
+        {
+          "id": "msg_001",
+          "senderId": "npc_mom",
+          "text": "Kian! What are you doing?! 😱",
+          "timestamp": 1000,
+          "isRead": false,
+          "type": "text"
+        },
+        {
+          "id": "msg_002",
+          "senderId": "npc_mom",
+          "text": "Your father and I are worried sick!",
+          "timestamp": 1100,
+          "isRead": false,
+          "type": "text"
+        },
+        {
+          "id": "msg_003",
+          "senderId": "npc_mom",
+          "text": "At least tell me you packed enough socks! It gets cold at night! 🧦",
+          "timestamp": 1200,
+          "isRead": false,
+          "type": "text",
+          "unlockCondition": {
+            "type": "level_complete",
+            "targetId": "level_2"
+          }
+        }
+      ],
+      "lastMessagePreview": "At least tell me you packed enough socks!",
+      "lastMessageTime": 1200,
+      "unreadCount": 3
+    },
+    {
+      "id": "thread_darvish",
+      "participantId": "npc_darvish",
+      "messages": [
+        {
+          "id": "msg_101",
+          "senderId": "npc_darvish",
+          "text": "Greetings, traveler. 🙏",
+          "timestamp": 2000,
+          "isRead": false,
+          "type": "text",
+          "unlockCondition": {
+            "type": "level_complete",
+            "targetId": "level_3"
+          }
+        },
+        {
+          "id": "msg_102",
+          "senderId": "npc_darvish",
+          "text": "The onion has many layers. Peel them wisely.",
+          "timestamp": 2100,
+          "isRead": false,
+          "type": "text",
+          "unlockCondition": {
+            "type": "level_complete",
+            "targetId": "level_3"
+          }
+        },
+        {
+          "id": "msg_103",
+          "senderId": "npc_darvish",
+          "text": "When you reach Kashan, find me at the tea house. I have something for you. 🍵",
+          "timestamp": 2200,
+          "isRead": false,
+          "type": "quest",
+          "actionLink": "goto:chapter:chapter_2",
+          "unlockCondition": {
+            "type": "level_complete",
+            "targetId": "level_5"
+          }
+        }
+      ],
+      "lastMessagePreview": "When you reach Kashan...",
+      "lastMessageTime": 2200,
+      "unreadCount": 3
+    },
+    {
+      "id": "thread_boss",
+      "participantId": "npc_boss",
+      "messages": [
+        {
+          "id": "msg_201",
+          "senderId": "npc_boss",
+          "text": "WHERE ARE THE REPORTS?! 😡",
+          "timestamp": 500,
+          "isRead": true,
+          "type": "text"
+        },
+        {
+          "id": "msg_202",
+          "senderId": "npc_boss",
+          "text": "You have 24 hours to return or face termination.",
+          "timestamp": 600,
+          "isRead": true,
+          "type": "text"
+        }
+      ],
+      "lastMessagePreview": "You have 24 hours...",
+      "lastMessageTime": 600,
+      "unreadCount": 0
+    }
+  ]
+}
+
