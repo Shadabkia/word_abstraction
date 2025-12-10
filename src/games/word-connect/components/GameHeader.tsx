@@ -38,15 +38,17 @@ export function GameHeader({ completed, total }: GameHeaderProps) {
               x: ['-100%', '200%']
             }}
             transition={{
-              duration: 2,
+              duration: 3,
               repeat: Infinity,
-              repeatDelay: 1
+              repeatDelay: 2,
+              ease: "linear",
+              repeatType: "loop"
             }}
           />
           <motion.div 
             className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-white rounded-full shadow-lg relative z-10"
             animate={{ scale: [1, 1.3, 1] }}
-            transition={{ duration: 1, repeat: Infinity }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatType: "loop" }}
           />
         </motion.div>
       </div>

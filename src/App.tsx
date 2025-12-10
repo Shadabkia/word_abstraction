@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, Grid, MessageCircle, User, Zap } from 'lucide-react';
+import { Truck, Grid, MessageCircle, User, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { FeedScreen } from './features/feed/FeedScreen';
@@ -125,10 +125,10 @@ export default function App() {
               <motion.div
                 className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600"
                 animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear", repeatType: "loop" }}
               />
             )}
-            <Home className={`w-8 h-8 relative z-10 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
+            <Truck className={`w-8 h-8 relative z-10 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
           </button>
         </motion.div>
 
@@ -167,7 +167,7 @@ function NavButton({ active, onClick, icon: Icon, badge }: { active: boolean, on
     >
       <motion.div
         animate={active ? { y: [0, -2, 0] } : {}}
-        transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatType: "loop" }}
       >
         <Icon className={`w-7 h-7 ${active ? 'fill-current' : ''}`} strokeWidth={active ? 2.5 : 2} />
       </motion.div>

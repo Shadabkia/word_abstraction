@@ -88,11 +88,18 @@ class ContentManager {
   }
 
   /**
-   * Get thread by ID
+   * Get thread by ID (filtered by unlocked messages)
    */
   getThread(threadId: string, completedLevels: string[]): MessageThread | undefined {
     const threads = this.getUnlockedThreads(completedLevels);
     return threads.find(t => t.id === threadId);
+  }
+
+  /**
+   * Get thread by ID (raw, unfiltered)
+   */
+  getThreadById(threadId: string): MessageThread | undefined {
+    return this.messageThreads.find(t => t.id === threadId);
   }
 
   /**

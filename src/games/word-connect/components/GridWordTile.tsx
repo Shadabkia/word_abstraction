@@ -126,7 +126,12 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     e.stopPropagation();
     
     // Capture pointer to track movement even when cursor leaves element
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Ignore capture errors on some browsers
+      console.log('Pointer capture failed:', err);
+    }
     
     startPositionRef.current = {
       x: e.clientX,
@@ -136,7 +141,12 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     isDraggingThis.current = false;
     canStartDrag.current = false;
     
-    startLongPressTimer();
+    // On touch devices, allow immediate drag without long press
+    if (e.pointerType === 'touch') {
+      canStartDrag.current = true;
+    } else {
+      startLongPressTimer();
+    }
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -152,19 +162,26 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     
     console.log('📍 Pointer move:', dx, dy, 'isDragging:', isDraggingThis.current);
     
+    // Use smaller threshold for touch to be more responsive
+    const threshold = e.pointerType === 'touch' ? 3 : 5;
+    
     // Check if moved enough to be considered movement
-    if (dx > 5 || dy > 5) {
+    if (dx > threshold || dy > threshold) {
       if (!hasMoved.current) {
         hasMoved.current = true;
         // Cancel long press timer if moving (but don't prevent drag)
         if (!canStartDrag.current) {
           cancelTimers();
+          // For touch, enable drag immediately on movement
+          if (e.pointerType === 'touch') {
+            canStartDrag.current = true;
+          }
         }
       }
 
-      // Start drag if: 1) long press triggered, OR 2) user is moving (immediate drag)
-      if (!isDraggingThis.current) {
-        console.log('🚀 DRAG STARTED on:', word.text, canStartDrag.current ? '(after long press)' : '(immediate)');
+      // Start drag if ready
+      if (!isDraggingThis.current && canStartDrag.current) {
+        console.log('🚀 DRAG STARTED on:', word.text, e.pointerType === 'touch' ? '(touch)' : '(mouse)');
         soundManager.playPickUp();
         
         const rect = tileRef.current?.getBoundingClientRect();
@@ -298,9 +315,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       zIndex: 20,
       opacity: 1,
       transition: {
-        duration: 1.5,
+        duration: 2.5,
         ease: "easeInOut",
         repeat: Infinity,
+        repeatType: "loop" as const,
       }
     } : {},
     [hintColor]

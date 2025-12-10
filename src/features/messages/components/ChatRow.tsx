@@ -14,7 +14,7 @@ export function ChatRow({ id, name, lastMessage, time, unreadCount, avatarColor,
   return (
     <div 
       onClick={onClick}
-      className={`flex items-center gap-3 p-4 hover:bg-slate-50 cursor-pointer transition-colors ${unreadCount > 0 ? 'bg-indigo-50/50' : ''}`}
+      className={`flex items-center gap-3 p-4 active:bg-slate-100 cursor-pointer transition-colors touch-manipulation ${unreadCount > 0 ? 'bg-indigo-50/50' : ''}`}
     >
       {/* Avatar */}
       <div className={`w-14 h-14 rounded-full ${avatarColor} flex items-center justify-center border-2 border-white shadow-sm shrink-0`}>

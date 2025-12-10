@@ -89,11 +89,6 @@
       animation: none !important;
     }
     
-    /* Faster transitions on mobile */
-    * {
-      transition-duration: 0.15s !important;
-    }
-    
     /* Reduce blur effects on mobile for better performance */
     .backdrop-blur-xl {
       backdrop-filter: blur(8px) !important;
@@ -337,15 +332,6 @@
   @keyframes wiggle {
     0%, 100% { transform: rotate(0deg); }
     50% { transform: rotate(-3deg); }
-  }
-  
-  /* Reduce animation durations on mobile */
-  * {
-    animation-duration: 0.15s !important;
-  }
-  
-  [style*="animation-duration"] {
-    animation-duration: 0.15s !important;
   }
 }
 

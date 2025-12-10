@@ -590,7 +590,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
                 )}
 
                 <div className="flex items-center gap-1.5 sm:gap-2 pl-0.5 sm:pl-1">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-inner border-2 border-yellow-300 text-lg sm:text-xl animate-[bounceSlight_3s_infinite]">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-inner border-2 border-yellow-300 text-lg sm:text-xl animate-[bounceSlight_4s_ease-in-out_infinite]">
                     ⭐
                   </div>
                   <div className="bg-slate-100 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 shadow-inner font-bold text-slate-700 text-sm sm:text-base">

@@ -22,7 +22,7 @@ export function CategoryRow({ name, words }: CategoryRowProps) {
           opacity: [0.3, 0.4, 0.3],
           scale: [1, 1.02, 1]
         }}
-        transition={{ duration: 2, repeat: Infinity }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatType: "loop" }}
       />
       
       <div className="relative h-full bg-gradient-to-r from-emerald-400 to-green-400 rounded-xl sm:rounded-2xl shadow-[0_3px_0_rgb(21,128,61)] sm:shadow-[0_4px_0_rgb(21,128,61)] p-0.5 sm:p-1">
@@ -36,7 +36,7 @@ export function CategoryRow({ name, words }: CategoryRowProps) {
               <span className="font-bold text-white text-base sm:text-lg drop-shadow-sm truncate">{name}</span>
               <motion.div 
                 animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatType: "loop" }}
               >
                 <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-300 fill-yellow-300" />
               </motion.div>
