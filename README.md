@@ -1,96 +1,130 @@
-# Word Abstraction Game
+# Pars Ra Pas
 
-A multilingual puzzle game where you find connections between words. Group 16 words into 4 categories to clear the board!
+**A narrative-driven platform of Persian word games inside a fictional social app.**
 
-## 🎮 Introduction & Gameplay
+Pars Ra Pas is not a single game — it's a pocket arcade wrapped in a story. Follow Kian as he travels across Iran in his van, "The Onion", while you solve word puzzles, unlock memories, and explore a world told through an Instagram-like interface.
 
-**The Goal:** Organize a grid of 16 words into 4 meaningful groups of 4 words each.
+## 🎮 What Is This?
 
-**How to Play:**
-1.  **Read**: Look at the 16 words on the board.
-2.  **Connect**: Find 4 words that belong together (e.g., they are all "Dairy Products").
-3.  **Drag & Drop**: Move the words into a single row to group them.
-4.  **Solve**: If correct, the words merge into a category tile (or an icon!).
+A platform where:
+- **The UI is the world**: Everything happens inside a fictional social media app
+- **Multiple games**: Word Connect, word searches, and more puzzle types (modular architecture)
+- **Story-driven**: Each level unlocks a memory, posts appear in the feed, NPCs send messages
+- **5 Tabs**: Feed, Arcade, Dashboard, Messages, and Profile — each serving a unique purpose
 
-**Example:**
-*   **Words**: Cheese, Butter, Milk, Cream
-*   **Category**: 🥛 Dairy
-*   **Result**: The row locks and transforms into a single "Dairy" block.
+## 🏗️ Tech Stack
 
-## 🛠️ Setup & Development
+- **Framework**: React 18 + TypeScript + Vite
+- **State**: Zustand (global state) + React Context
+- **Styling**: Tailwind CSS 4 + Framer Motion
+- **UI Components**: Radix UI + shadcn/ui
+- **Mobile**: Capacitor (Android/iOS)
+- **Content**: JSON-driven (levels, posts, messages, NPCs)
 
-### Prerequisites
-*   Node.js (v18+)
-*   Android Studio (for mobile build)
+## 🚀 Quick Start
 
-### Quick Start
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-2.  **Run Development Server**:
-    ```bash
-    npm run dev
-    ```
-    The game will open at `http://localhost:5173`.
+### Install Dependencies
+```bash
+npm install
+```
 
-## 🧩 Levels & Design
+### Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173)
 
-Levels are stored as JSON files in `src/data/levels/`.
+### Build for Production
+```bash
+npm run build
+```
 
-### File Structure
-Each level file (e.g., `chapter1/level1.json`) contains:
-*   **Meta**: Title, description, difficulty.
-*   **Dictionary**: The 16 word tiles with translations and colors.
-*   **Mechanics**: The 4 valid groups (rules) and their outcomes (e.g., transform to icon).
-*   **Layout**: The initial grid arrangement.
+## 📂 Project Structure
 
-### Design Principles
-1.  **Economy**: Exactly 16 tiles must be used. No leftovers, no missing pieces.
-2.  **Solvability**: The level must be solvable without guessing.
-3.  **Groups**: Must have exactly 4 groups of 4 words.
+```
+src/
+├── assets/content/      # JSON content (posts, messages, NPCs)
+├── core/                # Business logic & state (no UI)
+│   ├── domain/          # TypeScript interfaces
+│   ├── state/           # Zustand stores
+│   └── services/        # Content manager, loaders
+├── features/            # Feature modules (UI + logic)
+│   ├── dashboard/       # Home tab (Hero Card)
+│   ├── feed/            # Social feed
+│   ├── arcade/          # Game library
+│   ├── messages/        # DM inbox
+│   └── profile/         # Campaign mode
+├── games/               # Pluggable game engines
+│   └── word-connect/    # 4x4 word categorization game
+└── shared/              # Reusable components & utils
+```
 
-### How to Add a Level
-1.  Create a new JSON file in a chapter folder (e.g., `src/data/levels/chapter1/level2.json`).
-2.  Define your words and groups following the format of existing levels.
-3.  Update the `meta.json` in that chapter to include your new level filename.
-4.  Run the validator to check your work.
+## 🎯 The Five Tabs
 
-## ✅ Level Validator
+1. **Feed** — Instagram-style timeline of NPC posts and daily challenges
+2. **Arcade** — Browse and play all available game modes
+3. **Dashboard** — The hub: continue campaign, quick access, status widgets
+4. **Messages** — Read-only DMs from NPCs (quests, hints, story beats)
+5. **Profile** — Campaign progression: levels as "posts", chapters as "highlights"
 
-We have a built-in tool to ensure levels are broken-free and solvable.
+## 🎨 Design Philosophy
 
-**Run Validator:**
+- **Warm & Familiar**: Instagram-like UX with Persian cultural flavor
+- **Modular**: New games plug in with a standard interface
+- **Content-Driven**: Add levels, posts, and messages without touching code
+- **Story-First**: Every puzzle is a memory; every memory is a post
+
+## 📱 Mobile Build (Capacitor)
+
+### Sync Changes
+```bash
+npm run cap:sync
+```
+
+### Open Android Studio
+```bash
+npm run cap:open:android
+```
+
+### Full Build
+```bash
+npm run cap:build
+```
+
+## 🧩 Adding Content
+
+All content lives in `src/assets/content/` as JSON:
+- `campaign.json` — Campaign levels and chapter definitions
+- `posts.json` — NPC social feed posts
+- `messages.json` — DM threads from NPCs
+- `npcs.json` — Character data
+
+Levels for each game are in their respective directories:
+- `src/games/word-connect/data/levels/`
+
+### Validate Levels
 ```bash
 npm run validate-levels
 ```
 
-**What it Checks:**
-*   **Schema**: Is the JSON valid?
-*   **Economy**: Do inputs equal outputs? (Are all 16 tiles used?)
-*   **Simulation**: Can the AI solve it? (Detects deadlocks).
+## 📖 Documentation
 
-## 📱 Capacitor & Mobile Build
+- [Architecture](./specs/Architecture.md) — Technical structure
+- [Vision](./specs/Vision_HighLevel.md) — High-level concept
+- [Developer Guide](./specs/Developer_Guide.md) — Implementation details
+- [Main Spec](./specs/Main.md) — Complete UX specification
 
-This project uses [Capacitor](https://capacitorjs.com/) to run on Android.
+## 🛠️ Development Status
 
-### Basic Commands
-*   **Sync Changes**: Copies your web build to the Android project.
-    ```bash
-    npm run cap:sync
-    ```
-*   **Open Android Studio**: Opens the native project for building/running on device.
-    ```bash
-    npm run cap:open:android
-    ```
+✅ Core platform architecture  
+✅ All 5 tabs implemented  
+✅ Word Connect game integrated  
+✅ Content system (posts, messages, NPCs)  
+✅ Campaign manager & progression  
+🚧 Additional game modes (in progress)  
+🚧 Full narrative content (in progress)
 
-### Building the APK
-1.  Build the web app: `npm run build`
-2.  Sync with Capacitor: `npm run cap:sync`
-3.  Open Android Studio: `npm run cap:open:android`
-4.  In Android Studio: `Build` -> `Build Bundle(s) / APK(s)` -> `Build APK(s)`.
+---
 
-### Live Updates
-We use **Capacitor Updater** to push updates without re-downloading the app store version.
-*   Configured in `capacitor.config.json`.
-*   Updates are downloaded from the URL specified in `VITE_UPDATE_URL`.
+**Built with care in Tehran** 🇮🇷
+
