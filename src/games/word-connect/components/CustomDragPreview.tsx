@@ -6,6 +6,8 @@ import { createPortal } from 'react-dom';
 export const CustomDragPreview: React.FC = () => {
   const { dragState } = useDragContext();
 
+  console.log('👁️ CustomDragPreview render:', dragState);
+
   if (!dragState.isDragging || !dragState.draggedWord) {
     return null;
   }
@@ -15,6 +17,8 @@ export const CustomDragPreview: React.FC = () => {
   // Calculate position - subtract offset so cursor is at the original click point
   const left = currentPosition.x - dragOffset.x;
   const top = currentPosition.y - dragOffset.y;
+  
+  console.log('🖼️ Rendering preview at:', { left, top, currentPosition, dragOffset });
 
   const iconName = draggedWord.icon?.iconName;
   const IconComponent = iconName ? getIcon(iconName) : null;

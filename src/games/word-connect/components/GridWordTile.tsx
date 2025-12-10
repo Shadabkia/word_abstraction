@@ -125,6 +125,9 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     e.preventDefault();
     e.stopPropagation();
     
+    // Capture pointer to track movement even when cursor leaves element
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    
     startPositionRef.current = {
       x: e.clientX,
       y: e.clientY,
@@ -140,11 +143,14 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     if (!startPositionRef.current || isDisabled) return;
 
     e.preventDefault();
+    e.stopPropagation();
 
     const currentX = e.clientX;
     const currentY = e.clientY;
     const dx = Math.abs(currentX - startPositionRef.current.x);
     const dy = Math.abs(currentY - startPositionRef.current.y);
+    
+    console.log('📍 Pointer move:', dx, dy, 'isDragging:', isDraggingThis.current);
     
     // Check if moved enough to be considered movement
     if (dx > 5 || dy > 5) {
@@ -163,6 +169,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         
         const rect = tileRef.current?.getBoundingClientRect();
         if (rect) {
+          console.log('📦 Starting drag with rect:', rect, 'position:', { x: currentX, y: currentY });
           startDrag(
             word,
             {
@@ -179,6 +186,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
       // Update drag position if dragging
       if (isDraggingThis.current) {
+        console.log('🔄 Updating drag position:', { x: currentX, y: currentY });
         updateDragPosition({ x: currentX, y: currentY });
         
         // Find drop target
@@ -193,6 +201,15 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     cancelTimers();
+
+    // Release pointer capture
+    if (e.target && (e.target as HTMLElement).hasPointerCapture) {
+      try {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch (err) {
+        // Ignore if pointer capture was already released
+      }
+    }
 
     const finalTarget = getDropTarget(e.clientX, e.clientY);
 
@@ -214,8 +231,18 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     dropTargetRef.current = null;
   };
 
-  const handlePointerCancel = () => {
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
     cancelTimers();
+    
+    // Release pointer capture
+    if (e.target && (e.target as HTMLElement).hasPointerCapture) {
+      try {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch (err) {
+        // Ignore if pointer capture was already released
+      }
+    }
+    
     if (isDraggingThis.current) {
       endDrag();
     }
@@ -315,7 +342,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
   return (
     <motion.div
-      layoutId={word.id}
+      layoutId={!isDragging ? word.id : undefined}
       layout={!isDragging}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={animateState}
@@ -349,7 +376,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         userSelect: 'none',
       }}
       dir="rtl"
-      whileTap={{ scale: 0.95 }}
     >
       {/* Shadow/Depth Layer */}
       <div className={`
