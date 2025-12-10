@@ -8,6 +8,8 @@ interface UserState {
   coins: number;
   vibes: number; // Soft currency / XP
   streak: number;
+  followers: number;
+  following: number;
 }
 
 interface ProgressState {
@@ -48,6 +50,8 @@ const initialUser: UserState = {
   coins: 100,
   vibes: 0,
   streak: 0,
+  followers: 42,
+  following: 12,
 };
 
 const initialProgress: ProgressState = {

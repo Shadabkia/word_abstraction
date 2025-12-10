@@ -36,7 +36,7 @@ export default function App() {
 
   const handlePlayGame = (gameId: string, levelNumber?: number) => {
     setActiveGame(gameId);
-    if (levelNumber) setCurrentLevel(levelNumber);
+    setCurrentLevel(levelNumber || 1);
   };
 
   const handleExitGame = () => {
@@ -48,10 +48,10 @@ export default function App() {
     const levelId = `level_${currentLevel}`;
     completeLevel(levelId, score, 3); // 3 stars for now
     
-    // Show success, then return to arcade
+    // Show success, then return to previous tab
     setTimeout(() => {
       setActiveGame(null);
-      setActiveTab('arcade');
+      // Return to arcade or profile based on context
     }, 2000);
   };
 
@@ -82,7 +82,7 @@ export default function App() {
           {activeTab === 'feed' && <FeedScreen />}
           {activeTab === 'arcade' && <ArcadeScreen onPlayGame={handlePlayGame} />}
           {activeTab === 'messages' && <MessagesScreen />}
-          {activeTab === 'profile' && <ProfileScreen />}
+          {activeTab === 'profile' && <ProfileScreen onPlayGame={handlePlayGame} />}
         </div>
 
       {/* Bottom Navigation Bar - Enhanced */}

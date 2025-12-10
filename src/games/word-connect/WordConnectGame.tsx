@@ -62,16 +62,12 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   // FIX: Track when game is processing to prevent race conditions
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load saved game state on mount (restore last played level)
+  // Set initial level - initialLevel prop takes priority
   useEffect(() => {
-    gameStorage.getCurrentLevel().then(savedLevel => {
-      if (savedLevel && savedLevel > 0 && savedLevel !== initialLevel) {
-        console.log(`Restoring saved level: ${savedLevel}`);
-        setLevel(savedLevel);
-      }
-    }).catch(error => {
-      console.error('Failed to restore saved level:', error);
-    });
+    if (initialLevel && initialLevel > 0) {
+      console.log(`Loading level from prop: ${initialLevel}`);
+      setLevel(initialLevel);
+    }
   }, [initialLevel]);
 
   // Load available levels and metadata on mount
