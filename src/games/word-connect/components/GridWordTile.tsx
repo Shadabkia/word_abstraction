@@ -30,25 +30,25 @@ interface GridWordTileProps {
   isDisabled?: boolean;
 }
 
-// Map hint colors to their specific styling classes
+// Map hint colors to their specific styling classes - Softer Palette
 const getHintStyles = (color: string) => {
   switch (color) {
     case 'yellow':
-      return 'ring-4 ring-yellow-300 border-yellow-400 z-20 shadow-[0_0_15px_rgba(253,224,71,0.6)]';
+      return 'ring-2 ring-yellow-200 bg-yellow-50';
     case 'green':
-      return 'ring-4 ring-green-400 border-green-500 z-20 shadow-[0_0_15px_rgba(74,222,128,0.6)]';
+      return 'ring-2 ring-emerald-200 bg-emerald-50';
     case 'blue':
-      return 'ring-4 ring-blue-400 border-blue-500 z-20 shadow-[0_0_15px_rgba(96,165,250,0.6)]';
+      return 'ring-2 ring-sky-200 bg-sky-50';
     case 'purple':
-      return 'ring-4 ring-purple-400 border-purple-500 z-20 shadow-[0_0_15px_rgba(192,132,252,0.6)]';
+      return 'ring-2 ring-purple-200 bg-purple-50';
     case 'orange':
-      return 'ring-4 ring-orange-400 border-orange-500 z-20 shadow-[0_0_15px_rgba(251,146,60,0.6)]';
+      return 'ring-2 ring-orange-200 bg-orange-50';
     case 'pink':
-      return 'ring-4 ring-pink-400 border-pink-500 z-20 shadow-[0_0_15px_rgba(244,114,182,0.6)]';
+      return 'ring-2 ring-pink-200 bg-pink-50';
     case 'cyan':
-      return 'ring-4 ring-cyan-400 border-cyan-500 z-20 shadow-[0_0_15px_rgba(34,211,238,0.6)]';
+      return 'ring-2 ring-cyan-200 bg-cyan-50';
     case 'red':
-      return 'ring-4 ring-red-400 border-red-500 z-20 shadow-[0_0_15px_rgba(248,113,113,0.6)]';
+      return 'ring-2 ring-rose-200 bg-rose-50';
     default:
       return '';
   }
@@ -125,8 +125,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     const dx = Math.abs(currentX - startPositionRef.current.x);
     const dy = Math.abs(currentY - startPositionRef.current.y);
     
-    console.log('📍 Pointer move:', dx, dy, 'isDragging:', isDraggingThis.current);
-    
     // Use smaller threshold for touch to be more responsive
     const threshold = e.pointerType === 'touch' ? 3 : 5;
     
@@ -138,12 +136,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
       // Start drag immediately on movement
       if (!isDraggingThis.current) {
-        console.log('🚀 DRAG STARTED on:', word.text, e.pointerType === 'touch' ? '(touch)' : '(mouse)');
         soundManager.playPickUp();
         
         const rect = tileRef.current?.getBoundingClientRect();
         if (rect) {
-          console.log('📦 Starting drag with rect:', rect, 'position:', { x: currentX, y: currentY });
           startDrag(
             word,
             {
@@ -160,7 +156,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
       // Update drag position if dragging
       if (isDraggingThis.current) {
-        console.log('🔄 Updating drag position:', { x: currentX, y: currentY });
         updateDragPosition({ x: currentX, y: currentY });
         
         // Find drop target
@@ -189,7 +184,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       soundManager.playPop();
       Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
       onSwap(word, finalTarget.row, finalTarget.col);
-      console.log('✅ DROP on row:', finalTarget.row, 'col:', finalTarget.col);
     }
 
     if (isDraggingThis.current) {
@@ -246,10 +240,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   // OPTIMIZATION: Memoize merge animation
   const mergeAnimation = React.useMemo(() => 
     isMerging ? {
-      scale: [1, 1.1, 0],
+      scale: [1, 1.05, 0],
       opacity: [1, 1, 0],
-      rotate: [0, 5, -5, 0],
-      filter: "brightness(1.5)",
+      rotate: [0, 2, -2, 0],
+      filter: "brightness(1.1)",
       transition: {
         duration: 0.6,
         ease: "easeInOut",
@@ -262,12 +256,12 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   // OPTIMIZATION: Memoize hint animation
   const hintAnimation = React.useMemo(() =>
     hintColor ? {
-      scale: [1, 1.05, 1],
-      filter: ["brightness(1)", "brightness(1.1)", "brightness(1)"],
+      scale: [1, 1.02, 1],
+      filter: ["brightness(1)", "brightness(1.05)", "brightness(1)"],
       zIndex: 20,
       opacity: 1,
       transition: {
-        duration: 2.5,
+        duration: 3,
         ease: "easeInOut",
         repeat: Infinity,
         repeatType: "loop" as const,
@@ -281,7 +275,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     if (isMerging) return mergeAnimation;
     if (hintColor && !isDragging) return hintAnimation;
     return { 
-      opacity: isDragging ? 0.5 : 1, 
+      opacity: isDragging ? 0.4 : 1, 
       scale: 1, 
       x: 0,
       y: 0,
@@ -295,8 +289,8 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   const transitionConfig = React.useMemo(() => 
     (isMerging || hintColor) ? {} : { 
       type: "spring", 
-      stiffness: 350, 
-      damping: 25,
+      stiffness: 400, 
+      damping: 30,
       layout: { duration: 0.2 },
       repeat: 0
     },
@@ -308,7 +302,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     <motion.div
       layoutId={!isDragging ? word.id : undefined}
       layout={!isDragging}
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.9 }}
       animate={animateState}
       transition={transitionConfig}
       ref={tileRef}
@@ -341,60 +335,47 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       }}
       dir="rtl"
     >
-      {/* Shadow/Depth Layer */}
+      {/* Main Tile Face - Clean & Calm */}
       <div className={`
         absolute inset-0 
-        rounded-xl sm:rounded-2xl 
-        translate-y-[4px] sm:translate-y-[5px]
-        ${word.isMergedGroup ? 'bg-purple-300' : 'bg-slate-300'}
-        transition-colors duration-200
-      `}></div>
-
-      {/* Main Tile Face */}
-      <div className={`
-        absolute inset-0 
-        rounded-xl sm:rounded-2xl 
+        climate-tile
         flex items-center justify-center 
         px-1.5 sm:px-2
         text-center
-        transition-all duration-150
-        border-2
+        transition-all duration-300
+        border border-transparent
         ${word.isMergedGroup 
-          ? 'bg-gradient-to-b from-purple-50 to-purple-100 border-purple-200 text-purple-700' 
-          : 'bg-gradient-to-b from-white to-slate-50 border-white text-slate-700'
+          ? 'bg-purple-50 text-purple-900 border-purple-100' 
+          : 'bg-white text-[var(--color-climate-text-primary)]'
         }
-        ${isOver ? 'translate-y-[4px] sm:translate-y-[5px] brightness-95 ring-2 ring-blue-400' : 'hover:-translate-y-[1px]'}
-        ${isSubcategoryGlow ? 'ring-4 ring-yellow-300 border-yellow-400 shadow-[0_0_15px_rgba(253,224,71,0.6)]' : ''}
+        ${isOver ? 'scale-95 brightness-95 ring-2 ring-climate-hint' : 'hover:-translate-y-0.5'}
+        ${isSubcategoryGlow ? 'ring-2 ring-yellow-200 bg-yellow-50' : ''}
         ${hintColor ? getHintStyles(hintColor) : ''}
       `}>
         
-        {/* Inner shine for extra polish */}
-        <div className="absolute inset-x-2 top-1 h-1/3 bg-gradient-to-b from-white/60 to-transparent rounded-t-lg pointer-events-none"></div>
-
         {/* Content */}
         <div className="flex flex-col items-center justify-center gap-0.5 z-10">
           {/* Show icon from Lucide library */}
           {iconDisplay.hasLibraryIcon && IconComponent && (
             <IconComponent 
-              className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-600' : 'text-slate-600'}`}
-              strokeWidth={2.5}
+              className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-700/70' : 'text-slate-500/70'}`}
+              strokeWidth={2}
             />
           )}
           
           {/* Show emoji if type is emoji */}
           {iconDisplay.hasEmoji && (
-            <span className="text-lg sm:text-xl drop-shadow-sm filter">{word.icon!.emoji}</span>
+            <span className="text-lg sm:text-xl drop-shadow-sm filter grayscale-[0.3]">{word.icon!.emoji}</span>
           )}
           
           {/* Show fallback "*" if icon not found */}
           {iconDisplay.showFallbackIcon && (
-            <span className="text-lg sm:text-xl font-bold drop-shadow-sm filter">*</span>
+            <span className="text-lg sm:text-xl font-bold text-slate-400">*</span>
           )}
           
           <span className={`
-            text-xs sm:text-sm font-bold leading-tight break-words
-            drop-shadow-sm
-            ${word.isMergedGroup ? 'text-purple-800' : 'text-slate-700'}
+            text-xs sm:text-sm font-medium leading-tight break-words
+            ${word.isMergedGroup ? 'text-purple-900' : 'text-[var(--color-climate-text-primary)]'}
           `}>
             {iconDisplay.displayText}
           </span>
