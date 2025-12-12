@@ -15,8 +15,15 @@ export function CategoryRow({ name, words }: CategoryRowProps) {
       className="relative group h-14 sm:h-16" 
       dir="rtl"
     >
-      {/* Glow effect */}
-      <div className="absolute inset-0 bg-green-400 blur-lg opacity-20 rounded-xl sm:rounded-2xl group-hover:opacity-30 transition-opacity"></div>
+      {/* Enhanced Glow effect */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 blur-xl opacity-30 rounded-xl sm:rounded-2xl"
+        animate={{
+          opacity: [0.3, 0.4, 0.3],
+          scale: [1, 1.02, 1]
+        }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatType: "loop" }}
+      />
       
       <div className="relative h-full bg-gradient-to-r from-emerald-400 to-green-400 rounded-xl sm:rounded-2xl shadow-[0_3px_0_rgb(21,128,61)] sm:shadow-[0_4px_0_rgb(21,128,61)] p-0.5 sm:p-1">
         <div className="bg-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 h-full flex items-center gap-2 sm:gap-3 backdrop-blur-[2px]">
@@ -29,7 +36,7 @@ export function CategoryRow({ name, words }: CategoryRowProps) {
               <span className="font-bold text-white text-base sm:text-lg drop-shadow-sm truncate">{name}</span>
               <motion.div 
                 animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatType: "loop" }}
               >
                 <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-300 fill-yellow-300" />
               </motion.div>

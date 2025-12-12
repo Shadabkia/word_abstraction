@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "posts": [
+    {
+      "id": "post_001",
+      "authorId": "npc_mom",
+      "image": "",
+      "caption": "Kian left his job today. I don't understand why. He had a good position! 😢 Kids these days...",
+      "likes": 42,
+      "comments": [
+        {
+          "id": "c1",
+          "authorId": "npc_boss",
+          "text": "Irresponsible. Return immediately.",
+          "likes": 1,
+          "timestamp": 1000
+        }
+      ],
+      "timestamp": 1000,
+      "unlockCondition": {
+        "type": "level_complete",
+        "targetId": "level_1"
+      }
+    },
+    {
+      "id": "post_002",
+      "authorId": "npc_darvish",
+      "image": "",
+      "caption": "The road opens when the heart is ready. 🛣️✨ #wisdom",
+      "likes": 108,
+      "comments": [
+        {
+          "id": "c2",
+          "authorId": "npc_mom",
+          "text": "What does that even mean?!",
+          "likes": 15,
+          "timestamp": 2000
+        }
+      ],
+      "timestamp": 2000,
+      "unlockCondition": {
+        "type": "level_complete",
+        "targetId": "level_2"
+      }
+    },
+    {
+      "id": "post_003",
+      "authorId": "npc_ali",
+      "image": "",
+      "caption": "Fixed up The Onion today. She's ready for the journey! 🚐🔧",
+      "likes": 89,
+      "comments": [],
+      "timestamp": 3000,
+      "unlockCondition": {
+        "type": "level_complete",
+        "targetId": "level_3"
+      }
+    },
+    {
+      "id": "post_004",
+      "authorId": "npc_boss",
+      "image": "",
+      "caption": "Unauthorized absence will result in termination. Report to Sector 7 immediately. 😡",
+      "likes": 3,
+      "comments": [
+        {
+          "id": "c3",
+          "authorId": "npc_mom",
+          "text": "Leave my son alone!",
+          "likes": 67,
+          "timestamp": 4000
+        }
+      ],
+      "timestamp": 4000,
+      "unlockCondition": {
+        "type": "level_complete",
+        "targetId": "level_1"
+      }
+    },
+    {
+      "id": "post_005",
+      "authorId": "npc_kian",
+      "image": "",
+      "caption": "First day on the road. Tehran is behind me. The future is ahead. 🌅",
+      "likes": 156,
+      "comments": [
+        {
+          "id": "c4",
+          "authorId": "npc_mom",
+          "text": "Call me when you stop! Be safe! ❤️",
+          "likes": 45,
+          "timestamp": 5000
+        },
+        {
+          "id": "c5",
+          "authorId": "npc_darvish",
+          "text": "The onion peels reveal truth...",
+          "likes": 12,
+          "timestamp": 5100
+        }
+      ],
+      "timestamp": 5000,
+      "unlockCondition": {
+        "type": "level_complete",
+        "targetId": "level_5"
+      }
+    }
+  ]
+}
+

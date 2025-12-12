@@ -68,6 +68,7 @@ export const DragProvider: React.FC<DragProviderProps> = ({ children }) => {
     size: { width: number; height: number },
     source: { rowIndex: number; colIndex: number }
   ) => {
+    console.log('🎯 DragContext.startDrag called:', { word: word.text, position, offset, size, source });
     setDragState({
       isDragging: true,
       draggedWord: word,
@@ -79,6 +80,7 @@ export const DragProvider: React.FC<DragProviderProps> = ({ children }) => {
   };
 
   const updateDragPosition = (position: { x: number; y: number }) => {
+    console.log('🔄 DragContext.updateDragPosition called:', position);
     setDragState((prev) => ({
       ...prev,
       currentPosition: position,
@@ -114,3 +116,4 @@ export const DragProvider: React.FC<DragProviderProps> = ({ children }) => {
     </DragContext.Provider>
   );
 };
+

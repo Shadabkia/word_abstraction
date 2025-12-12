@@ -1,0 +1,40 @@
+{
+  "npcs": [
+    {
+      "id": "npc_kian",
+      "name": "Kian",
+      "handle": "@kian_ontheroad",
+      "avatar": "",
+      "bio": "Former office worker. Currently driving across Iran in The Onion 🚐"
+    },
+    {
+      "id": "npc_mom",
+      "name": "Mom",
+      "handle": "@kians_mom",
+      "avatar": "",
+      "bio": "Worried mother. Expert at guilt trips and home-cooked meals."
+    },
+    {
+      "id": "npc_boss",
+      "name": "Mr. Ghoulian",
+      "handle": "@ghoulian_corp",
+      "avatar": "",
+      "bio": "CEO of Sector 7. Believes in productivity above all else."
+    },
+    {
+      "id": "npc_darvish",
+      "name": "The Darvish",
+      "handle": "@wandering_darvish",
+      "avatar": "",
+      "bio": "Mystical traveler. Speaks in riddles and tea metaphors."
+    },
+    {
+      "id": "npc_ali",
+      "name": "Mechanic Ali",
+      "handle": "@ali_fixes_things",
+      "avatar": "",
+      "bio": "Best mechanic in Tehran. Saved The Onion from retirement."
+    }
+  ]
+}
+

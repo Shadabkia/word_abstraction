@@ -1,0 +1,530 @@
+{
+  "version": "1.0",
+  "chapters": [
+    {
+      "id": "chapter_1",
+      "index": 1,
+      "title": "Tehran",
+      "subtitle": "The Great Escape",
+      "description": "Kian quits his soul-crushing office job and prepares to leave Tehran",
+      "city": "Tehran",
+      "color": "from-slate-600 to-slate-800",
+      "levels": [
+        {
+          "id": "campaign_level_1",
+          "levelNumber": 1,
+          "wordConnectLevel": 1,
+          "title": "سفره صبحانه",
+          "titleEn": "Breakfast Table",
+          "location": "Tehran • Kian's Apartment",
+          "timestamp": "Day 1 • 7:42 AM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "سفره صبحانه",
+              "text": "The last breakfast at home",
+              "backgroundColor": "#FFF8E7"
+            },
+            {
+              "type": "story",
+              "text": "کیان برای آخرین بار پشت میز صبحانه نشست. پنیر، نان، چای. همه چیز مثل همیشه بود، اما امروز فرق داشت.",
+              "backgroundColor": "#FFFACD"
+            },
+            {
+              "type": "story",
+              "text": "He looked at the familiar items on the table. Each one a memory. Today, he would pack his bags and leave this life behind.",
+              "backgroundColor": "#F5E6D3"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "آخرین صبحانه خونگی. فردا جاده‌ها منتظرند. 🍵",
+          "captionEn": "Last home breakfast. Tomorrow, the roads await.",
+          "likes": 42,
+          "comments": [
+            {
+              "id": "c1",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "کیان این یعنی چی؟! داری میری؟ 😢",
+              "likes": 15
+            },
+            {
+              "id": "c2",
+              "authorId": "npc_ali",
+              "authorName": "Mechanic Ali",
+              "text": "Ready for adventure, brother! 🚐",
+              "likes": 8
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_2",
+          "levelNumber": 2,
+          "wordConnectLevel": 2,
+          "title": "دفتر کار",
+          "titleEn": "The Office",
+          "location": "Tehran • Sector 7 Office",
+          "timestamp": "Day 1 • 9:15 AM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "دفتر کار",
+              "text": "One last look at the cubicle",
+              "backgroundColor": "#E8E8E8"
+            },
+            {
+              "type": "story",
+              "text": "The fluorescent lights hummed their endless monotone song. Kian looked at his desk - papers, pens, a cold cup of tea from yesterday.",
+              "backgroundColor": "#D3D3D3"
+            },
+            {
+              "type": "story",
+              "text": "آقای غولیان داشت فریاد می‌زد. کیان لبخند زد. دیگر اهمیتی نداشت.",
+              "backgroundColor": "#C0C0C0"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "Goodbye, cubicle. You won't be missed. 💼➡️🚪",
+          "likes": 89,
+          "comments": [
+            {
+              "id": "c3",
+              "authorId": "npc_boss",
+              "authorName": "Mr. Ghoulian",
+              "text": "UNACCEPTABLE! Return immediately! 😡",
+              "likes": 2
+            },
+            {
+              "id": "c4",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "The caged bird remembers the sky... 🕊️",
+              "likes": 23
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_3",
+          "levelNumber": 3,
+          "wordConnectLevel": 3,
+          "title": "تعمیرگاه",
+          "titleEn": "The Garage",
+          "location": "Tehran • Ali's Garage",
+          "timestamp": "Day 1 • 2:30 PM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "تعمیرگاه",
+              "text": "Meeting The Onion",
+              "backgroundColor": "#8B4513"
+            },
+            {
+              "type": "story",
+              "text": "علی با لبخند ون را نشان داد. 'بهش پیاز می‌گن. قدیمیه، ولی قلبش سالمه.'",
+              "backgroundColor": "#A0522D"
+            },
+            {
+              "type": "story",
+              "text": "The van was old, cream-colored, covered in dents. But when Kian touched it, something felt right. This was his ticket to freedom.",
+              "backgroundColor": "#CD853F"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "Meet The Onion 🚐 My new home on wheels.",
+          "likes": 156,
+          "comments": [
+            {
+              "id": "c5",
+              "authorId": "npc_ali",
+              "authorName": "Mechanic Ali",
+              "text": "She'll take good care of you! Changed the oil, checked everything. 🔧",
+              "likes": 34
+            },
+            {
+              "id": "c6",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "Is it safe?! Does it have seatbelts?! 😰",
+              "likes": 67
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_4",
+          "levelNumber": 4,
+          "wordConnectLevel": 4,
+          "title": "بسته‌بندی",
+          "titleEn": "Packing",
+          "location": "Tehran • Kian's Apartment",
+          "timestamp": "Day 1 • 8:00 PM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "بسته‌بندی",
+              "text": "What do you take to start over?",
+              "backgroundColor": "#8B7355"
+            },
+            {
+              "type": "story",
+              "text": "کیان به وسایلش نگاه کرد. چه چیزی برای شروع دوباره لازم داشت؟",
+              "backgroundColor": "#A0826D"
+            },
+            {
+              "type": "story",
+              "text": "Books. Clothes. A photo of his family. Tea. The essentials of a new life fit in one bag.",
+              "backgroundColor": "#BDB5A8"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "One bag. Infinite possibilities. 🎒✨",
+          "likes": 134,
+          "comments": [
+            {
+              "id": "c7",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "The lighter the bag, the freer the soul. 🌙",
+              "likes": 45
+            },
+            {
+              "id": "c8",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "Did you pack warm socks?! Extra underwear?! 🧦",
+              "likes": 78
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_5",
+          "levelNumber": 5,
+          "wordConnectLevel": 5,
+          "title": "شب آخر",
+          "titleEn": "Last Night",
+          "location": "Tehran • Kian's Rooftop",
+          "timestamp": "Day 1 • 11:47 PM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "شب آخر",
+              "text": "One last look at Tehran's lights",
+              "backgroundColor": "#1a1a2e"
+            },
+            {
+              "type": "story",
+              "text": "از پشت بام، تهران مثل یک دریای نور بود. کیان نفس عمیقی کشید.",
+              "backgroundColor": "#16213e"
+            },
+            {
+              "type": "story",
+              "text": "Tomorrow, everything changes. Tonight, he said goodbye to the city that made him, and the life that broke him.",
+              "backgroundColor": "#0f3460"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "Tehran, you were beautiful. But I need to find what's beyond your lights. 🌃→🌅",
+          "likes": 203,
+          "comments": [
+            {
+              "id": "c9",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "Every ending is a beginning wearing a disguise. 🎭",
+              "likes": 67
+            },
+            {
+              "id": "c10",
+              "authorId": "npc_ali",
+              "authorName": "Mechanic Ali",
+              "text": "Drive safe, brother. The road is long. 🛣️",
+              "likes": 45
+            },
+            {
+              "id": "c11",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "Please call me every day! EVERY DAY! 📱❤️",
+              "likes": 91
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_2",
+      "index": 2,
+      "title": "Kashan",
+      "subtitle": "Desert Roads",
+      "description": "Kian drives into the desert and discovers unexpected wisdom",
+      "city": "Kashan",
+      "color": "from-orange-600 to-red-700",
+      "levels": [
+        {
+          "id": "campaign_level_6",
+          "levelNumber": 6,
+          "wordConnectLevel": 6,
+          "title": "صبح جاده",
+          "titleEn": "Highway Morning",
+          "location": "Highway 7 • Leaving Tehran",
+          "timestamp": "Day 2 • 6:12 AM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "صبح جاده",
+              "text": "The road stretches forward",
+              "backgroundColor": "#FFB347"
+            },
+            {
+              "type": "story",
+              "text": "The sun rose behind The Onion. Tehran disappeared in the rearview mirror. Kian's hands gripped the wheel.",
+              "backgroundColor": "#FFA07A"
+            },
+            {
+              "type": "story",
+              "text": "جاده خالی بود. فقط پیاز، کیان، و افق بی‌پایان.",
+              "backgroundColor": "#FF8C69"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "First sunrise on the road. Freedom tastes like dust and hope. 🌅🚐",
+          "likes": 178,
+          "comments": [
+            {
+              "id": "c12",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "Did you eat breakfast?! Don't drive hungry! 🥐",
+              "likes": 52
+            },
+            {
+              "id": "c13",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "The road teaches what the classroom cannot. 🛤️",
+              "likes": 34
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_7",
+          "levelNumber": 7,
+          "wordConnectLevel": 7,
+          "title": "چایخانه",
+          "titleEn": "The Tea House",
+          "location": "Qom • Roadside Tea House",
+          "timestamp": "Day 2 • 10:45 AM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "چایخانه",
+              "text": "First stop. First tea.",
+              "backgroundColor": "#8B4513"
+            },
+            {
+              "type": "story",
+              "text": "چایخانه کنار جاده بوی چای تازه و نعنا می‌داد. کیان روی تخت سنتی نشست.",
+              "backgroundColor": "#A0522D"
+            },
+            {
+              "type": "story",
+              "text": "An old man with a long beard sat across from him. 'First time traveling alone?' The man smiled knowingly.",
+              "backgroundColor": "#CD853F"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "Met a wandering darvish today. He said: 'The onion has many layers.' 🧅☕",
+          "likes": 145,
+          "comments": [
+            {
+              "id": "c14",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "We meet again, traveler. The tea was good, yes? 🍵",
+              "likes": 67
+            },
+            {
+              "id": "c15",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "Don't talk to strangers! And wash your hands! 🧼",
+              "likes": 38
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_8",
+          "levelNumber": 8,
+          "wordConnectLevel": 8,
+          "title": "کویر",
+          "titleEn": "The Desert",
+          "location": "Kavir Desert • Middle of Nowhere",
+          "timestamp": "Day 2 • 3:30 PM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "کویر",
+              "text": "Silence. Sand. Sky.",
+              "backgroundColor": "#F4A460"
+            },
+            {
+              "type": "story",
+              "text": "The desert was endless. No buildings, no people, no deadlines. Just wind and sand.",
+              "backgroundColor": "#DEB887"
+            },
+            {
+              "type": "story",
+              "text": "کیان ماشین را کنار زد و بیرون رفت. برای اولین بار در زندگیش، سکوت واقعی را شنید.",
+              "backgroundColor": "#D2B48C"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "The desert doesn't judge. It just listens. 🏜️",
+          "likes": 267,
+          "comments": [
+            {
+              "id": "c16",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "In emptiness, we find ourselves. 🌵",
+              "likes": 89
+            },
+            {
+              "id": "c17",
+              "authorId": "npc_ali",
+              "authorName": "Mechanic Ali",
+              "text": "Don't forget to check the radiator in this heat! 🌡️",
+              "likes": 43
+            },
+            {
+              "id": "c18",
+              "authorId": "npc_boss",
+              "authorName": "Mr. Ghoulian",
+              "text": "This is not a vacation! Your desk is waiting!",
+              "likes": 3
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_9",
+          "levelNumber": 9,
+          "wordConnectLevel": 9,
+          "title": "باغ فین",
+          "titleEn": "Fin Garden",
+          "location": "Kashan • Fin Garden",
+          "timestamp": "Day 2 • 6:00 PM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "باغ فین",
+              "text": "An oasis in the desert",
+              "backgroundColor": "#2E8B57"
+            },
+            {
+              "type": "story",
+              "text": "بعد از ساعت‌ها کویر، باغ فین مثل یک رویا بود. آب، درخت، سایه.",
+              "backgroundColor": "#3CB371"
+            },
+            {
+              "type": "story",
+              "text": "Kian walked through the garden. The water flowed through ancient channels. Beauty can exist anywhere, even surrounded by desert.",
+              "backgroundColor": "#90EE90"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "After the desert, paradise. Persian gardens know how to survive. 🌳💧",
+          "likes": 312,
+          "comments": [
+            {
+              "id": "c19",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "Water finds a way. So does the soul. 🌊",
+              "likes": 98
+            },
+            {
+              "id": "c20",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "Beautiful! But don't catch a cold from the water! 🤧",
+              "likes": 67
+            }
+          ]
+        },
+        {
+          "id": "campaign_level_10",
+          "levelNumber": 10,
+          "wordConnectLevel": 10,
+          "title": "شب کاشان",
+          "titleEn": "Kashan Night",
+          "location": "Kashan • Traditional House Rooftop",
+          "timestamp": "Day 2 • 10:30 PM",
+          "slides": [
+            {
+              "type": "cover",
+              "title": "شب کاشان",
+              "text": "Stars over an ancient city",
+              "backgroundColor": "#191970"
+            },
+            {
+              "type": "story",
+              "text": "The rooftop of an old house. Tea in hand. Stars overhead. Kian felt something shift inside him.",
+              "backgroundColor": "#1C1C4D"
+            },
+            {
+              "type": "story",
+              "text": "درویش کنارش نشست. 'می‌بینی؟ هر ستاره یک داستان است. تو هم یک ستاره‌ای.'",
+              "backgroundColor": "#252565"
+            },
+            {
+              "type": "game"
+            }
+          ],
+          "caption": "Two cities. Ten stars. One journey just beginning. ✨",
+          "likes": 289,
+          "comments": [
+            {
+              "id": "c21",
+              "authorId": "npc_darvish",
+              "authorName": "The Darvish",
+              "text": "The road ahead is long, but you are ready. See you in Isfahan. 🌙",
+              "likes": 112
+            },
+            {
+              "id": "c22",
+              "authorId": "npc_ali",
+              "authorName": "Mechanic Ali",
+              "text": "How's The Onion holding up? 🚐",
+              "likes": 34
+            },
+            {
+              "id": "c23",
+              "authorId": "npc_mom",
+              "authorName": "Mom",
+              "text": "I'm proud of you, my son. But still worried. 😊😢",
+              "likes": 143
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

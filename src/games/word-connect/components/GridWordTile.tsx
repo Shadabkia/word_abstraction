@@ -1,9 +1,9 @@
 import * as React from "react";
 import { motion } from "framer-motion";
-import { getIcon } from '@/utils/iconMapper';
+import { getIcon } from '@/shared/utils/iconMapper';
 import { soundManager } from '../utils/soundManager';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { useDragContext } from '../contexts/DragContext';
+import { useDragContext } from '@/contexts/DragContext';
 
 interface Word {
   id: string;
@@ -58,13 +58,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   const tileRef = React.useRef<HTMLDivElement | null>(null);
   const { dragState, startDrag, updateDragPosition, endDrag } = useDragContext();
   
-  // Long press and drag state
-  const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const dragTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  // Drag state
   const startPositionRef = React.useRef<{ x: number; y: number } | null>(null);
   const hasMoved = React.useRef<boolean>(false);
   const isDraggingThis = React.useRef<boolean>(false);
-  const canStartDrag = React.useRef<boolean>(false);
   const dropTargetRef = React.useRef<{ row: number; col: number } | null>(null);
 
   const getDropTarget = React.useCallback((x: number, y: number) => {
@@ -93,30 +90,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     dropTargetRef.current?.col === colIndex &&
     dragState.draggedWord?.id !== word.id;
 
-  // Long press handler
-  const handleLongPress = () => {
-    console.log('🔥 LONG PRESS DETECTED - Ready to drag:', word.text);
-    canStartDrag.current = true;
-  };
-
-  const startLongPressTimer = () => {
-    cancelTimers();
-    canStartDrag.current = false;
-    longPressTimerRef.current = setTimeout(() => {
-      handleLongPress();
-    }, 500); // 500ms for long press
-  };
-
-  const cancelTimers = () => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-    if (dragTimerRef.current) {
-      clearTimeout(dragTimerRef.current);
-      dragTimerRef.current = null;
-    }
-  };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isDisabled) return;
@@ -125,44 +98,52 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     e.preventDefault();
     e.stopPropagation();
     
+    // Capture pointer to track movement even when cursor leaves element
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Ignore capture errors on some browsers
+      console.log('Pointer capture failed:', err);
+    }
+    
     startPositionRef.current = {
       x: e.clientX,
       y: e.clientY,
     };
     hasMoved.current = false;
     isDraggingThis.current = false;
-    canStartDrag.current = false;
-    
-    startLongPressTimer();
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!startPositionRef.current || isDisabled) return;
 
     e.preventDefault();
+    e.stopPropagation();
 
     const currentX = e.clientX;
     const currentY = e.clientY;
     const dx = Math.abs(currentX - startPositionRef.current.x);
     const dy = Math.abs(currentY - startPositionRef.current.y);
     
+    console.log('📍 Pointer move:', dx, dy, 'isDragging:', isDraggingThis.current);
+    
+    // Use smaller threshold for touch to be more responsive
+    const threshold = e.pointerType === 'touch' ? 3 : 5;
+    
     // Check if moved enough to be considered movement
-    if (dx > 5 || dy > 5) {
+    if (dx > threshold || dy > threshold) {
       if (!hasMoved.current) {
         hasMoved.current = true;
-        // Cancel long press timer if moving (but don't prevent drag)
-        if (!canStartDrag.current) {
-          cancelTimers();
-        }
       }
 
-      // Start drag if: 1) long press triggered, OR 2) user is moving (immediate drag)
+      // Start drag immediately on movement
       if (!isDraggingThis.current) {
-        console.log('🚀 DRAG STARTED on:', word.text, canStartDrag.current ? '(after long press)' : '(immediate)');
+        console.log('🚀 DRAG STARTED on:', word.text, e.pointerType === 'touch' ? '(touch)' : '(mouse)');
         soundManager.playPickUp();
         
         const rect = tileRef.current?.getBoundingClientRect();
         if (rect) {
+          console.log('📦 Starting drag with rect:', rect, 'position:', { x: currentX, y: currentY });
           startDrag(
             word,
             {
@@ -179,6 +160,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
 
       // Update drag position if dragging
       if (isDraggingThis.current) {
+        console.log('🔄 Updating drag position:', { x: currentX, y: currentY });
         updateDragPosition({ x: currentX, y: currentY });
         
         // Find drop target
@@ -192,7 +174,14 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    cancelTimers();
+    // Release pointer capture
+    if (e.target && (e.target as HTMLElement).hasPointerCapture) {
+      try {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch (err) {
+        // Ignore if pointer capture was already released
+      }
+    }
 
     const finalTarget = getDropTarget(e.clientX, e.clientY);
 
@@ -210,19 +199,26 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     startPositionRef.current = null;
     hasMoved.current = false;
     isDraggingThis.current = false;
-    canStartDrag.current = false;
     dropTargetRef.current = null;
   };
 
-  const handlePointerCancel = () => {
-    cancelTimers();
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    
+    // Release pointer capture
+    if (e.target && (e.target as HTMLElement).hasPointerCapture) {
+      try {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch (err) {
+        // Ignore if pointer capture was already released
+      }
+    }
+    
     if (isDraggingThis.current) {
       endDrag();
     }
     startPositionRef.current = null;
     hasMoved.current = false;
     isDraggingThis.current = false;
-    canStartDrag.current = false;
     dropTargetRef.current = null;
   };
 
@@ -271,9 +267,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       zIndex: 20,
       opacity: 1,
       transition: {
-        duration: 1.5,
+        duration: 2.5,
         ease: "easeInOut",
         repeat: Infinity,
+        repeatType: "loop" as const,
       }
     } : {},
     [hintColor]
@@ -306,16 +303,10 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     [isMerging, hintColor]
   );
 
-  // Cleanup on unmount
-  React.useEffect(() => {
-    return () => {
-      cancelTimers();
-    };
-  }, []);
 
   return (
     <motion.div
-      layoutId={word.id}
+      layoutId={!isDragging ? word.id : undefined}
       layout={!isDragging}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={animateState}
@@ -349,7 +340,6 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         userSelect: 'none',
       }}
       dir="rtl"
-      whileTap={{ scale: 0.95 }}
     >
       {/* Shadow/Depth Layer */}
       <div className={`
