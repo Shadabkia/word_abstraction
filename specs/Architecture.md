@@ -12,6 +12,7 @@ This document defines the technical decisions, patterns, and structure of the pl
 -   **Styling:** Tailwind CSS + Framer Motion (Animations)
 -   **Icons:** Lucide React
 -   **Build Target:** Web / Capacitor (Android/iOS)
+-   **Responsiveness:** Mobile-Only (Desktop uses Device Simulator)
 
 ## 2. Directory Structure & Modules
 We follow a **Feature-Based Architecture**.

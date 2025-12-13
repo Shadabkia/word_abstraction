@@ -16,6 +16,12 @@ The architecture should be:
 
 ## 2. Core Architectural Principles
 
+### Mobile-First "Phone Booth" Architecture
+The application is designed exclusively for mobile viewports.
+- **Mobile First:** All UI components are built assuming a mobile screen width. No complex responsive overrides (sm/md/lg) are used.
+- **Desktop Simulator:** On desktop, the app runs inside a constrained "Phone Booth" container that mimics a physical device (e.g., iPhone 14 Pro).
+- **Zero Desktop Logic:** We do not write separate desktop layouts. The desktop experience is a high-fidelity simulation of the mobile experience.
+
 ### Content-driven, not hard-coded
 - Everything that “happens” in the game (levels, feed posts, messages, chapter unlocks, daily challenges) should be describable in a JSON DSL.
 - The app reads this DSL and instantiates screens and game sessions.

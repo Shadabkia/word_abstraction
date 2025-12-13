@@ -318,7 +318,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       }}
       className={`
         relative group
-        h-14 sm:h-16
+        h-14
         ${isDisabled ? 'cursor-not-allowed opacity-60' : 'cursor-grab active:cursor-grabbing'}
         select-none
         z-10
@@ -338,7 +338,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         absolute inset-0 
         glass-tile rounded-2xl
         flex items-center justify-center 
-        px-1.5 sm:px-2
+        px-1.5
         text-center
         transition-all duration-300
         border border-white/50
@@ -356,23 +356,23 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           {/* Show icon from Lucide library */}
           {iconDisplay.hasLibraryIcon && IconComponent && (
             <IconComponent 
-              className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-700/80' : 'text-slate-600/80'}`}
+              className={`w-5 h-5 ${word.isMergedGroup ? 'text-purple-700/80' : 'text-slate-600/80'}`}
               strokeWidth={2.5}
             />
           )}
           
           {/* Show emoji if type is emoji */}
           {iconDisplay.hasEmoji && (
-            <span className="text-xl sm:text-2xl drop-shadow-sm">{word.icon!.emoji}</span>
+            <span className="text-xl drop-shadow-sm">{word.icon!.emoji}</span>
           )}
           
           {/* Show fallback "*" if icon not found */}
           {iconDisplay.showFallbackIcon && (
-            <span className="text-lg sm:text-xl font-bold text-slate-400">*</span>
+            <span className="text-lg font-bold text-slate-400">*</span>
           )}
           
           <span className={`
-            text-sm sm:text-base font-bold leading-tight break-words tracking-wide
+            text-sm font-bold leading-tight break-words tracking-wide
             ${word.isMergedGroup ? 'text-purple-900' : 'text-[var(--color-climate-text-primary)]'}
             drop-shadow-sm
           `}>

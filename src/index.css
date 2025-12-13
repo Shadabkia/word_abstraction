@@ -105,38 +105,7 @@
 }
 
 /* Portrait shell: keeps entire app vertical on desktop */
-.app-viewport {
-  min-height: 100svh;
-}
-
-.app-frame {
-  min-height: 100svh;
-}
-
-@media (min-width: 768px) {
-  .app-viewport {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-  }
-
-  .app-frame {
-    /*
-      Constrain to a portrait stage on desktop, but allow it to grow.
-      Use rem so it grows together with the desktop font-size scaling above.
-    */
-    width: min(32rem, calc(100vw - 32px));
-    min-height: 0;
-    height: min(100svh, calc(100vh - 32px));
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
-    border-left: 1px solid rgba(255, 255, 255, 0.06);
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
-    overflow: hidden;
-    background: var(--color-climate-bg);
-    border-radius: 28px;
-  }
-}
+/* Deleted unused styles to clean up */
 
 @layer components {
   /* New Tile Style */

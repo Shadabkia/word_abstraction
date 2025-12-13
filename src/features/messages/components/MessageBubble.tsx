@@ -27,7 +27,7 @@ export function MessageBubble({ text, isSender, timestamp, type = 'text', action
 
   return (
     <div className={`flex ${isSender ? 'justify-end' : 'justify-start'} mb-3 px-1`}>
-      <div className={`max-w-[80%] sm:max-w-[75%] ${isSender ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+      <div className={`max-w-[80%] ${isSender ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
         <div className={`px-4 py-2.5 rounded-2xl ${getBubbleStyle()} shadow-sm`}>
           <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{text}</p>
           {type === 'quest' && actionLink && (

@@ -30,13 +30,15 @@ You MUST update specs when:
 - Remove outdated or misleading information immediately.
 
 ## Change Discipline
+- **MANDATORY:** Before starting any coding task, you MUST check the `specs/` folder to understand the current defined behavior.
+- **MANDATORY:** If your code changes diverge from the spec, you MUST update the spec.
 - Do NOT implement changes without updating specs.
 - If a spec is missing, unclear, or outdated, STOP and call it out.
 - Ask whether a spec update is needed before proceeding with code.
 
 ## Output Behavior
-- When making code changes, explicitly mention whether specs were updated.
-- If no spec update is required, explain briefly why.
+- When making code changes, you MUST explicitly confirm in your final response: **"Specs updated: [Yes/No] - [Reason]"**.
+- If you forget to check specs, you are failing your core directive.
 
 ## Anti-Patterns (Strictly Avoid)
 - “We’ll update the specs later”

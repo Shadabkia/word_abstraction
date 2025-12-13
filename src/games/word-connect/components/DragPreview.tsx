@@ -101,8 +101,8 @@ export function DragPreview() {
         }}
         className={`
           ${isMerged ? 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-300' : 'bg-white border-slate-200'}
-          rounded-xl sm:rounded-2xl
-          border-b-[4px] sm:border-b-[6px]
+          rounded-xl
+          border-b-[4px]
           shadow-2xl
           flex items-center justify-center gap-1
           text-center
@@ -115,22 +115,22 @@ export function DragPreview() {
         {/* Show icon from library */}
         {hasLibraryIcon && IconComponent && (
           <IconComponent 
-            className={`w-5 h-5 sm:w-6 sm:h-6 ${isMerged ? 'text-purple-600' : 'text-blue-600'}`}
+            className={`w-5 h-5 ${isMerged ? 'text-purple-600' : 'text-blue-600'}`}
             strokeWidth={2.5}
           />
         )}
         
         {/* Show emoji if type is emoji */}
         {hasEmoji && (
-          <span className="text-base sm:text-lg">{item.icon!.emoji}</span>
+          <span className="text-base">{item.icon!.emoji}</span>
         )}
         
         {/* Show fallback "*" if icon not found */}
         {showFallbackIcon && (
-          <span className="text-base sm:text-lg font-bold">*</span>
+          <span className="text-base font-bold">*</span>
         )}
         
-        <span className={`${isMerged ? 'text-purple-700' : 'text-blue-600'} text-sm sm:text-lg leading-tight break-words font-bold drop-shadow-sm`}>
+        <span className={`${isMerged ? 'text-purple-700' : 'text-blue-600'} text-sm leading-tight break-words font-bold drop-shadow-sm`}>
           {displayText}
         </span>
       </div>

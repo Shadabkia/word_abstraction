@@ -491,7 +491,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
         >
           <CustomDragPreview />
           
-          <div className="w-full max-w-md md:max-w-none mx-auto relative min-h-screen flex flex-col pb-24">
+          <div className="w-full mx-auto relative min-h-screen flex flex-col pb-24">
             {/* Minimalist Top Bar */}
             <div className="px-6 pt-8 pb-4 flex items-center justify-between z-10">
                 <div className="flex items-center gap-3">
@@ -514,7 +514,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
             </div>
 
             {/* Game Content - Vertically Centered */}
-            <div className="flex-1 flex flex-col justify-center px-4 -mt-16 sm:mt-0">
+            <div className="flex-1 flex flex-col justify-center px-4 -mt-16">
                 
                 {/* Progress/Header Context */}
                 <div className="mb-8 px-2">
@@ -535,13 +535,13 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
 
                 {/* The Grid */}
                 {!isLoading && (
-                <div className="space-y-3 relative z-10 glass-panel rounded-3xl p-3 sm:p-5 transition-all duration-500">
+                <div className="space-y-3 relative z-10 glass-panel rounded-3xl p-3 transition-all duration-500">
                   {gridRows.map((row, rowIndex) => (
                     <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
                       {row.type === 'completed' && row.completed ? (
                         <CategoryRow name={row.completed.name} words={row.completed.words} />
                       ) : (
-                        <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                        <div className="grid grid-cols-4 gap-2">
                           {row.words?.map((word, colIndex) => (
                             <GridWordTile
                               key={word.id}
@@ -571,7 +571,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
             
             {/* Minimal Bottom Dock */}
             <div className="fixed bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
-                <div className="w-full max-w-md md:max-w-none mx-auto flex items-center justify-center gap-6 pointer-events-auto">
+                <div className="w-full mx-auto flex items-center justify-center gap-6 pointer-events-auto">
                      <button
                         onClick={() => setShowSettingsDialog(true)}
                         className="w-14 h-14 rounded-full glass-tile text-[var(--color-climate-text-secondary)] flex items-center justify-center hover:bg-white transition-all active:scale-95 border border-white/60"

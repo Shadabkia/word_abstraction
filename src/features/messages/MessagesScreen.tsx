@@ -52,24 +52,24 @@ export function MessagesScreen() {
         <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setSelectedThreadId(null)} />
       )}
       {/* Header - Enhanced */}
-      <div className="px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between border-b-2 border-slate-100 bg-white shadow-sm shrink-0">
+      <div className="px-4 py-4 flex items-center justify-between border-b-2 border-slate-100 bg-white shadow-sm shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <MessageCircle className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Messages
           </h1>
         </div>
         <button 
           className="text-slate-600 active:text-indigo-600 transition-colors p-2 active:bg-indigo-50 rounded-xl touch-manipulation"
         >
-          <Edit className="w-5 h-5 sm:w-6 sm:h-6" />
+          <Edit className="w-5 h-5" />
         </button>
       </div>
 
       {/* Search (Optional placeholder) - Enhanced */}
-      <div className="px-4 sm:px-6 py-3 shrink-0">
+      <div className="px-4 py-3 shrink-0">
         <div className="bg-gradient-to-r from-slate-100 to-slate-50 rounded-2xl h-11 flex items-center px-4 text-slate-400 text-sm border border-slate-200 shadow-sm">
           🔍 Search
         </div>
@@ -78,7 +78,7 @@ export function MessagesScreen() {
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
         <div className="py-3">
-          <div className="px-4 sm:px-6 pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+          <div className="px-4 pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <span className="text-base">💬</span>
             Primary
           </div>
