@@ -336,19 +336,20 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       {/* Main Tile Face - Clean & Calm */}
       <div className={`
         absolute inset-0 
-        glass-tile rounded-2xl
+        bg-white/95 rounded-xl
         flex items-center justify-center 
-        px-1.5
+        px-1
         text-center
         transition-all duration-300
-        border border-white/50
+        border border-slate-200
         ${word.isMergedGroup 
-          ? 'bg-purple-50/90 text-purple-900 border-purple-200' 
+          ? 'bg-purple-50/95 text-purple-900 border-purple-200' 
           : 'text-[var(--color-climate-text-primary)]'
         }
         ${isOver ? 'scale-95 brightness-95 ring-2 ring-[var(--color-climate-hint)]' : 'hover:-translate-y-0.5'}
         ${isSubcategoryGlow ? 'ring-4 ring-yellow-400/80 !bg-yellow-100 shadow-[0_0_15px_rgba(250,204,21,0.5)]' : ''}
         ${hintColor ? getHintStyles(hintColor) : ''}
+        shadow-sm
       `}>
         
         {/* Content */}

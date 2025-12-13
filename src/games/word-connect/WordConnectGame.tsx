@@ -486,12 +486,12 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     <LanguageProvider>
       <DragProvider>
         <div
-          className="min-h-screen transition-colors duration-700 font-display selection:bg-[var(--color-climate-accent)] overflow-hidden bg-no-repeat bg-cover"
+          className="h-full transition-colors duration-700 font-display selection:bg-[var(--color-climate-accent)] overflow-hidden bg-no-repeat bg-cover"
           style={screenStyle}
         >
           <CustomDragPreview />
           
-          <div className="w-full mx-auto relative min-h-screen flex flex-col pb-24">
+          <div className="w-full mx-auto relative h-full flex flex-col pb-24">
             {/* Minimalist Top Bar */}
             <div className="px-6 pt-8 pb-4 flex items-center justify-between z-10">
                 <div className="flex items-center gap-3">
@@ -535,13 +535,13 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
 
                 {/* The Grid */}
                 {!isLoading && (
-                <div className="space-y-3 relative z-10 glass-panel rounded-3xl p-3 transition-all duration-500">
+                <div className="space-y-2 relative z-10 glass-panel rounded-[2rem] p-2 sm:p-3 transition-all duration-500">
                   {gridRows.map((row, rowIndex) => (
                     <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
                       {row.type === 'completed' && row.completed ? (
                         <CategoryRow name={row.completed.name} words={row.completed.words} />
                       ) : (
-                        <div className="grid grid-cols-4 gap-2">
+                        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
                           {row.words?.map((word, colIndex) => (
                             <GridWordTile
                               key={word.id}

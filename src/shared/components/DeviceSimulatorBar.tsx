@@ -48,6 +48,8 @@ export function DeviceSimulatorBar({ currentModel, onModelChange, scale = 100, o
     if (onScaleChange) onScaleChange(Math.max(scale - 10, 50));
   };
 
+  if (currentModel === 'fullscreen') return null;
+
   return (
     <>
       {/* Invisible constraints layer for dragging */}

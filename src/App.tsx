@@ -89,6 +89,8 @@ export default function App() {
     }
   };
 
+  const isFullscreen = deviceModel === 'fullscreen';
+
   const renderContent = () => {
     if (activeGame === 'word-connect') {
       return (
@@ -102,7 +104,7 @@ export default function App() {
 
     return (
       <>
-        <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden">
+        <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden ${isFullscreen ? 'h-screen' : ''}`}>
           
           {/* Decorative floating elements - hidden (portrait-first) */}
           <div className="hidden absolute inset-0 pointer-events-none overflow-hidden opacity-30">
@@ -125,7 +127,7 @@ export default function App() {
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-            className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 px-6 py-4 pb-6 flex items-center justify-between rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40"
+            className={`absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 px-6 py-4 pb-6 flex items-center justify-between rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40 ${isFullscreen ? 'max-w-md mx-auto rounded-t-3xl mb-4' : ''}`}
           >
             
             <NavButton 
@@ -187,6 +189,17 @@ export default function App() {
       </>
     );
   };
+
+  // Mobile detection hook or check
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  if (isMobile) {
+    return (
+      <div className="h-[100dvh] w-full bg-white">
+        {renderContent()}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-[#0b0f14] flex flex-col items-center justify-center font-sans overflow-auto py-12">
