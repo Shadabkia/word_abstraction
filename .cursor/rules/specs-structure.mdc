@@ -1,0 +1,69 @@
+---
+globs: specs/*
+alwaysApply: false
+---
+# Specs Structure & Writing Rules
+
+## Purpose of Specs
+The `specs/` folder contains:
+- Requirements
+- Intent
+- High-level design decisions
+
+Specs describe **what exists, why it exists, and how parts relate at a conceptual level**.
+They are NOT implementation guides.
+
+## Spec Types (Two Only)
+
+### 1. Main Spec (Single Entry Point)
+- Exactly one main spec file per domain or system.
+- Acts as the **map** of the specs folder.
+- Describes:
+  - Overall scope and goals
+  - Core concepts and terminology
+  - High-level architecture and design ideas
+- MUST link to all other spec files.
+- Does not contain detailed flows or edge cases.
+
+### 2. Linked Specs (Flat Structure)
+- All other spec files live at the same level.
+- No hierarchy between linked specs.
+- Each file covers one focused topic:
+  - Feature
+  - Component
+  - Flow
+  - Design concern
+- Specs may link to each other freely.
+- Must be referenced by the main spec.
+
+## Writing Rules (All Specs)
+- Stay at **requirement or high-level design level**.
+- Describe *what* and *why*, not *how*.
+- Use domain language, not technical or code-level language.
+- Keep specs concise, scannable, and readable.
+- Prefer clarity over completeness.
+
+## Design Guidance
+- High-level design is allowed and encouraged.
+- Design descriptions should focus on:
+  - Responsibilities
+  - Boundaries
+  - Interactions
+- Avoid:
+  - Algorithms
+  - Data structures
+  - Class or method definitions
+  - Technology-specific choices unless essential to the concept
+
+## Change Discipline
+- Any change in behavior, scope, or design intent must be reflected in specs.
+- New spec files must be linked from the main spec.
+- Outdated or misleading specs must be updated or removed immediately.
+- If a change cannot be clearly expressed at spec level, stop and flag it.
+
+## Strictly Forbidden
+- Implementation details
+- Pseudocode
+- Code snippets
+- TODO placeholders for future thinking
+

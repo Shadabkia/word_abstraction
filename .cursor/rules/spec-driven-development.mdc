@@ -1,0 +1,45 @@
+---
+description: Spec-driven development enforcement
+alwaysApply: true
+---
+
+# Spec-Driven Development Rules
+
+## Core Principle
+This project follows **spec-driven development**.
+Code changes and spec changes must stay in sync at all times.
+
+## Specs as Source of Truth
+- The `specs/` folder is the **source of truth** for behavior, contracts, and intent.
+- If behavior changes, the relevant spec MUST be updated first or alongside the code.
+- Code should never drift ahead of the specs.
+
+## When to Update Specs
+You MUST update specs when:
+- Adding new functionality
+- Changing existing behavior
+- Modifying contracts, flows, or assumptions
+- Introducing new edge cases or constraints
+- Renaming or re-scoping concepts
+
+## How to Write Specs
+- Specs must be **clear, concise, and unambiguous**.
+- Prefer simple language over technical jargon.
+- Describe *what* and *why*, not implementation details.
+- Keep specs structured and easy to scan.
+- Remove outdated or misleading information immediately.
+
+## Change Discipline
+- Do NOT implement changes without updating specs.
+- If a spec is missing, unclear, or outdated, STOP and call it out.
+- Ask whether a spec update is needed before proceeding with code.
+
+## Output Behavior
+- When making code changes, explicitly mention whether specs were updated.
+- If no spec update is required, explain briefly why.
+
+## Anti-Patterns (Strictly Avoid)
+- “We’ll update the specs later”
+- Specs that lag behind the code
+- Specs that duplicate implementation details
+- Specs that no longer reflect reality
