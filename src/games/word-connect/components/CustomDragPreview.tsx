@@ -6,8 +6,6 @@ import { createPortal } from 'react-dom';
 export const CustomDragPreview: React.FC = () => {
   const { dragState } = useDragContext();
 
-  console.log('👁️ CustomDragPreview render:', dragState);
-
   if (!dragState.isDragging || !dragState.draggedWord) {
     return null;
   }
@@ -18,8 +16,6 @@ export const CustomDragPreview: React.FC = () => {
   const left = currentPosition.x - dragOffset.x;
   const top = currentPosition.y - dragOffset.y;
   
-  console.log('🖼️ Rendering preview at:', { left, top, currentPosition, dragOffset });
-
   const iconName = draggedWord.icon?.iconName;
   const IconComponent = iconName ? getIcon(iconName) : null;
   
@@ -40,55 +36,41 @@ export const CustomDragPreview: React.FC = () => {
         pointerEvents: 'none',
         zIndex: 9999,
         transform: 'scale(1.05)',
-        opacity: 0.95,
       }}
     >
-      {/* Shadow/Depth Layer */}
+      {/* Main Tile Face - Matches GridWordTile */}
       <div className={`
         absolute inset-0 
-        rounded-xl sm:rounded-2xl 
-        translate-y-[4px] sm:translate-y-[5px]
-        ${draggedWord.isMergedGroup ? 'bg-purple-300' : 'bg-slate-300'}
-      `}></div>
-
-      {/* Main Tile Face */}
-      <div className={`
-        absolute inset-0 
-        rounded-xl sm:rounded-2xl 
+        rounded-2xl
         flex items-center justify-center 
-        px-1.5 sm:px-2
+        px-2
         text-center
-        border-2
         ${draggedWord.isMergedGroup 
-          ? 'bg-gradient-to-b from-purple-50 to-purple-100 border-purple-200 text-purple-700' 
-          : 'bg-gradient-to-b from-white to-slate-50 border-white text-slate-700'
+          ? 'bg-purple-50 border border-purple-100' 
+          : 'bg-[var(--color-climate-tile)] border border-transparent'
         }
-        shadow-2xl
+        shadow-[var(--shadow-climate-hover)]
       `}>
-        {/* Inner shine */}
-        <div className="absolute inset-x-2 top-1 h-1/3 bg-gradient-to-b from-white/60 to-transparent rounded-t-lg pointer-events-none"></div>
-
         {/* Content */}
         <div className="flex flex-col items-center justify-center gap-0.5 z-10">
           {hasLibraryIcon && IconComponent && (
             <IconComponent 
-              className={`w-5 h-5 sm:w-6 sm:h-6 ${draggedWord.isMergedGroup ? 'text-purple-600' : 'text-slate-600'}`}
-              strokeWidth={2.5}
+              className={`w-6 h-6 ${draggedWord.isMergedGroup ? 'text-purple-700/70' : 'text-slate-500/70'}`}
+              strokeWidth={2}
             />
           )}
           
           {hasEmoji && (
-            <span className="text-lg sm:text-xl drop-shadow-sm filter">{draggedWord.icon!.emoji}</span>
+            <span className="text-xl filter grayscale-[0.3]">{draggedWord.icon!.emoji}</span>
           )}
           
           {showFallbackIcon && (
-            <span className="text-lg sm:text-xl font-bold drop-shadow-sm filter">*</span>
+            <span className="text-xl font-bold text-slate-400">*</span>
           )}
           
           <span className={`
-            text-xs sm:text-sm font-bold leading-tight break-words
-            drop-shadow-sm
-            ${draggedWord.isMergedGroup ? 'text-purple-800' : 'text-slate-700'}
+            text-sm font-medium leading-tight break-words
+            ${draggedWord.isMergedGroup ? 'text-purple-900' : 'text-[var(--color-climate-text-primary)]'}
           `}>
             {displayText}
           </span>

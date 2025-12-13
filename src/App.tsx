@@ -69,8 +69,8 @@ export default function App() {
     <>
       <div className="flex flex-col h-screen max-w-md mx-auto bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden shadow-2xl">
         
-        {/* Decorative floating elements - hidden on mobile for performance */}
-        <div className="hidden md:block absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+        {/* Decorative floating elements - hidden (portrait-first) */}
+        <div className="hidden absolute inset-0 pointer-events-none overflow-hidden opacity-30">
           <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '0s' }} />
           <div className="absolute top-40 right-20 w-32 h-32 bg-blue-300 rounded-full blur-3xl floating-element" style={{ animationDelay: '2s' }} />
           <div className="absolute bottom-40 left-20 w-24 h-24 bg-pink-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '4s' }} />

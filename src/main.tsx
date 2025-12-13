@@ -22,4 +22,11 @@ if (Capacitor.isNativePlatform()) {
   }
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  <div className="app-viewport">
+    <div className="app-frame">
+      <App />
+    </div>
+  </div>
+);
+

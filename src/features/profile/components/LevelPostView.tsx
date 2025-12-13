@@ -120,7 +120,7 @@ export function LevelPostView({ post, onClose, onStartGame }: LevelPostViewProps
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-4xl md:text-5xl font-black text-white"
+                  className="text-4xl font-black text-white"
                   dir="rtl"
                 >
                   {currentSlideData.title}

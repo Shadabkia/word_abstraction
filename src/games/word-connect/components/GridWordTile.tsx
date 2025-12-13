@@ -253,18 +253,16 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     [isMerging, colIndex]
   );
 
-  // OPTIMIZATION: Memoize hint animation
+  // OPTIMIZATION: Memoize hint animation - Static highlight instead of pulsing
   const hintAnimation = React.useMemo(() =>
     hintColor ? {
-      scale: [1, 1.02, 1],
-      filter: ["brightness(1)", "brightness(1.05)", "brightness(1)"],
+      scale: 1.05,
+      filter: "brightness(1.02)",
       zIndex: 20,
       opacity: 1,
       transition: {
-        duration: 3,
-        ease: "easeInOut",
-        repeat: Infinity,
-        repeatType: "loop" as const,
+        duration: 0.3,
+        ease: "easeOut"
       }
     } : {},
     [hintColor]
@@ -346,9 +344,9 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
         border border-transparent
         ${word.isMergedGroup 
           ? 'bg-purple-50 text-purple-900 border-purple-100' 
-          : 'bg-white text-[var(--color-climate-text-primary)]'
+          : 'bg-[var(--color-climate-tile)] text-[var(--color-climate-text-primary)]'
         }
-        ${isOver ? 'scale-95 brightness-95 ring-2 ring-climate-hint' : 'hover:-translate-y-0.5'}
+        ${isOver ? 'scale-95 brightness-95 ring-2 ring-[var(--color-climate-hint)]' : 'hover:-translate-y-0.5'}
         ${isSubcategoryGlow ? 'ring-2 ring-yellow-200 bg-yellow-50' : ''}
         ${hintColor ? getHintStyles(hintColor) : ''}
       `}>
@@ -365,7 +363,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           
           {/* Show emoji if type is emoji */}
           {iconDisplay.hasEmoji && (
-            <span className="text-lg sm:text-xl drop-shadow-sm filter grayscale-[0.3]">{word.icon!.emoji}</span>
+            <span className="text-lg sm:text-xl">{word.icon!.emoji}</span>
           )}
           
           {/* Show fallback "*" if icon not found */}

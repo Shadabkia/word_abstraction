@@ -39,7 +39,7 @@ export function GameCard({ title, description, icon, color, progress, onPlay, is
       {/* Animated background shimmer effect for active games - hidden on mobile */}
       {!isComingSoon && (
         <motion.div
-          className="hidden md:block absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          className="hidden absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
           animate={{
             x: ['-200%', '200%']
           }}
@@ -63,7 +63,7 @@ export function GameCard({ title, description, icon, color, progress, onPlay, is
         {!isComingSoon && (
           <>
             <motion.div
-              className="hidden md:block absolute -top-1 -right-1"
+              className="hidden absolute -top-1 -right-1"
               animate={{ 
                 scale: [1, 1.2, 1],
                 rotate: [0, 180, 360]

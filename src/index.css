@@ -38,6 +38,13 @@
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Desktop backdrop for the portrait shell */
+  @media (min-width: 768px) {
+    body {
+      background-color: #0b0f14;
+    }
+  }
   
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
@@ -84,6 +91,31 @@
   .min-h-screen {
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+  }
+}
+
+/* Portrait shell: keeps entire app vertical on desktop */
+.app-viewport {
+  min-height: 100svh;
+}
+
+.app-frame {
+  min-height: 100svh;
+}
+
+@media (min-width: 768px) {
+  .app-viewport {
+    display: flex;
+    justify-content: center;
+  }
+
+  .app-frame {
+    width: min(430px, 100vw);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    background: var(--color-climate-bg);
   }
 }
 

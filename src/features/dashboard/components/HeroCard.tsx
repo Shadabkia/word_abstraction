@@ -50,8 +50,8 @@ export function HeroCard({
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
         
-        {/* Floating particles - hidden on mobile for performance */}
-        <div className="hidden md:block">
+        {/* Floating particles - keep disabled for portrait-first UI */}
+        <div className="hidden">
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={i}

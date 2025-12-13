@@ -12,38 +12,23 @@ export function CategoryRow({ name, words }: CategoryRowProps) {
       initial={{ scale: 0.9, opacity: 0, y: 10 }}
       animate={{ scale: 1, opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="relative group h-14 sm:h-16" 
+      className="relative group min-h-[3.5rem] w-full mb-3" 
       dir="rtl"
     >
-      {/* Enhanced Glow effect */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 blur-xl opacity-30 rounded-xl sm:rounded-2xl"
-        animate={{
-          opacity: [0.3, 0.4, 0.3],
-          scale: [1, 1.02, 1]
-        }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatType: "loop" }}
-      />
-      
-      <div className="relative h-full bg-gradient-to-r from-emerald-400 to-green-400 rounded-xl sm:rounded-2xl shadow-[0_3px_0_rgb(21,128,61)] sm:shadow-[0_4px_0_rgb(21,128,61)] p-0.5 sm:p-1">
-        <div className="bg-white/10 rounded-lg sm:rounded-xl px-2 sm:px-3 h-full flex items-center gap-2 sm:gap-3 backdrop-blur-[2px]">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-md border-2 border-green-200">
-            <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 stroke-[3]" />
+      <div className="relative h-full bg-[var(--color-climate-tile)] rounded-2xl shadow-[var(--shadow-climate-soft)] border border-[var(--color-climate-accent)] p-3">
+        <div className="flex items-center gap-3 h-full">
+          <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
           </div>
           
           <div className="flex-1 min-w-0 flex flex-col justify-center">
-            <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-              <span className="font-bold text-white text-base sm:text-lg drop-shadow-sm truncate">{name}</span>
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatType: "loop" }}
-              >
-                <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-300 fill-yellow-300" />
-              </motion.div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-medium text-[var(--color-climate-text-primary)] text-sm sm:text-base truncate">{name}</span>
+              <Star className="w-3 h-3 text-[var(--color-climate-highlight)] fill-[var(--color-climate-highlight)]" />
             </div>
-            <div className="flex flex-wrap gap-0.5 sm:gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {words.map((word, i) => (
-                <span key={i} className="inline-block bg-white/20 px-1.5 sm:px-2 py-0.5 rounded-md text-white text-[10px] sm:text-xs font-medium whitespace-nowrap">
+                <span key={i} className="inline-block bg-[var(--color-climate-bg-secondary)] px-2 py-0.5 rounded-md text-[var(--color-climate-text-secondary)] text-xs font-medium whitespace-nowrap">
                   {word}
                 </span>
               ))}
