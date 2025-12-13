@@ -3,7 +3,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
   SelectGroup,
   SelectLabel,
 } from "@/shared/ui/select";
@@ -37,14 +36,6 @@ export function LevelSelector({
      return lvl === currentLevel;
   }), [levels, currentLevel]);
 
-  const difficultyColors = [
-    "bg-green-500",
-    "bg-blue-500",
-    "bg-yellow-500",
-    "bg-orange-500",
-    "bg-red-500",
-  ];
-
   // Group levels by chapter
   const groupedLevels = useMemo(() => {
     const groups = new Map<string, { name: string, levels: LevelJSON[] }>();
@@ -68,28 +59,28 @@ export function LevelSelector({
       value={currentLevel.toString()}
       onValueChange={(val) => onLevelSelect(parseInt(val))}
     >
-      <SelectTrigger className="w-full bg-[var(--color-climate-tile)] h-12 rounded-xl text-[var(--color-climate-text-primary)] hover:bg-[var(--color-climate-bg-secondary)] transition-colors border-transparent shadow-sm">
+      <SelectTrigger className="w-full glass-tile h-12 rounded-xl text-[var(--color-climate-text-primary)] hover:bg-white/90 transition-all border-white/50 shadow-sm">
         <div className="flex items-center gap-3 w-full">
-          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-climate-text-secondary)]/10 text-[var(--color-climate-text-primary)] text-xs font-medium shrink-0">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-climate-text-primary)] text-white text-xs font-bold shrink-0 shadow-sm">
             {currentLevel}
           </div>
           <div className="flex flex-col flex-1 text-left overflow-hidden">
              {currentLevelMeta?.meta.chapter && (
-                 <span className="text-[10px] text-[var(--color-climate-text-secondary)] leading-tight font-medium">
+                 <span className="text-[10px] text-[var(--color-climate-text-secondary)] leading-tight font-bold uppercase tracking-wide opacity-80">
                      {currentLevelMeta.meta.chapter.name}
                  </span>
              )}
-             <span className="font-medium truncate text-sm">
+             <span className="font-bold truncate text-sm">
                 {currentLevelMeta?.meta.title || `Level ${currentLevel}`}
              </span>
           </div>
         </div>
       </SelectTrigger>
-      <SelectContent className="max-h-[300px] bg-white border-slate-100 text-[var(--color-climate-text-primary)] shadow-[var(--shadow-climate-hover)] rounded-xl">
+      <SelectContent className="max-h-[300px] glass-panel border-white/40 text-[var(--color-climate-text-primary)] shadow-lg rounded-xl backdrop-blur-xl bg-white/90">
         {groupedLevels.map((group) => (
            <SelectGroup key={group.name}>
               {groupedLevels.length > 0 && (
-                 <SelectLabel className="px-3 py-2 text-xs font-bold text-[var(--color-climate-text-secondary)] uppercase tracking-wider bg-slate-50 sticky top-0 z-10">
+                 <SelectLabel className="px-3 py-2 text-xs font-extrabold text-[var(--color-climate-text-secondary)] uppercase tracking-wider bg-white/50 sticky top-0 z-10 backdrop-blur-md">
                     {group.name}
                  </SelectLabel>
               )}
@@ -110,30 +101,30 @@ export function LevelSelector({
                       key={meta.meta.id}
                       value={lvl.toString()}
                       disabled={isLocked}
-                      className="py-2.5 focus:bg-[var(--color-climate-bg-secondary)] cursor-pointer my-1 mx-1 rounded-lg"
+                      className="py-3 focus:bg-white/60 cursor-pointer my-1 mx-1 rounded-lg font-medium"
                     >
                       <div className="flex items-center w-full gap-3">
                         <div className={cn(
-                          "flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium shrink-0",
-                          isLocked ? "bg-slate-100 text-slate-400" : "bg-slate-100 text-slate-700"
+                          "flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0",
+                          isLocked ? "bg-slate-100 text-slate-400" : "bg-white text-slate-700 shadow-sm"
                         )}>
                            {isLocked ? <Lock className="w-3 h-3" /> : lvl}
                         </div>
                         
                         <div className="flex flex-col flex-1 gap-0.5 text-left overflow-hidden">
-                          <span className={cn("font-medium text-sm truncate", isLocked && "text-slate-400")}>
+                          <span className={cn("font-bold text-sm truncate", isLocked && "text-slate-400")}>
                             {meta.meta.title}
                           </span>
-                          <div className="flex items-center gap-2 text-[10px] text-[var(--color-climate-text-secondary)]">
+                          <div className="flex items-center gap-2 text-[10px] text-[var(--color-climate-text-secondary)] font-semibold">
                             <span className="flex items-center gap-1.5">
-                                <div className={cn("w-1.5 h-1.5 rounded-full opacity-60", difficultyColor)} />
+                                <div className={cn("w-1.5 h-1.5 rounded-full opacity-80", difficultyColor)} />
                                 Difficulty {meta.meta.difficulty}
                             </span>
                           </div>
                         </div>
 
                         {lvl < Math.max(...availableLevels, 0) && !isLocked && (
-                          <Star className="w-3 h-3 text-[var(--color-climate-highlight)] fill-[var(--color-climate-highlight)] shrink-0 ml-2" />
+                          <Star className="w-3.5 h-3.5 text-[var(--color-climate-highlight)] fill-[var(--color-climate-highlight)] shrink-0 ml-2 drop-shadow-sm" />
                         )}
                       </div>
                     </SelectItem>

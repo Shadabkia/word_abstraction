@@ -486,12 +486,12 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     <LanguageProvider>
       <DragProvider>
         <div
-          className="min-h-screen transition-colors duration-700 font-display selection:bg-[var(--color-climate-accent)] overflow-hidden bg-no-repeat bg-cover md:bg-contain"
+          className="min-h-screen transition-colors duration-700 font-display selection:bg-[var(--color-climate-accent)] overflow-hidden bg-no-repeat bg-cover"
           style={screenStyle}
         >
           <CustomDragPreview />
           
-          <div className="max-w-md mx-auto relative min-h-screen flex flex-col pb-24">
+          <div className="w-full max-w-md md:max-w-none mx-auto relative min-h-screen flex flex-col pb-24">
             {/* Minimalist Top Bar */}
             <div className="px-6 pt-8 pb-4 flex items-center justify-between z-10">
                 <div className="flex items-center gap-3">
@@ -535,7 +535,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
 
                 {/* The Grid */}
                 {!isLoading && (
-                <div className="space-y-3 relative z-10">
+                <div className="space-y-3 relative z-10 glass-panel rounded-3xl p-3 sm:p-5 transition-all duration-500">
                   {gridRows.map((row, rowIndex) => (
                     <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
                       {row.type === 'completed' && row.completed ? (
@@ -571,29 +571,29 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
             
             {/* Minimal Bottom Dock */}
             <div className="fixed bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
-                <div className="max-w-md mx-auto flex items-center justify-center gap-6 pointer-events-auto">
+                <div className="w-full max-w-md md:max-w-none mx-auto flex items-center justify-center gap-6 pointer-events-auto">
                      <button
                         onClick={() => setShowSettingsDialog(true)}
-                        className="w-12 h-12 rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[var(--color-climate-text-secondary)] flex items-center justify-center hover:bg-slate-50 hover:shadow-md transition-all active:scale-95"
+                        className="w-14 h-14 rounded-full glass-tile text-[var(--color-climate-text-secondary)] flex items-center justify-center hover:bg-white transition-all active:scale-95 border border-white/60"
                      >
-                        <Settings className="w-5 h-5" />
+                        <Settings className="w-6 h-6" />
                      </button>
                      
                      <div className="flex items-center gap-3 px-2">
                         <button
                             onClick={handleSearchHint}
-                            className="w-14 h-14 rounded-2xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-slate-50 hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0"
+                            className="w-16 h-16 rounded-2xl glass-tile text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-white hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0 border border-white/60"
                             title="Reveal Categories"
                         >
-                             <Search className="w-6 h-6 opacity-70" />
+                             <Search className="w-7 h-7 opacity-80" strokeWidth={2.5} />
                         </button>
                         
                         <button
                             onClick={handleHint}
-                            className="w-14 h-14 rounded-2xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-slate-50 hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0"
+                            className="w-16 h-16 rounded-2xl glass-tile text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-white hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0 border border-white/60"
                              title="Hint Pair"
                         >
-                            <Lightbulb className="w-6 h-6 opacity-70" />
+                            <Lightbulb className="w-7 h-7 opacity-80" strokeWidth={2.5} />
                         </button>
                      </div>
                 </div>

@@ -30,25 +30,25 @@ interface GridWordTileProps {
   isDisabled?: boolean;
 }
 
-// Map hint colors to their specific styling classes - Softer Palette
+// Map hint colors to their specific styling classes - Stronger Palette for visibility
 const getHintStyles = (color: string) => {
   switch (color) {
     case 'yellow':
-      return 'ring-2 ring-yellow-200 bg-yellow-50';
+      return 'ring-4 ring-yellow-400/80 !bg-yellow-100 shadow-[0_0_15px_rgba(250,204,21,0.5)]';
     case 'green':
-      return 'ring-2 ring-emerald-200 bg-emerald-50';
+      return 'ring-4 ring-emerald-400/80 !bg-emerald-100 shadow-[0_0_15px_rgba(52,211,153,0.5)]';
     case 'blue':
-      return 'ring-2 ring-sky-200 bg-sky-50';
+      return 'ring-4 ring-sky-400/80 !bg-sky-100 shadow-[0_0_15px_rgba(56,189,248,0.5)]';
     case 'purple':
-      return 'ring-2 ring-purple-200 bg-purple-50';
+      return 'ring-4 ring-purple-400/80 !bg-purple-100 shadow-[0_0_15px_rgba(192,132,252,0.5)]';
     case 'orange':
-      return 'ring-2 ring-orange-200 bg-orange-50';
+      return 'ring-4 ring-orange-400/80 !bg-orange-100 shadow-[0_0_15px_rgba(251,146,60,0.5)]';
     case 'pink':
-      return 'ring-2 ring-pink-200 bg-pink-50';
+      return 'ring-4 ring-pink-400/80 !bg-pink-100 shadow-[0_0_15px_rgba(244,114,182,0.5)]';
     case 'cyan':
-      return 'ring-2 ring-cyan-200 bg-cyan-50';
+      return 'ring-4 ring-cyan-400/80 !bg-cyan-100 shadow-[0_0_15px_rgba(34,211,238,0.5)]';
     case 'red':
-      return 'ring-2 ring-rose-200 bg-rose-50';
+      return 'ring-4 ring-rose-400/80 !bg-rose-100 shadow-[0_0_15px_rgba(251,113,133,0.5)]';
     default:
       return '';
   }
@@ -228,9 +228,9 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   
   // OPTIMIZATION: Memoize icon display logic
   const iconDisplay = React.useMemo(() => {
-    const hasIcon = word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
-    const hasEmoji = hasIcon && word.icon.type === 'emoji' && word.icon.emoji;
-    const hasLibraryIcon = hasIcon && word.icon.type === 'library' && IconComponent;
+    const hasIcon = !!word.icon && (word.icon.type === 'library' || word.icon.type === 'emoji');
+    const hasEmoji = hasIcon && word.icon?.type === 'emoji' && !!word.icon.emoji;
+    const hasLibraryIcon = hasIcon && word.icon?.type === 'library' && !!IconComponent;
     const showFallbackIcon = hasIcon && !hasEmoji && !hasLibraryIcon;
     const displayText = word.icon?.label || word.text;
     
@@ -246,7 +246,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       filter: "brightness(1.1)",
       transition: {
         duration: 0.6,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
         delay: colIndex * 0.1
       }
     } : {},
@@ -286,7 +286,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   // OPTIMIZATION: Memoize transition config
   const transitionConfig = React.useMemo(() => 
     (isMerging || hintColor) ? {} : { 
-      type: "spring", 
+      type: "spring" as const, 
       stiffness: 400, 
       damping: 30,
       layout: { duration: 0.2 },
@@ -336,18 +336,18 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
       {/* Main Tile Face - Clean & Calm */}
       <div className={`
         absolute inset-0 
-        climate-tile
+        glass-tile rounded-2xl
         flex items-center justify-center 
         px-1.5 sm:px-2
         text-center
         transition-all duration-300
-        border border-transparent
+        border border-white/50
         ${word.isMergedGroup 
-          ? 'bg-purple-50 text-purple-900 border-purple-100' 
-          : 'bg-[var(--color-climate-tile)] text-[var(--color-climate-text-primary)]'
+          ? 'bg-purple-50/90 text-purple-900 border-purple-200' 
+          : 'text-[var(--color-climate-text-primary)]'
         }
         ${isOver ? 'scale-95 brightness-95 ring-2 ring-[var(--color-climate-hint)]' : 'hover:-translate-y-0.5'}
-        ${isSubcategoryGlow ? 'ring-2 ring-yellow-200 bg-yellow-50' : ''}
+        ${isSubcategoryGlow ? 'ring-4 ring-yellow-400/80 !bg-yellow-100 shadow-[0_0_15px_rgba(250,204,21,0.5)]' : ''}
         ${hintColor ? getHintStyles(hintColor) : ''}
       `}>
         
@@ -356,14 +356,14 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           {/* Show icon from Lucide library */}
           {iconDisplay.hasLibraryIcon && IconComponent && (
             <IconComponent 
-              className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-700/70' : 'text-slate-500/70'}`}
-              strokeWidth={2}
+              className={`w-5 h-5 sm:w-6 sm:h-6 ${word.isMergedGroup ? 'text-purple-700/80' : 'text-slate-600/80'}`}
+              strokeWidth={2.5}
             />
           )}
           
           {/* Show emoji if type is emoji */}
           {iconDisplay.hasEmoji && (
-            <span className="text-lg sm:text-xl">{word.icon!.emoji}</span>
+            <span className="text-xl sm:text-2xl drop-shadow-sm">{word.icon!.emoji}</span>
           )}
           
           {/* Show fallback "*" if icon not found */}
@@ -372,8 +372,9 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
           )}
           
           <span className={`
-            text-xs sm:text-sm font-medium leading-tight break-words
+            text-sm sm:text-base font-bold leading-tight break-words tracking-wide
             ${word.isMergedGroup ? 'text-purple-900' : 'text-[var(--color-climate-text-primary)]'}
+            drop-shadow-sm
           `}>
             {iconDisplay.displayText}
           </span>
