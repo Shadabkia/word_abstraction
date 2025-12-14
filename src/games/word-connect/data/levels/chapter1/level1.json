@@ -10,6 +10,12 @@
     "tags": ["tutorial", "food", "static"],
     "constraints": {
       "no_initial_matches": true
+    },
+    "visuals": {
+      "background": {
+        "src": "/backgrounds/CH01L01.png",
+        "position": "center"
+      }
     }
   },
 

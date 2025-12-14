@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "id": "CH1-L02",
+  "gameRef": { "gameId": "word-connect", "levelId": 2 },
+  "chapter": {
+    "id": "chapter_1",
+    "index": 1,
+    "title": "Tehran"
+  },
+  "level": {
+    "campaignLevelId": "campaign_level_2",
+    "levelNumberInChapter": 2,
+    "name": "Voices in the Backseat",
+    "location": "Tehran (Inside the moving car)",
+    "time": "Morning",
+    "mood": ["loud", "saturated", "claustrophobic", "crowded"],
+    "narrativeRole": "Establish Kian as a listener; city as psychological pressure"
+  },
+  "post": {
+    "caption": "The engine is warm now.\nThe city is awake.\nPeople get in.\nThey leave things behind.",
+    "comments": [
+      {
+        "id": "ch1l02_c1",
+        "authorId": "npc_mom",
+        "authorName": "Mom",
+        "text": "Did you eat anything yet?",
+        "likes": 52
+      },
+      {
+        "id": "ch1l02_c2",
+        "authorId": "npc_snap_support",
+        "authorName": "@SnapSupport",
+        "text": "Remember to keep a high rating ⭐",
+        "likes": 12
+      },
+      {
+        "id": "ch1l02_c3",
+        "authorId": "npc_random_2",
+        "authorName": "Random Passenger",
+        "text": "Drivers hear everything, huh?",
+        "likes": 5
+      },
+      {
+        "id": "ch1l02_c4",
+        "authorId": "npc_ali",
+        "authorName": "Mechanic Ali",
+        "text": "Noise is worse than silence.",
+        "likes": 34
+      }
+    ]
+  },
+  "comic": {
+    "slides": [
+      {
+        "id": "s1",
+        "title": "The First Voice",
+        "panelCount": 2,
+        "image": "ch1/CH1-L02/slide1.svg",
+        "beats": [
+          "Once the car moves, the city starts talking.",
+          "I never answer this question. It doesn’t stop them."
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "No Space to Respond",
+        "panelCount": 3,
+        "image": "ch1/CH1-L02/slide2.svg",
+        "beats": [
+          "Confidence is contagious.",
+          "There is no pause.",
+          "This is my part."
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "Accumulation",
+        "panelCount": 3,
+        "image": "ch1/CH1-L02/slide3.svg",
+        "beats": [
+          "I’m not sure what year they mean.",
+          "Everyone has a plan in the backseat.",
+          "The car fills up. Not with people. With voices."
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "The Weight of Listening",
+        "panelCount": 2,
+        "image": "ch1/CH1-L02/slide4.svg",
+        "beats": [
+          "Listening takes space. Nobody checks if you have any left.",
+          "They always leave lighter."
+        ]
+      }
+    ]
+  },
+  "startScreen": {
+    "image": "ch1/CH1-L02/start.svg"
+  }
+}
+
+

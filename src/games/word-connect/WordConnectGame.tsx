@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, type CSSProperties } from 'react';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { CustomDragPreview } from './components/CustomDragPreview';
-import { Settings, Search, Lightbulb, X, Gift } from 'lucide-react';
+import { Settings, Search, Lightbulb, X } from 'lucide-react';
 import { Button } from '../../shared/ui/button';
 import { SettingsDialog } from '../../shared/ui/dialogs/SettingsDialog';
 import { LevelSelector } from './components/LevelSelector';
@@ -31,7 +31,7 @@ interface GridRow {
 // Helper function to trigger vibration on supported devices
 const triggerHapticFeedback = async () => {
   try {
-    await Haptics.impact({ style: ImpactStyle.Medium });
+    await Haptics.impact({ style: ImpactStyle.Light }); // Changed to Light for subtler feel
   } catch (error) {
     // Silently fail on web or unsupported platforms
     console.log('Haptics not available:', error);
@@ -47,10 +47,8 @@ interface WordConnectGameProps {
 export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }: WordConnectGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [coins] = useState(10);
-  // hints state removed as requested - infinite hints now
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
-  // Track hinted words and their color (yellow for lightbulb, green for search)
   const [hintedWords, setHintedWords] = useState<Map<string, string>>(new Map());
   
   // Level data state
@@ -59,56 +57,41 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   const [availableLevels, setAvailableLevels] = useState<number[]>([1, 2, 3]); // Default levels
   const [levelMetadata, setLevelMetadata] = useState<LevelJSON[]>([]);
   
-  // FIX: Track when game is processing to prevent race conditions
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Set initial level - initialLevel prop takes priority
+  // Set initial level
   useEffect(() => {
     if (initialLevel && initialLevel > 0) {
-      console.log(`Loading level from prop: ${initialLevel}`);
       setLevel(initialLevel);
     }
   }, [initialLevel]);
 
-  // Load available levels and metadata on mount
+  // Load available levels and metadata
   useEffect(() => {
     Promise.all([
       getAvailableLevels(),
       loadAllLevelMetadata()
     ]).then(([levels, metadata]) => {
-      if (levels.length > 0) {
-        setAvailableLevels(levels);
-      }
-      if (metadata.length > 0) {
-        setLevelMetadata(metadata);
-      }
-    }).catch(error => {
-      console.error('Failed to load available levels:', error);
-    });
+      if (levels.length > 0) setAvailableLevels(levels);
+      if (metadata.length > 0) setLevelMetadata(metadata);
+    }).catch(console.error);
   }, []);
 
-  // Load level data on mount and when level changes
+  // Load level data
   useEffect(() => {
     setIsLoading(true);
-    // Reset game state when level changes
     setMergedSubcategoriesCount(0);
     setHintedWords(new Map());
-    
-    // Save current level
     gameStorage.saveCurrentLevel(level);
     
     loadLevel(level).then(async data => {
       setCurrentLevelData(data);
-      
-      // Try to restore saved progress for this level
       const savedProgress = await gameStorage.getLevelProgress(level);
-      if (savedProgress && savedProgress.gridRows && savedProgress.gridRows.length > 0) {
-        console.log(`Restoring saved progress for level ${level}`);
+      if (savedProgress?.gridRows?.length) {
         setGridRows(savedProgress.gridRows);
         setHiddenPool(savedProgress.hiddenPool || []);
         setMergedSubcategoriesCount(savedProgress.mergedSubcategoriesCount || 0);
       }
-      
       setIsLoading(false);
     }).catch(error => {
       console.error('Failed to load level:', error);
@@ -120,24 +103,18 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   const CATEGORY_NAMES = currentLevelData?.categories || {};
   const HIERARCHY = currentLevelData?.hierarchy;
 
-  // Separate visible and hidden words
   const visibleWords = useMemo(() => LEVEL_DATA ? LEVEL_DATA.filter((w: Word) => !w.hidden) : [], [LEVEL_DATA]);
   const hiddenWordsPool = useMemo(() => LEVEL_DATA ? LEVEL_DATA.filter((w: Word) => w.hidden) : [], [LEVEL_DATA]);
 
-  // Use words exactly as they appear in the level file (no shuffling)
-  const shuffledWords = useMemo(() => {
-    if (visibleWords.length === 0) return [];
-    return visibleWords;
-  }, [visibleWords]);
+  const shuffledWords = useMemo(() => visibleWords.length ? visibleWords : [], [visibleWords]);
 
   const [gridRows, setGridRows] = useState<GridRow[]>([]);
   const [hiddenPool, setHiddenPool] = useState<Word[]>([]);
 
-  // FIX: Initialize grid rows when shuffled words are ready
+  // Initialize grid rows
   useEffect(() => {
     if (shuffledWords.length > 0) {
-      // Dynamically create rows based on the actual number of words
-      const rowSize = 4; // All levels use 4 columns
+      const rowSize = 4;
       const numRows = Math.ceil(shuffledWords.length / rowSize);
       const newRows: GridRow[] = [];
       
@@ -146,83 +123,105 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
         const endIdx = Math.min(startIdx + rowSize, shuffledWords.length);
         const rowWords = shuffledWords.slice(startIdx, endIdx);
         
-        // Only add row if it has words
         if (rowWords.length > 0) {
-          // Create immutable word objects to prevent reference changes
           const immutableWords = rowWords.map(w => ({ ...w }));
           newRows.push({ type: 'words', words: immutableWords });
         }
       }
       
       setGridRows(newRows);
-      setHiddenPool([...hiddenWordsPool]); // Clone to ensure immutability
+      setHiddenPool([...hiddenWordsPool]);
     }
   }, [shuffledWords, hiddenWordsPool]);
 
-  // Get total steps from level data (default to 6 for backward compatibility)
   const totalSteps = currentLevelData?.totalSteps || 6;
+
+  // ----------------------------
+  // Visual system (JSON-driven)
+  // ----------------------------
+  const screenVisuals = currentLevelData?.visuals;
+  const chapterId = currentLevelData?.chapter?.id;
+
+  const screenStyle = useMemo<CSSProperties>(() => {
+    const style: Record<string, any> = {};
+
+    // Optional climate overrides (CSS vars)
+    const climate = screenVisuals?.climate;
+    if (climate?.bg) style['--color-climate-bg'] = climate.bg;
+    if (climate?.bgSecondary) style['--color-climate-bg-secondary'] = climate.bgSecondary;
+    if (climate?.tile) style['--color-climate-tile'] = climate.tile;
+    if (climate?.textPrimary) style['--color-climate-text-primary'] = climate.textPrimary;
+    if (climate?.textSecondary) style['--color-climate-text-secondary'] = climate.textSecondary;
+    if (climate?.accent) style['--color-climate-accent'] = climate.accent;
+    if (climate?.hint) style['--color-climate-hint'] = climate.hint;
+    if (climate?.highlight) style['--color-climate-highlight'] = climate.highlight;
+    if (climate?.success) style['--color-climate-success'] = climate.success;
+
+    // Full-screen background image
+    const rawSrc = screenVisuals?.background?.src;
+    const normalizedSrc =
+      rawSrc ? (rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`) : undefined;
+
+    // Fallback: chapter-based background asset.
+    // Note: chapter meta ids are like "chapter_1" but asset filenames might be "chapter1".
+    const chapterIdNoUnderscore = chapterId ? chapterId.replace(/_/g, '') : undefined;
+    const chapterIdPrefixFixed = chapterId ? chapterId.replace(/^chapter_/, 'chapter') : undefined;
+
+    const fallbackCandidates = chapterId
+      ? [
+          `/backgrounds/${chapterId}.png`,
+          `/backgrounds/${chapterIdNoUnderscore}.png`,
+          `/backgrounds/${chapterIdPrefixFixed}.png`,
+          `/backgrounds/${chapterId}.webp`,
+          `/backgrounds/${chapterIdNoUnderscore}.webp`,
+          `/backgrounds/${chapterIdPrefixFixed}.webp`,
+        ]
+      : [];
+
+    // Primary background source (level JSON overrides chapter fallback)
+    const bgCandidates = normalizedSrc ? [normalizedSrc, ...fallbackCandidates] : fallbackCandidates;
+
+    style.backgroundColor = 'var(--color-climate-bg)';
+
+    if (bgCandidates.length > 0) {
+      // Multiple url() layers allow graceful fallback if one asset 404s.
+      // No overlay/scrim: background is shown at full strength.
+      style.backgroundImage = bgCandidates.map((s) => `url('${s}')`).join(', ');
+      style.backgroundPosition = screenVisuals?.background?.position || 'center';
+    }
+
+    return style as CSSProperties;
+  }, [screenVisuals, chapterId]);
   
-  // FIX: Handle empty level data gracefully
   if (!isLoading && (!currentLevelData || !currentLevelData.words || currentLevelData.words.length === 0)) {
     return (
       <LanguageProvider>
-        <div className="min-h-screen bg-candy-bg bg-pattern-dots overflow-x-hidden font-display selection:bg-candy-secondary selection:text-white flex flex-col">
-          <div className="max-w-md mx-auto w-full px-4 pt-6 pb-4 flex-1 flex flex-col">
-            
-            {/* Simple Header for Navigation */}
-            <div className="mb-6">
-              <LevelSelector
-                currentLevel={level}
-                levels={levelMetadata}
-                onLevelSelect={setLevel}
-                availableLevels={availableLevels}
-              />
+        <div className="min-h-screen bg-[var(--color-climate-bg)] font-display flex flex-col items-center justify-center p-6 text-center">
+            <div className="w-16 h-16 bg-[var(--color-climate-bg-secondary)] rounded-2xl flex items-center justify-center mb-4 text-3xl">
+              🚧
             </div>
-
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 glass-panel rounded-3xl shadow-3d">
-              <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center mb-6 animate-bounceSlight">
-                <span className="text-4xl">🚧</span>
-              </div>
-              <h2 className="text-2xl font-bold text-slate-700 mb-2">
-                Level Under Construction
-              </h2>
-              <p className="text-slate-500 mb-8">
-                This level is currently being designed. <br/>Please check back later!
-              </p>
-              
-              <Button 
-                onClick={() => setLevel(1)}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-8 py-3 shadow-md transition-all btn-3d"
-              >
-                Go to Level 1
-              </Button>
-            </div>
-          </div>
+            <h2 className="text-xl font-medium text-[var(--color-climate-text-primary)] mb-2">
+              Level Under Construction
+            </h2>
+            <p className="text-[var(--color-climate-text-secondary)] mb-6 text-sm">
+                This level is currently being designed.
+            </p>
+            <Button onClick={() => setLevel(1)} className="bg-[var(--color-climate-tile)] text-[var(--color-climate-text-primary)] shadow-sm hover:bg-[var(--color-climate-bg-secondary)] rounded-full px-6 py-2">
+              Go to Level 1
+            </Button>
         </div>
       </LanguageProvider>
     );
   }
 
-  // Track count of merged subcategories (for levels with multiple transform groups)
   const [mergedSubcategoriesCount, setMergedSubcategoriesCount] = useState(0);
-  
-  // Count completed categories from grid
   const completedCategoriesCount = gridRows.filter(row => row.type === 'completed').length;
-  
-  // Calculate total completed steps (merged subcategories + completed final groups)
   const completedSteps = mergedSubcategoriesCount + completedCategoriesCount;
-
-  // Track merging row for animation
   const [mergingRow, setMergingRow] = useState<number | null>(null);
 
   const handleSwap = (draggedWord: Word, targetRowIndex: number, targetColIndex: number) => {
-    // FIX: Prevent swaps while processing matches/merges
-    if (isProcessing) {
-      console.log('Swap blocked: currently processing');
-      return;
-    }
+    if (isProcessing) return;
     
-    // Find the dragged word's position
     let sourceRowIndex = -1;
     let sourceColIndex = -1;
     
@@ -237,46 +236,20 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       }
     }
     
-    // FIX: Enhanced validation checks
-    if (sourceRowIndex === -1) {
-      console.warn('handleSwap: source word not found in grid');
-      return;
-    }
-    if (gridRows[targetRowIndex]?.type !== 'words') {
-      console.warn('handleSwap: target row is not a word row');
-      return;
-    }
-    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) {
-      console.log('handleSwap: same position, no swap needed');
-      return;
-    }
-    if (!gridRows[targetRowIndex].words || targetColIndex >= gridRows[targetRowIndex].words!.length) {
-      console.warn('handleSwap: invalid target position');
-      return;
-    }
+    if (sourceRowIndex === -1 || gridRows[targetRowIndex]?.type !== 'words') return;
+    if (sourceRowIndex === targetRowIndex && sourceColIndex === targetColIndex) return;
+    if (!gridRows[targetRowIndex].words || targetColIndex >= gridRows[targetRowIndex].words!.length) return;
     
     const targetWord = gridRows[targetRowIndex].words![targetColIndex];
-    if (!targetWord) {
-      console.warn('handleSwap: target word is null or undefined');
-      return;
-    }
+    if (!targetWord) return;
     
-    // FIX: Create new grid with immutable word objects to prevent reference issues
     const newGridRows = gridRows.map((row, rowIdx) => {
       if (row.type !== 'words') return row;
-      
       return {
         ...row,
         words: row.words!.map((w, colIdx) => {
-          // If this is the source position, place a copy of the target word
-          if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) {
-            return { ...targetWord };
-          }
-          // If this is the target position, place a copy of the dragged word
-          if (rowIdx === targetRowIndex && colIdx === targetColIndex) {
-            return { ...draggedWord };
-          }
-          // Otherwise keep a copy of the word
+          if (rowIdx === sourceRowIndex && colIdx === sourceColIndex) return { ...targetWord };
+          if (rowIdx === targetRowIndex && colIdx === targetColIndex) return { ...draggedWord };
           return { ...w };
         })
       };
@@ -284,8 +257,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     
     setGridRows(newGridRows);
     
-    // FIX: Check matches immediately to prevent state inconsistency
-    // The visual delay should be handled by animations, not setTimeout
     requestAnimationFrame(() => {
       checkRowForMatch(newGridRows, sourceRowIndex);
       if (targetRowIndex !== sourceRowIndex) {
@@ -298,7 +269,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     const row = rows[rowIndex];
     if (row.type !== 'words' || !row.words || row.words.length !== 4) return;
     
-    // FIX: Filter out empty/invalid words
     const validWords = row.words.filter(w => w && w.category && w.category !== 'empty');
     if (validWords.length !== 4) return;
     
@@ -306,35 +276,29 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     const allSame = categories.every(cat => cat === categories[0]);
     
     if (allSame) {
-      // FIX: Set processing flag to block other interactions
       setIsProcessing(true);
-      
-      // Trigger merge animation
       setMergingRow(rowIndex);
 
-      // Wait for animation to complete before processing match
       setTimeout(() => {
         const matchedCategory = categories[0];
         const categoryName = CATEGORY_NAMES[matchedCategory] || matchedCategory;
         const words = validWords.map(w => w.text);
         
-        // Check if this is a subcategory that should merge
-        // Support both single subcategory (backward compat) and multiple subcategories
         const subcategories = HIERARCHY?.subcategories || (HIERARCHY?.subcategory ? [HIERARCHY.subcategory] : []);
         const matchingSubcategory = subcategories.find(sub => sub.category === matchedCategory);
         
         if (matchingSubcategory) {
-          // This is a subcategory - merge into single tile
           handleSubcategoryCompletion(rows, rowIndex, matchingSubcategory);
         } else {
-          // Regular category - show as completed row
           soundManager.playSuccess();
           triggerHapticFeedback();
+          // Reduced confetti intensity for "Calm"
           confetti({
-            particleCount: 50,
-            spread: 50,
+            particleCount: 30,
+            spread: 40,
             origin: { y: 0.6 },
-            colors: ['#6C5DD3', '#FFA2C0']
+            colors: ['#A8D8EA', '#AA96DA'], // Softer colors
+            disableForReducedMotion: true
           });
           const newGridRows = [...rows];
           newGridRows[rowIndex] = {
@@ -343,7 +307,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
           };
           setGridRows(newGridRows);
           
-          // Save progress
           gameStorage.saveLevelProgress(
             level,
             newGridRows,
@@ -352,25 +315,19 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
             newGridRows.filter(r => r.type === 'completed').length
           );
           
-          // Check for level completion
           const newCompletedCount = newGridRows.filter(r => r.type === 'completed').length;
           const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
           
           if (newTotalCompleted >= totalSteps) {
-            // Level complete!
             setTimeout(() => {
-              if (onComplete) {
-                onComplete(1000); // Score/points could be calculated
-              }
-            }, 1500); // Give time for confetti/celebration
+              if (onComplete) onComplete(1000);
+            }, 1000);
           }
         }
         
-        // Reset merging state after grid update
         setMergingRow(null);
-        // FIX: Clear processing flag to allow new interactions
         setIsProcessing(false);
-      }, 1000);
+      }, 800); // Slightly faster merge
     }
   };
 
@@ -382,15 +339,9 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       mergesInto: string; 
       displayAfterMerge: string; 
       wordsToReveal: string[];
-      icon?: {
-        id: string;
-        label?: string;
-        emoji?: string;
-        iconName?: string;
-      };
+      icon?: { id: string; label?: string; emoji?: string; iconName?: string; };
     }
   ) => {
-    // FIX: Use category and timestamp for stable IDs
     const timestamp = Date.now();
     const subcategoryWord: Word = {
       id: `merged_${subcategoryInfo.category}_${timestamp}`,
@@ -400,66 +351,48 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       icon: subcategoryInfo.icon
     };
     
-    // Trigger glow animation for this subcategory tile
     setGlowingSubcategoryId(subcategoryWord.id);
-    
     soundManager.playMerge();
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    
+    // Subtler merge feedback
+    const tileElement = document.querySelector(`[data-word-id="${subcategoryWord.id}"]`);
+    if (tileElement) {
+        // Could add specific small particle effect here
+    }
 
     setTimeout(() => {
       setGlowingSubcategoryId(null);
-    }, 1200); // Match animation duration
+    }, 1200);
 
-    // Get the specific 3 words that should be revealed
     const wordsToAdd: Word[] = [];
     const newHiddenPool = [...hiddenPool];
     
-    // Find and add the specific words that match wordsToReveal (by ID)
     for (const wordId of subcategoryInfo.wordsToReveal) {
       let word = newHiddenPool.find(w => w.id === wordId);
       let fromPool = true;
 
       if (!word) {
-        console.warn(`Word ${wordId} not found in hidden pool! Falling back to level data.`);
-        // Fallback: try to find in global level data
         word = LEVEL_DATA.find((w: Word) => w.id === wordId);
         fromPool = false;
       }
 
       if (word) {
-        // Create a clean copy of the word
-        // Ensure hidden is false so it shows up
         wordsToAdd.push({ ...word, hidden: false });
-        
         if (fromPool) {
           const wordIndex = newHiddenPool.findIndex(w => w.id === wordId);
-          if (wordIndex !== -1) {
-            newHiddenPool.splice(wordIndex, 1);
-          }
+          if (wordIndex !== -1) newHiddenPool.splice(wordIndex, 1);
         }
       }
     }
 
-    // FIX: Ensure the subcategory tile has the same category as the revealed words
-    // This fixes potential mismatches where the hierarchy info and hidden word categories differ
     if (wordsToAdd.length > 0) {
       const consensusCategory = wordsToAdd[0].category;
-      const allSame = wordsToAdd.every(w => w.category === consensusCategory);
-      
-      if (allSame && consensusCategory !== subcategoryWord.category) {
-        console.warn(`Category mismatch detected! Subcategory tile: ${subcategoryWord.category}, Revealed words: ${consensusCategory}. Syncing to revealed words.`);
+      if (consensusCategory !== subcategoryWord.category) {
         subcategoryWord.category = consensusCategory;
       }
     }
 
-    // Create new row: 1 subcategory tile + 3 revealed words
     const newRow: Word[] = [subcategoryWord, ...wordsToAdd];
-    
-    // Pad with empty slots if needed (shouldn't happen with proper level design)
     while (newRow.length < 4) {
       newRow.push({
         id: `empty_${Date.now()}_${newRow.length}`,
@@ -468,39 +401,28 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       });
     }
 
-    // Update grid
     const newGridRows = [...rows];
     newGridRows[rowIndex] = { type: 'words', words: newRow };
     setGridRows(newGridRows);
     setHiddenPool(newHiddenPool);
-    
-    // Increment merged subcategories count (each merge counts as 1 step)
     setMergedSubcategoriesCount(prev => prev + 1);
   };
 
   const handleHint = () => {
-    // Build category map directly from visible grid words
     const categoryToWords = new Map<string, string[]>();
-    
     gridRows.forEach(row => {
       if (row.type === 'words' && row.words) {
         row.words.forEach(word => {
-          // Skip empty placeholders
           if (word.category === 'empty') return;
-
-          if (!categoryToWords.has(word.category)) {
-            categoryToWords.set(word.category, []);
-          }
+          if (!categoryToWords.has(word.category)) categoryToWords.set(word.category, []);
           categoryToWords.get(word.category)!.push(word.id);
         });
       }
     });
 
-    // Find a category with at least 2 words visible
     let hintWords: string[] = [];
     for (const [, wordIds] of categoryToWords.entries()) {
       if (wordIds.length >= 2) {
-        // Shuffle and pick 2 random words from this category
         const shuffled = [...wordIds].sort(() => Math.random() - 0.5);
         hintWords = shuffled.slice(0, 2);
         break;
@@ -508,36 +430,27 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     }
 
     if (hintWords.length === 2) {
-      // Show hint animation (yellow)
       const newHints = new Map(hintedWords);
       hintWords.forEach(id => newHints.set(id, 'yellow'));
       setHintedWords(newHints);
       soundManager.playMerge();
     } else {
-      // No valid hint available
       soundManager.playError();
     }
   };
 
   const handleSearchHint = () => {
-    // Build category map directly from visible grid words
     const categoryToWords = new Map<string, string[]>();
-    
     gridRows.forEach(row => {
       if (row.type === 'words' && row.words) {
         row.words.forEach(word => {
-          // Skip empty placeholders
           if (word.category === 'empty') return;
-          
-          if (!categoryToWords.has(word.category)) {
-            categoryToWords.set(word.category, []);
-          }
+          if (!categoryToWords.has(word.category)) categoryToWords.set(word.category, []);
           categoryToWords.get(word.category)!.push(word.id);
         });
       }
     });
 
-    // Find ALL categories with 4 words and assign different colors
     const colors = ['green', 'blue', 'purple', 'orange', 'pink', 'cyan', 'red'];
     let colorIndex = 0;
     const newHints = new Map(hintedWords);
@@ -553,7 +466,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     }
 
     if (foundAny) {
-       // Show search hint animation (colors)
        setHintedWords(newHints);
        soundManager.playMerge();
     } else {
@@ -561,7 +473,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     }
   };
 
-  // Auto-clear hints after 3 seconds
   useEffect(() => {
     if (hintedWords.size > 0) {
       const timer = setTimeout(() => {
@@ -574,140 +485,125 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   return (
     <LanguageProvider>
       <DragProvider>
-        <div className="min-h-screen bg-candy-bg bg-pattern-dots overflow-x-hidden font-display selection:bg-candy-secondary selection:text-white">
+        <div
+          className="h-full transition-colors duration-700 font-display selection:bg-[var(--color-climate-accent)] overflow-hidden bg-no-repeat bg-cover"
+          style={screenStyle}
+        >
           <CustomDragPreview />
           
-          <div className="max-w-md mx-auto relative min-h-screen pb-28 sm:pb-32">
-            {/* Floating Top Bar */}
-            <div className="px-3 sm:px-4 pt-4 sm:pt-6 pb-2 sticky top-0 z-10 pointer-events-none">
-              <div className="glass-panel rounded-full p-1.5 sm:p-2 flex items-center justify-between pointer-events-auto shadow-3d-sm">
+          <div className="w-full mx-auto relative h-full flex flex-col pb-24">
+            {/* Minimalist Top Bar */}
+            <div className="px-6 pt-8 pb-4 flex items-center justify-between z-10">
+                <div className="flex items-center gap-3">
+                    <div className="text-[var(--color-climate-text-secondary)] font-medium text-sm">
+                        Lvl {level}
+                    </div>
+                </div>
                 
-                {/* Exit Button */}
-                {onExit && (
-                  <button onClick={onExit} className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-slate-500 hover:text-red-500 mr-2">
-                    <X className="w-5 h-5" />
-                  </button>
+                <div className="flex items-center gap-4">
+                     <div className="flex items-center gap-1.5 text-[var(--color-climate-text-primary)]">
+                        <span className="text-yellow-500">★</span>
+                        <span className="font-medium">{coins}</span>
+                     </div>
+                     {onExit && (
+                        <button onClick={onExit} className="text-[var(--color-climate-text-secondary)] hover:text-red-500 transition-colors">
+                            <X className="w-5 h-5" />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Game Content - Vertically Centered */}
+            <div className="flex-1 flex flex-col justify-center px-4 -mt-16">
+                
+                {/* Progress/Header Context */}
+                <div className="mb-8 px-2">
+                     <GameHeader completed={completedSteps} total={totalSteps} />
+                </div>
+
+                {/* Level Selector (Contextual) */}
+                {!onExit && (
+                  <div className="mb-6 opacity-80 hover:opacity-100 transition-opacity">
+                    <LevelSelector
+                      currentLevel={level}
+                      levels={levelMetadata}
+                      onLevelSelect={setLevel}
+                      availableLevels={availableLevels}
+                    />
+                  </div>
                 )}
 
-                <div className="flex items-center gap-1.5 sm:gap-2 pl-0.5 sm:pl-1">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-inner border-2 border-yellow-300 text-lg sm:text-xl animate-[bounceSlight_4s_ease-in-out_infinite]">
-                    ⭐
-                  </div>
-                  <div className="bg-slate-100 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 shadow-inner font-bold text-slate-700 text-sm sm:text-base">
-                    {coins}
-                  </div>
+                {/* The Grid */}
+                {!isLoading && (
+                <div className="space-y-2 relative z-10 glass-panel rounded-[2rem] p-2 sm:p-3 transition-all duration-500">
+                  {gridRows.map((row, rowIndex) => (
+                    <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
+                      {row.type === 'completed' && row.completed ? (
+                        <CategoryRow name={row.completed.name} words={row.completed.words} />
+                      ) : (
+                        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                          {row.words?.map((word, colIndex) => (
+                            <GridWordTile
+                              key={word.id}
+                              word={word}
+                              rowIndex={rowIndex}
+                              colIndex={colIndex}
+                              onSwap={handleSwap}
+                              isSubcategoryGlow={word.id === glowingSubcategoryId}
+                              isMerging={mergingRow === rowIndex}
+                              hintColor={hintedWords.get(word.id)}
+                              isDisabled={isProcessing}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
+                )}
                 
-                <div className="flex items-center gap-1.5 sm:gap-2 pr-0.5 sm:pr-1">
-                  <div className="relative group cursor-pointer">
-                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-rose-500 rounded-xl flex items-center justify-center shadow-md btn-3d-sm transform rotate-3 group-hover:rotate-6 transition-transform">
-                      <span className="text-white font-bold text-[10px] sm:text-xs">ADS</span>
+                {isLoading && (
+                    <div className="flex items-center justify-center h-64">
+                         <div className="w-6 h-6 border-2 border-[var(--color-climate-accent)] border-t-[var(--color-climate-text-primary)] rounded-full animate-spin" />
                     </div>
-                    <div className="absolute -top-1 -right-0.5 sm:-top-2 sm:-right-1 w-4 h-4 sm:w-5 sm:h-5 bg-red-600 rounded-full flex items-center justify-center text-white text-[9px] sm:text-[10px] font-bold border-2 border-white shadow-sm animate-pulse">
-                      2
-                    </div>
-                  </div>
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500 rounded-xl flex items-center justify-center shadow-md btn-3d-sm transform -rotate-3 hover:rotate-0 transition-transform cursor-pointer">
-                    <Gift className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                  </div>
+                )}
+            </div>
+            
+            {/* Minimal Bottom Dock */}
+            <div className="fixed bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
+                <div className="w-full mx-auto flex items-center justify-center gap-6 pointer-events-auto">
+                     <button
+                        onClick={() => setShowSettingsDialog(true)}
+                        className="w-14 h-14 rounded-full glass-tile text-[var(--color-climate-text-secondary)] flex items-center justify-center hover:bg-white transition-all active:scale-95 border border-white/60"
+                     >
+                        <Settings className="w-6 h-6" />
+                     </button>
+                     
+                     <div className="flex items-center gap-3 px-2">
+                        <button
+                            onClick={handleSearchHint}
+                            className="w-16 h-16 rounded-2xl glass-tile text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-white hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0 border border-white/60"
+                            title="Reveal Categories"
+                        >
+                             <Search className="w-7 h-7 opacity-80" strokeWidth={2.5} />
+                        </button>
+                        
+                        <button
+                            onClick={handleHint}
+                            className="w-16 h-16 rounded-2xl glass-tile text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-white hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0 border border-white/60"
+                             title="Hint Pair"
+                        >
+                            <Lightbulb className="w-7 h-7 opacity-80" strokeWidth={2.5} />
+                        </button>
+                     </div>
                 </div>
-              </div>
             </div>
 
-            {/* Level Selector - Only show if not in embedded module mode (or we can always show it if desired) */}
-            {!onExit && (
-              <div className="px-3 sm:px-4 mb-2">
-                <LevelSelector
-                  currentLevel={level}
-                  levels={levelMetadata}
-                  onLevelSelect={setLevel}
-                  availableLevels={availableLevels}
-                />
-              </div>
-            )}
-
-            {/* Game Header (Level & Progress) */}
-            <div className="px-3 sm:px-4 mt-2 mb-3 sm:mb-4">
-              <GameHeader completed={completedSteps} total={totalSteps} />
-            </div>
-
-            {/* Loading State */}
-            {isLoading && (
-              <div className="px-3 sm:px-4 py-8 text-center">
-                <div className="text-white text-lg">Loading level...</div>
-              </div>
-            )}
-
-            {/* Game Grid */}
-            {!isLoading && (
-            <div className="px-3 sm:px-4 space-y-2 sm:space-y-3">
-              {gridRows.map((row, rowIndex) => (
-                <div key={rowIndex} className="animate-pop-in" style={{ animationDelay: `${rowIndex * 0.1}s` }}>
-                  {row.type === 'completed' && row.completed ? (
-                    <CategoryRow name={row.completed.name} words={row.completed.words} />
-                  ) : (
-                    <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-                      {row.words?.map((word, colIndex) => (
-                        <GridWordTile
-                          key={word.id}
-                          word={word}
-                          rowIndex={rowIndex}
-                          colIndex={colIndex}
-                          onSwap={handleSwap}
-                          isSubcategoryGlow={word.id === glowingSubcategoryId}
-                          isMerging={mergingRow === rowIndex}
-                          hintColor={hintedWords.get(word.id)}
-                          isDisabled={isProcessing}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            )}
-          </div>
-
-          {/* Bottom Floating Dock */}
-          <div className="fixed bottom-4 sm:bottom-6 left-0 right-0 z-20 px-3 sm:px-4 pointer-events-none">
-            <div className="max-w-md mx-auto flex items-center justify-center gap-2 sm:gap-4 pointer-events-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-12 h-12 sm:w-14 sm:h-14 bg-white hover:bg-slate-50 rounded-2xl shadow-3d border-2 border-slate-100 text-slate-600 btn-3d"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowSettingsDialog(true);
-                }}
-              >
-                <Settings className="w-6 h-6 sm:w-7 sm:h-7" />
-              </Button>
-              
-              <Button 
-                onClick={handleSearchHint}
-                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-green hover:bg-green-500 rounded-2xl shadow-3d border-b-4 border-green-700 active:border-b-0 btn-3d relative group overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <Search className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-              </Button>
-              
-              <Button 
-                onClick={handleHint}
-                className="w-24 h-14 sm:w-28 sm:h-16 bg-candy-yellow hover:bg-yellow-400 rounded-2xl shadow-3d border-b-4 border-yellow-600 active:border-b-0 btn-3d relative group overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <Lightbulb className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-              </Button>
-            </div>
           </div>
         </div>
       </DragProvider>
 
-      {/* Settings dialog */}
       <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
-      
-      {/* Toast notifications */}
       <Toaster />
     </LanguageProvider>
   );

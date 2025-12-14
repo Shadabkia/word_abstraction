@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1625"/>
+      <stop offset="1" stop-color="#2a2f3a"/>
+    </linearGradient>
+    <style>
+      .title{font:700 44px system-ui,-apple-system,Segoe UI,Roboto,Arial;fill:#fff}
+      .small{font:500 24px system-ui,-apple-system,Segoe UI,Roboto,Arial;fill:#d8dee9}
+      .label{font:600 28px system-ui,-apple-system,Segoe UI,Roboto,Arial;fill:#fff}
+      .panel{fill:rgba(255,255,255,0.06);stroke:rgba(255,255,255,0.18);stroke-width:4}
+      .tag{fill:rgba(0,0,0,0.35)}
+    </style>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <text x="56" y="92" class="title">CH1L02 - Slide 2</text>
+  <text x="56" y="140" class="small">No Space to Respond</text>
+
+  <rect x="56" y="182" rx="28" ry="28" width="968" height="290" class="panel"/>
+  <rect x="56" y="500" rx="28" ry="28" width="968" height="290" class="panel"/>
+  <rect x="56" y="818" rx="28" ry="28" width="968" height="206" class="panel"/>
+
+  <text x="88" y="236" class="label">Panel 1</text>
+  <text x="88" y="278" class="small">Passenger talks fast - hands slicing the air</text>
+  <rect x="88" y="312" rx="18" ry="18" width="520" height="64" class="tag"/>
+  <text x="112" y="356" class="small">Confidence is contagious.</text>
+
+  <text x="88" y="554" class="label">Panel 2</text>
+  <text x="88" y="596" class="small">Red light - motorcycles - honks - still talking</text>
+  <rect x="88" y="630" rx="18" ry="18" width="420" height="64" class="tag"/>
+  <text x="112" y="674" class="small">There is no pause.</text>
+
+  <text x="88" y="872" class="label">Panel 3</text>
+  <text x="88" y="914" class="small">Kians face in mirror - nods once</text>
+  <rect x="88" y="948" rx="18" ry="18" width="320" height="64" class="tag"/>
+  <text x="112" y="992" class="small">This is my part.</text>
+</svg>

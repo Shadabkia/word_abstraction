@@ -309,6 +309,7 @@ function convertJSONToLevelData(jsonLevel: LevelJSON): LevelData {
     words,
     categories,
     totalSteps: jsonLevel.mechanics.groups.length,
+    visuals: jsonLevel.meta.visuals,
     ...(hierarchy && { hierarchy })
   };
 }

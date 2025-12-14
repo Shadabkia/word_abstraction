@@ -6,7 +6,32 @@ import { campaignManager } from '@/core/services/campaignManager';
 import { LevelPostView } from './components/LevelPostView';
 
 interface ProfileScreenProps {
-  onPlayGame?: (gameId: string, levelNumber: number) => void;
+  onPlayGame?: (ref: { gameId: 'word-connect'; levelId: number; campaignLevelId: string }) => void;
+}
+
+function FallbackImage({
+  candidates,
+  alt,
+  className,
+}: {
+  candidates: string[];
+  alt: string;
+  className?: string;
+}) {
+  const [idx, setIdx] = useState(0);
+  const src = candidates[idx];
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => {
+        if (idx < candidates.length - 1) setIdx(idx + 1);
+      }}
+    />
+  );
 }
 
 export function ProfileScreen({ onPlayGame }: ProfileScreenProps) {
@@ -38,10 +63,10 @@ export function ProfileScreen({ onPlayGame }: ProfileScreenProps) {
   };
 
   // Start game from post view
-  const handleStartGame = (gameId: string, levelNumber: number) => {
+  const handleStartGame = (gameId: 'word-connect', levelNumber: number, campaignLevelId: string) => {
     setSelectedLevel(null);
     if (onPlayGame) {
-      onPlayGame(gameId, levelNumber);
+      onPlayGame({ gameId, levelId: levelNumber, campaignLevelId });
     }
   };
 
@@ -153,6 +178,7 @@ export function ProfileScreen({ onPlayGame }: ProfileScreenProps) {
           const levelId = `level_${level.levelNumber}`;
           const isCompleted = progress.completedLevels.includes(levelId);
           const isLocked = !isCompleted && level.levelNumber > (completedLevelNumbers.length + 1);
+          const thumbnailCandidates = campaignManager.getLevelThumbnailCandidates(level.id);
 
           return (
             <motion.button
@@ -163,10 +189,24 @@ export function ProfileScreen({ onPlayGame }: ProfileScreenProps) {
               disabled={isLocked}
               className="relative aspect-square bg-slate-100 overflow-hidden group"
             >
-              {/* Background gradient based on chapter color */}
-              <div 
-                className={`absolute inset-0 bg-gradient-to-br ${currentChapter?.color || 'from-slate-300 to-slate-400'} ${isLocked ? 'opacity-30' : 'opacity-100'}`}
-              />
+              {/* Thumbnail (falls back across extensions) */}
+              <div className="absolute inset-0">
+                {/* Gradient fallback behind image */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${currentChapter?.color || 'from-slate-300 to-slate-400'} ${
+                    isLocked ? 'opacity-30' : 'opacity-100'
+                  }`}
+                />
+                {thumbnailCandidates.length > 0 && (
+                  <FallbackImage
+                    candidates={thumbnailCandidates}
+                    alt={level.titleEn || level.title}
+                    className={`absolute inset-0 w-full h-full object-cover ${
+                      isLocked ? 'opacity-30 grayscale' : isCompleted ? 'opacity-100' : 'opacity-95'
+                    }`}
+                  />
+                )}
+              </div>
               
               {/* Level Number Badge */}
               <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full font-bold backdrop-blur-sm">

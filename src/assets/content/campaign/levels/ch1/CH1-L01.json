@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "id": "CH1-L01",
+  "gameRef": { "gameId": "word-connect", "levelId": 1 },
+  "chapter": {
+    "id": "chapter_1",
+    "index": 1,
+    "title": "Tehran"
+  },
+  "level": {
+    "campaignLevelId": "campaign_level_1",
+    "levelNumberInChapter": 1,
+    "name": "Morning Negotiation",
+    "location": "Tehran (Driver’s Seat)",
+    "time": "Early Morning",
+    "mood": ["cold", "quiet", "routine", "negotiation"],
+    "narrativeRole": "Introduce protagonist, tone, and daily loop"
+  },
+  "post": {
+    "caption": "Morning shift.\nThe city is cold.\nThe car is colder.\nI still have to ask.",
+    "comments": [
+      {
+        "id": "ch1l01_c1",
+        "authorId": "npc_mom",
+        "authorName": "Mom",
+        "text": "It’s cold today. Be careful.",
+        "likes": 15
+      },
+      {
+        "id": "ch1l01_c2",
+        "authorId": "npc_ali",
+        "authorName": "Mechanic Ali",
+        "text": "Morning engine sounds are never innocent.",
+        "likes": 8
+      },
+      {
+        "id": "ch1l01_c3",
+        "authorId": "npc_tehran_traffic",
+        "authorName": "@TehranTraffic",
+        "text": "Low traffic reported. For now.",
+        "likes": 23
+      },
+      {
+        "id": "ch1l01_c4",
+        "authorId": "npc_random_1",
+        "authorName": "Random User",
+        "text": "Early drivers are built different.",
+        "likes": 4
+      }
+    ]
+  },
+  "comic": {
+    "slides": [
+      {
+        "id": "s1",
+        "title": "Before the Day Starts",
+        "panelCount": 3,
+        "image": "ch1/CH1-L01/slide1.svg",
+        "beats": [
+          "Some days start before you’re ready.",
+          "Mine usually do.",
+          "06:18 · 3°C · Motivation: Low"
+        ]
+      },
+      {
+        "id": "s2",
+        "title": "Asking Politely",
+        "panelCount": 2,
+        "image": "ch1/CH1-L01/slide2.svg",
+        "beats": [
+          "Every morning begins with a question.",
+          "The car considers."
+        ]
+      },
+      {
+        "id": "s3",
+        "title": "Repeating the Question",
+        "panelCount": 3,
+        "image": "ch1/CH1-L01/slide3.svg",
+        "beats": [
+          "I try again.",
+          "Hope disconnects early.",
+          "No anger. This isn’t new."
+        ]
+      },
+      {
+        "id": "s4",
+        "title": "Agreement, Not Victory",
+        "panelCount": 2,
+        "image": "ch1/CH1-L01/slide4.svg",
+        "beats": [
+          "Negotiation works better than force.",
+          "Agreement reached. Terms unclear."
+        ]
+      }
+    ]
+  },
+  "startScreen": {
+    "image": "ch1/CH1-L01/start.svg"
+  }
+}
+
+

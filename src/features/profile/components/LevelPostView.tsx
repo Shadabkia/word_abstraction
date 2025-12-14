@@ -1,298 +1,360 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, MessageCircle, Send, Bookmark, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
-
-interface PostSlide {
-  type: 'cover' | 'story' | 'game';
-  image?: string;
-  title?: string;
-  text?: string;
-  backgroundColor?: string;
-}
-
-interface Comment {
-  id: string;
-  authorId: string;
-  authorName: string;
-  text: string;
-  likes: number;
-}
-
-interface CampaignLevelPost {
-  levelId: string;
-  author: {
-    name: string;
-    username: string;
-    avatar: string;
-  };
-  location: string;
-  timestamp: string;
-  slides: PostSlide[];
-  caption: string;
-  likes: number;
-  comments: Comment[];
-  gameId: string;
-  gameLevelNumber: number;
-}
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, Bookmark, Heart, MessageCircle, Send } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from '@/shared/ui/carousel';
+import type { CampaignLevelPost, CampaignPostCarouselSlide, Comment } from '@/core/services/campaignManager';
 
 interface LevelPostViewProps {
   post: CampaignLevelPost;
   onClose: () => void;
-  onStartGame: (gameId: string, levelNumber: number) => void;
+  onStartGame: (gameId: 'word-connect', levelNumber: number, campaignLevelId: string) => void;
+}
+
+function FallbackImage({
+  candidates,
+  alt,
+  className,
+}: {
+  candidates: string[];
+  alt: string;
+  className?: string;
+}) {
+  const [idx, setIdx] = useState(0);
+  const src = candidates[idx];
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => {
+        if (idx < candidates.length - 1) setIdx(idx + 1);
+      }}
+    />
+  );
 }
 
 export function LevelPostView({ post, onClose, onStartGame }: LevelPostViewProps) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [showComments, setShowComments] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
+  const [commentDraft, setCommentDraft] = useState('');
+  const [comments, setComments] = useState<Comment[]>(() => post.comments);
 
-  const nextSlide = () => {
-    if (currentSlide < post.slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    }
+  const startCandidates = useMemo(() => {
+    if (post.carousel.startScreenImageCandidates?.length) return post.carousel.startScreenImageCandidates;
+    if (post.carousel.startScreenImageUrl) return [post.carousel.startScreenImageUrl];
+    return [];
+  }, [post.carousel.startScreenImageCandidates, post.carousel.startScreenImageUrl]);
+
+  type ViewSlide =
+    | CampaignPostCarouselSlide
+    | {
+        type: 'start';
+        id: 'start';
+        imageCandidates: string[];
+      };
+
+  const slides: ViewSlide[] = useMemo(() => {
+    const base = post.carousel.slides as ViewSlide[];
+    if (!startCandidates.length) return base;
+    return [...base, { type: 'start', id: 'start', imageCandidates: startCandidates }];
+  }, [post.carousel.slides, startCandidates]);
+
+  const isMultiSlide = slides.length > 1;
+  const isOnStartSlide = startCandidates.length > 0 && activeSlide === slides.length - 1;
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    const sync = () => setActiveSlide(carouselApi.selectedScrollSnap());
+    sync();
+    carouselApi.on('select', sync);
+    carouselApi.on('reInit', sync);
+    return () => {
+      carouselApi.off('select', sync);
+      carouselApi.off('reInit', sync);
+    };
+  }, [carouselApi]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  const visibleComments = useMemo(() => {
+    if (isCommentsExpanded) return comments;
+    return comments.slice(0, 2);
+  }, [comments, isCommentsExpanded]);
+
+  const canPostComment = commentDraft.trim().length > 0;
+
+  const handlePostComment = () => {
+    if (!canPostComment) return;
+    const text = commentDraft.trim();
+    setComments((prev) => [
+      ...prev,
+      {
+        id: `local_${Date.now()}`,
+        authorId: 'me',
+        authorName: 'You',
+        text,
+        likes: 0,
+      },
+    ]);
+    setCommentDraft('');
+    setIsCommentsExpanded(true);
   };
 
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
+  const renderSlide = (slide: ViewSlide) => {
+    if (slide.type === 'start') {
+      return (
+        <div className="w-full h-full bg-black flex items-center justify-center">
+          <FallbackImage
+            candidates={slide.imageCandidates}
+            alt="Start screen"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      );
     }
-  };
 
-  const currentSlideData = post.slides[currentSlide];
+    const candidates =
+      slide.imageCandidates?.length ? slide.imageCandidates : slide.imageUrl ? [slide.imageUrl] : [];
+
+    if (slide.type === 'comic') {
+      return (
+        <div className="w-full h-full bg-black flex items-center justify-center">
+          {candidates.length > 0 ? (
+            <FallbackImage candidates={candidates} alt={slide.title || ''} className="w-full h-full object-contain" />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
+              {slide.title && <h2 className="text-2xl font-bold text-white mb-3">{slide.title}</h2>}
+              {slide.beats?.length ? (
+                <div className="space-y-2 max-w-md mx-auto">
+                  {slide.beats.map((beat, i) => (
+                    <p key={i} className="text-white/80 text-base" dir="auto">
+                      {beat}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-white/70">Comic slide</p>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // legacy
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center"
+        style={{ backgroundColor: slide.backgroundColor || '#0b0b0f' }}
+      >
+        {candidates.length > 0 ? (
+          <FallbackImage candidates={candidates} alt={slide.title || ''} className="w-full h-full object-contain" />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
+            {slide.title && (
+              <h2 className="text-3xl sm:text-4xl font-black text-white mb-4" dir="auto">
+                {slide.title}
+              </h2>
+            )}
+            {slide.text && (
+              <p className="text-white/85 text-base sm:text-lg max-w-md" dir="auto">
+                {slide.text}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black"
+      className="fixed inset-0 z-50 bg-white"
     >
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/60 to-transparent p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400" />
-            <div>
-              <p className="text-white font-semibold text-sm">{post.author.name}</p>
-              <p className="text-white/70 text-xs">{post.location}</p>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 8 }}
+        transition={{ duration: 0.15 }}
+        className="w-full h-full overflow-hidden flex flex-col"
+      >
+        {/* Top bar (Instagram-like page header) */}
+        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-100">
+          <div className="mx-auto w-full max-w-[520px] flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                onClick={onClose}
+                className="w-9 h-9 -ml-2 rounded-full hover:bg-slate-100 transition-colors flex items-center justify-center flex-shrink-0"
+                aria-label="Back"
+              >
+                <ArrowLeft className="w-5 h-5 text-slate-900" />
+              </button>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-900 truncate">{post.author.username}</p>
+                <p className="text-xs text-slate-500 truncate">{post.location}</p>
+              </div>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-          >
-            <X className="w-5 h-5 text-white" />
-          </button>
         </div>
 
-        {/* Progress Indicators */}
-        <div className="flex gap-1 mt-4">
-          {post.slides.map((_, index) => (
-            <div
-              key={index}
-              className="flex-1 h-0.5 bg-white/30 rounded-full overflow-hidden"
-            >
-              <motion.div
-                className="h-full bg-white"
-                initial={{ width: 0 }}
-                animate={{ width: index <= currentSlide ? '100%' : 0 }}
-                transition={{ duration: 0.3 }}
-              />
+        {/* Content container (centered like Instagram feed) */}
+        <div className="w-full flex-1 overflow-hidden">
+          <div className="mx-auto w-full max-w-[520px] h-full flex flex-col overflow-hidden">
+            {/* Carousel media */}
+            <div className="bg-black">
+              <Carousel setApi={setCarouselApi} opts={{ loop: false, align: 'start' }} className="w-full">
+            <CarouselContent className="ml-0">
+              {slides.map((slide, index) => (
+                <CarouselItem key={index} className="pl-0">
+                  <div className="w-full aspect-square">{renderSlide(slide)}</div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+
+          {isMultiSlide && (
+            <div className="bg-white">
+              <div className="flex items-center justify-center gap-1.5 py-2">
+                {slides.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                      i === activeSlide ? 'bg-slate-900' : 'bg-slate-300'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
+            </div>
 
-      {/* Slide Content */}
-      <div className="h-full flex items-center justify-center relative">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
-            className="w-full h-full flex flex-col items-center justify-center px-8"
-            style={{ backgroundColor: currentSlideData.backgroundColor || '#000' }}
-          >
-            {currentSlideData.type === 'cover' && (
-              <div className="text-center space-y-6">
-                <motion.h1
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-4xl md:text-5xl font-black text-white"
-                  dir="rtl"
-                >
-                  {currentSlideData.title}
-                </motion.h1>
-                {currentSlideData.text && (
-                  <motion.p
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-lg text-white/80 max-w-md mx-auto"
-                    dir="rtl"
-                  >
-                    {currentSlideData.text}
-                  </motion.p>
-                )}
-              </div>
-            )}
-
-            {currentSlideData.type === 'story' && (
-              <div className="max-w-xl space-y-4">
-                {currentSlideData.image && (
-                  <div className="w-full aspect-square bg-slate-800 rounded-2xl mb-6" />
-                )}
-                <p className="text-white text-lg leading-relaxed" dir="rtl">
-                  {currentSlideData.text}
-                </p>
-              </div>
-            )}
-
-            {currentSlideData.type === 'game' && (
-              <div className="text-center space-y-8 relative z-50">
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <div className="text-6xl mb-4">🧩</div>
-                  <h2 className="text-3xl font-bold text-white mb-2">Ready to Play?</h2>
-                  <p className="text-white/70 mb-8">Connect the words to reveal the memory</p>
-                </motion.div>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onStartGame(post.gameId, post.gameLevelNumber);
-                  }}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xl py-7 px-12 rounded-full shadow-2xl font-bold cursor-pointer relative z-50"
+            {/* Post body */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="px-4 pt-3 pb-4">
+            {/* Start Puzzle CTA (only on the dedicated start slide) */}
+            {isOnStartSlide && (
+              <div className="mt-2 mb-4">
+                <button
+                  onClick={() => onStartGame(post.gameId, post.gameLevelNumber, post.campaignLevelId)}
+                  className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors"
                 >
                   Start Puzzle
-                </motion.button>
-
-                <p className="text-white/50 text-sm mt-4">
-                  Level {post.gameLevelNumber} • Word Connect
-                </p>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Navigation Arrows */}
-        {currentSlide > 0 && (
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-colors z-[60]"
-          >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
-        )}
-
-        {currentSlide < post.slides.length - 1 && (
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-colors z-10"
-          >
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
-        )}
-
-        {/* Tap Areas for Navigation - Only show if not on game slide */}
-        {currentSlideData.type !== 'game' && (
-          <div className="absolute inset-0 flex pointer-events-none">
-            <div className="flex-1 pointer-events-auto" onClick={prevSlide} />
-            <div className="flex-1 pointer-events-auto" onClick={nextSlide} />
-          </div>
-        )}
-      </div>
-
-      {/* Footer - Only show on first slide */}
-      {currentSlide === 0 && (
-        <motion.div
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
-          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pb-8"
-        >
-          {/* Action Buttons */}
-          <div className="flex items-center gap-4 mb-4">
-            <button className="hover:scale-110 transition-transform">
-              <Heart className="w-7 h-7 text-white" />
-            </button>
-            <button
-              onClick={() => setShowComments(!showComments)}
-              className="hover:scale-110 transition-transform"
-            >
-              <MessageCircle className="w-7 h-7 text-white" />
-            </button>
-            <button className="hover:scale-110 transition-transform">
-              <Send className="w-7 h-7 text-white" />
-            </button>
-            <button className="ml-auto hover:scale-110 transition-transform">
-              <Bookmark className="w-7 h-7 text-white" />
-            </button>
-          </div>
-
-          {/* Likes */}
-          <p className="text-white font-semibold text-sm mb-2">{post.likes} likes</p>
-
-          {/* Caption */}
-          <p className="text-white text-sm">
-            <span className="font-semibold mr-2">{post.author.username}</span>
-            <span dir="rtl">{post.caption}</span>
-          </p>
-
-          {/* View Comments */}
-          {post.comments.length > 0 && (
-            <button
-              onClick={() => setShowComments(!showComments)}
-              className="text-white/60 text-sm mt-2 hover:text-white transition-colors"
-            >
-              View all {post.comments.length} comments
-            </button>
-          )}
-
-          <p className="text-white/40 text-xs mt-2 uppercase">{post.timestamp}</p>
-        </motion.div>
-      )}
-
-      {/* Comments Sheet */}
-      <AnimatePresence>
-        {showComments && (
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30 }}
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[70vh] overflow-y-auto z-30"
-          >
-            <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg">Comments</h3>
-                <button onClick={() => setShowComments(false)}>
-                  <X className="w-5 h-5" />
                 </button>
               </div>
+            )}
 
-              {post.comments.map((comment) => (
-                <div key={comment.id} className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm">
-                      <span className="font-semibold mr-2">{comment.authorName}</span>
-                      <span dir="rtl">{comment.text}</span>
-                    </p>
-                    <p className="text-xs text-slate-400 mt-1">{comment.likes} likes</p>
-                  </div>
-                </div>
-              ))}
+            {/* Action Buttons */}
+            <div className="flex items-center gap-4 mb-3">
+              <button className="hover:opacity-70 transition-opacity" aria-label="Like">
+                <Heart className="w-6 h-6 text-slate-900" />
+              </button>
+              <button
+                onClick={() => setIsCommentsExpanded(true)}
+                className="hover:opacity-70 transition-opacity"
+                aria-label="Comment"
+              >
+                <MessageCircle className="w-6 h-6 text-slate-900" />
+              </button>
+              <button className="hover:opacity-70 transition-opacity" aria-label="Share">
+                <Send className="w-6 h-6 text-slate-900" />
+              </button>
+              <button className="ml-auto hover:opacity-70 transition-opacity" aria-label="Save">
+                <Bookmark className="w-6 h-6 text-slate-900" />
+              </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            {/* Likes */}
+            <p className="text-sm font-semibold text-slate-900 mb-2">{post.likes} likes</p>
+
+            {/* Caption */}
+            <p className="text-sm text-slate-900">
+              <span className="font-semibold mr-2">{post.author.username}</span>
+              <span dir="auto" className="whitespace-pre-line">
+                {post.caption}
+              </span>
+            </p>
+
+            {/* Comments */}
+            {comments.length > 0 && (
+              <div className="mt-2">
+                <button
+                  onClick={() => setIsCommentsExpanded((v) => !v)}
+                  className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
+                >
+                  {isCommentsExpanded ? 'Hide comments' : `View all ${comments.length} comments`}
+                </button>
+
+                <div className="mt-2 space-y-2">
+                  {visibleComments.map((comment) => (
+                    <div key={comment.id} className="text-sm text-slate-900">
+                      <span className="font-semibold mr-2">{comment.authorName}</span>
+                      <span dir="auto">{comment.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p className="text-[11px] text-slate-400 mt-3 uppercase tracking-wide">{post.timestamp}</p>
+              </div>
+            </div>
+
+            {/* Add comment */}
+            <div className="border-t border-slate-100 px-4 py-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0" />
+              <input
+                value={commentDraft}
+                onChange={(e) => setCommentDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handlePostComment();
+                }}
+                className="flex-1 text-sm outline-none placeholder:text-slate-400"
+                placeholder="Add a comment..."
+              />
+              <button
+                onClick={handlePostComment}
+                disabled={!canPostComment}
+                className={`text-sm font-semibold transition-colors ${
+                  canPostComment ? 'text-indigo-600 hover:text-indigo-700' : 'text-slate-300'
+                }`}
+              >
+                Post
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {isCommentsExpanded && comments.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="px-4 pb-3 text-sm text-slate-500"
+                >
+                  No comments yet.
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }

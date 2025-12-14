@@ -6,17 +6,19 @@ import { FeedScreen } from './features/feed/FeedScreen';
 import { ArcadeScreen } from './features/arcade/ArcadeScreen';
 import { MessagesScreen } from './features/messages/MessagesScreen';
 import { ProfileScreen } from './features/profile/ProfileScreen';
-import WordConnectGame from './games/word-connect/WordConnectGame';
 import { DebugOverlay } from './shared/components/DebugOverlay';
+import { DeviceSimulatorBar, DeviceModel } from './shared/components/DeviceSimulatorBar';
 import { useGameState } from './core/state/gameState';
+import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
 
 type Tab = 'feed' | 'arcade' | 'dashboard' | 'messages' | 'profile';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [activeGame, setActiveGame] = useState<string | null>(null);
-  const [currentLevel, setCurrentLevel] = useState(1);
+  const [activeGame, setActiveGame] = useState<GameLaunchRef | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
+  const [deviceModel, setDeviceModel] = useState<DeviceModel>('iphone-14-pro');
+  const [scale, setScale] = useState(100);
   const { completeLevel, inbox } = useGameState();
   
   // Calculate total unread messages
@@ -34,9 +36,8 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handlePlayGame = (gameId: string, levelNumber?: number) => {
-    setActiveGame(gameId);
-    setCurrentLevel(levelNumber || 1);
+  const handlePlayGame = (ref: GameLaunchRef) => {
+    setActiveGame(ref);
   };
 
   const handleExitGame = () => {
@@ -44,9 +45,10 @@ export default function App() {
   };
 
   const handleGameComplete = (score: number) => {
-    // Update game state with completed level
-    const levelId = `level_${currentLevel}`;
-    completeLevel(levelId, score, 3); // 3 stars for now
+    // Update campaign progression only when launched from campaign.
+    if (activeGame?.campaignLevelId) {
+      completeLevel(activeGame.campaignLevelId, score, 3); // 3 stars for now
+    }
     
     // Show success, then return to previous tab
     setTimeout(() => {
@@ -55,101 +57,169 @@ export default function App() {
     }, 2000);
   };
 
-  if (activeGame === 'word-connect') {
+  const getContainerStyle = (model: DeviceModel) => {
+    switch (model) {
+      // iOS Devices
+      case 'iphone-se':
+        return 'w-full max-w-[375px] h-[667px] rounded-[2rem] border-[8px] border-slate-800';
+      case 'iphone-13-mini':
+        return 'w-full max-w-[375px] h-[812px] rounded-[2.5rem] border-[8px] border-slate-800';
+      case 'iphone-14-pro':
+        return 'w-full max-w-[430px] h-[932px] rounded-[3rem] border-[8px] border-slate-800';
+      case 'iphone-14-plus':
+        return 'w-full max-w-[428px] h-[926px] rounded-[3rem] border-[8px] border-slate-800';
+      case 'iphone-14-pro-max':
+        return 'w-full max-w-[430px] h-[932px] rounded-[3rem] border-[8px] border-slate-800';
+      
+      // Android Devices
+      case 'pixel-5':
+        return 'w-full max-w-[393px] h-[851px] rounded-[2rem] border-[8px] border-slate-800';
+      case 'pixel-7':
+        return 'w-full max-w-[412px] h-[915px] rounded-[2.5rem] border-[8px] border-slate-800';
+      case 'galaxy-s22':
+        return 'w-full max-w-[360px] h-[780px] rounded-[2rem] border-[8px] border-slate-800';
+      case 'galaxy-s22-ultra':
+        return 'w-full max-w-[412px] h-[915px] rounded-[2.5rem] border-[8px] border-slate-800';
+      
+      case 'fullscreen':
+        return 'w-full h-full max-w-none max-h-none rounded-none border-0';
+      default:
+        return 'w-full max-w-[430px] h-[932px] rounded-[3rem] border-[8px] border-slate-800';
+    }
+  };
+
+  const isFullscreen = deviceModel === 'fullscreen';
+
+  const renderContent = () => {
+    if (activeGame) {
+      const entry = gameRegistry[activeGame.gameId];
+      const GameComponent = entry.Component;
+      return (
+        <GameComponent
+          onExit={handleExitGame}
+          onComplete={handleGameComplete}
+          {...entry.buildProps(activeGame)}
+        />
+      );
+    }
+
     return (
-      <WordConnectGame 
-        onExit={handleExitGame} 
-        onComplete={handleGameComplete}
-        initialLevel={currentLevel}
-      />
+      <>
+        <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden ${isFullscreen ? 'h-screen' : ''}`}>
+          
+          {/* Decorative floating elements - hidden (portrait-first) */}
+          <div className="hidden absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+            <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '0s' }} />
+            <div className="absolute top-40 right-20 w-32 h-32 bg-blue-300 rounded-full blur-3xl floating-element" style={{ animationDelay: '2s' }} />
+            <div className="absolute bottom-40 left-20 w-24 h-24 bg-pink-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '4s' }} />
+          </div>
+          
+          {/* Main Content Area */}
+          <div className="flex-1 overflow-y-auto pb-20 scrollbar-hide relative z-10">
+            {activeTab === 'dashboard' && <DashboardScreen />}
+            {activeTab === 'feed' && <FeedScreen />}
+            {activeTab === 'arcade' && <ArcadeScreen onPlayGame={handlePlayGame} />}
+            {activeTab === 'messages' && <MessagesScreen />}
+            {activeTab === 'profile' && <ProfileScreen onPlayGame={handlePlayGame} />}
+          </div>
+
+          {/* Bottom Navigation Bar - Enhanced */}
+          <motion.div 
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+            className={`absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 px-6 py-4 pb-6 flex items-center justify-between rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40 ${isFullscreen ? 'max-w-md mx-auto rounded-t-3xl mb-4' : ''}`}
+          >
+            
+            <NavButton 
+              active={activeTab === 'feed'} 
+              onClick={() => setActiveTab('feed')}
+              icon={Zap}
+            />
+            
+            <NavButton 
+              active={activeTab === 'arcade'} 
+              onClick={() => setActiveTab('arcade')}
+              icon={Grid}
+            />
+            
+            {/* Center Dashboard Button - Enhanced */}
+            <motion.div 
+              className="relative -top-6"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <button 
+                onClick={() => setActiveTab('dashboard')}
+                className={`
+                  w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
+                  ${activeTab === 'dashboard' 
+                    ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 scale-110 ring-4 ring-indigo-100 shadow-indigo-200' 
+                    : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-indigo-200'
+                  }
+                `}
+              >
+                {activeTab === 'dashboard' && (
+                  <motion.div
+                    className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear", repeatType: "loop" }}
+                  />
+                )}
+                <Truck className={`w-8 h-8 relative z-10 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
+              </button>
+            </motion.div>
+
+            <NavButton 
+              active={activeTab === 'messages'} 
+              onClick={() => setActiveTab('messages')}
+              icon={MessageCircle}
+              badge={unreadCount > 0 ? unreadCount : undefined}
+            />
+            
+            <NavButton 
+              active={activeTab === 'profile'} 
+              onClick={() => setActiveTab('profile')}
+              icon={User}
+            />
+          </motion.div>
+        </div>
+
+        {/* Debug Overlay - Ctrl+Shift+D to open */}
+        <DebugOverlay isOpen={debugOpen} onClose={() => setDebugOpen(false)} />
+      </>
+    );
+  };
+
+  // Mobile detection hook or check
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  if (isMobile) {
+    return (
+      <div className="h-[100dvh] w-full bg-white">
+        {renderContent()}
+      </div>
     );
   }
 
   return (
-    <>
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden shadow-2xl">
-        
-        {/* Decorative floating elements - hidden on mobile for performance */}
-        <div className="hidden md:block absolute inset-0 pointer-events-none overflow-hidden opacity-30">
-          <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '0s' }} />
-          <div className="absolute top-40 right-20 w-32 h-32 bg-blue-300 rounded-full blur-3xl floating-element" style={{ animationDelay: '2s' }} />
-          <div className="absolute bottom-40 left-20 w-24 h-24 bg-pink-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '4s' }} />
-        </div>
-        
-        {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto pb-20 scrollbar-hide relative z-10">
-          {activeTab === 'dashboard' && <DashboardScreen />}
-          {activeTab === 'feed' && <FeedScreen />}
-          {activeTab === 'arcade' && <ArcadeScreen onPlayGame={handlePlayGame} />}
-          {activeTab === 'messages' && <MessagesScreen />}
-          {activeTab === 'profile' && <ProfileScreen onPlayGame={handlePlayGame} />}
-        </div>
-
-      {/* Bottom Navigation Bar - Enhanced */}
-      <motion.div 
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-        className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 px-6 py-4 pb-6 flex items-center justify-between rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40"
+    <div className="min-h-screen w-full bg-[#0b0f14] flex flex-col items-center justify-center font-sans overflow-auto py-12">
+      <div 
+        className="transition-all duration-300 origin-top"
+        style={{ transform: `scale(${scale / 100})` }}
       >
-        
-        <NavButton 
-          active={activeTab === 'feed'} 
-          onClick={() => setActiveTab('feed')}
-          icon={Zap}
-        />
-        
-        <NavButton 
-          active={activeTab === 'arcade'} 
-          onClick={() => setActiveTab('arcade')}
-          icon={Grid}
-        />
-        
-        {/* Center Dashboard Button - Enhanced */}
-        <motion.div 
-          className="relative -top-6"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <button 
-            onClick={() => setActiveTab('dashboard')}
-            className={`
-              w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
-              ${activeTab === 'dashboard' 
-                ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 scale-110 ring-4 ring-indigo-100 shadow-indigo-200' 
-                : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-indigo-200'
-              }
-            `}
-          >
-            {activeTab === 'dashboard' && (
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear", repeatType: "loop" }}
-              />
-            )}
-            <Truck className={`w-8 h-8 relative z-10 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
-          </button>
-        </motion.div>
-
-        <NavButton 
-          active={activeTab === 'messages'} 
-          onClick={() => setActiveTab('messages')}
-          icon={MessageCircle}
-          badge={unreadCount > 0 ? unreadCount : undefined}
-        />
-        
-        <NavButton 
-          active={activeTab === 'profile'} 
-          onClick={() => setActiveTab('profile')}
-          icon={User}
-        />
-      </motion.div>
+        <div className={`bg-white overflow-hidden shadow-2xl relative ring-1 ring-slate-900/5 transition-all duration-500 ease-spring ${getContainerStyle(deviceModel)}`}>
+          {renderContent()}
+        </div>
+      </div>
+      
+      <DeviceSimulatorBar 
+        currentModel={deviceModel} 
+        onModelChange={setDeviceModel} 
+        scale={scale}
+        onScaleChange={setScale}
+      />
     </div>
-
-    {/* Debug Overlay - Ctrl+Shift+D to open */}
-    <DebugOverlay isOpen={debugOpen} onClose={() => setDebugOpen(false)} />
-    </>
   );
 }
 

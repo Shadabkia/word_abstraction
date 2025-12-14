@@ -89,25 +89,22 @@ export function WordTile({ word, inDropZone = false }: WordTileProps) {
       onTouchStart={handleTouchStart}
       onMouseDown={handleMouseDown}
       className={`
-        bg-gradient-to-br from-yellow-100 to-yellow-200
-        border-2 border-yellow-300
+        bg-[var(--color-climate-tile)]
         rounded-2xl
-        shadow-md
+        shadow-[var(--shadow-climate-hover)]
         px-3 py-4
         cursor-move
         select-none
         flex items-center justify-center
         text-center
         transition-all
-        hover:shadow-lg
-        hover:scale-105
-        active:scale-95
+        scale-105
         ${isDragging ? 'opacity-50' : 'opacity-100'}
         ${inDropZone ? 'h-12' : 'min-h-[3rem]'}
       `}
       style={{ touchAction: 'none' }}
     >
-      <span className="text-gray-900 text-sm leading-tight break-words">
+      <span className="text-[var(--color-climate-text-primary)] font-medium text-sm leading-tight break-words">
         {word.text}
       </span>
     </div>

@@ -68,6 +68,70 @@ export interface LevelConstraints {
   max_moves?: number;
 }
 
+export interface LevelVisualBackground {
+  /**
+   * Public URL path (served from /public), e.g. "/backgrounds/chapter1.webp"
+   */
+  src?: string;
+  /**
+   * CSS background-position. Examples: "center", "top", "50% 30%"
+   */
+  position?: string;
+  /**
+   * 0..1, white overlay to keep grid readable above an image.
+   * Higher = calmer / more washed.
+   */
+  overlayOpacity?: number;
+}
+
+export interface LevelVisualPattern {
+  /**
+   * "none": disable pattern layer
+   * "dots": use built-in subtle dots
+   * "image": use a custom image from /public (e.g. "/patterns/waves.png")
+   */
+  type?: 'none' | 'dots' | 'image';
+  /**
+   * Public URL path for image pattern.
+   */
+  src?: string;
+  /**
+   * 0..1, opacity of the pattern overlay.
+   */
+  opacity?: number;
+  /**
+   * CSS background-size (number => px). Examples: 32, "48px 48px", "cover"
+   */
+  size?: number | string;
+}
+
+export interface LevelVisualClimate {
+  bg?: string;
+  bgSecondary?: string;
+  tile?: string;
+  textPrimary?: string;
+  textSecondary?: string;
+  accent?: string;
+  hint?: string;
+  highlight?: string;
+  success?: string;
+}
+
+export interface LevelVisuals {
+  /**
+   * Full-screen background configuration.
+   */
+  background?: LevelVisualBackground;
+  /**
+   * Optional overlay pattern configuration.
+   */
+  pattern?: LevelVisualPattern;
+  /**
+   * Optional per-level climate overrides (CSS vars).
+   */
+  climate?: LevelVisualClimate;
+}
+
 export interface LevelMeta {
   id: string;
   version: string;
@@ -77,6 +141,7 @@ export interface LevelMeta {
   difficulty: number;
   tags?: string[];
   constraints?: LevelConstraints;
+  visuals?: LevelVisuals;
   levelNumber?: number; // Global level number injected at runtime
   chapter?: {
     id: string;
@@ -143,6 +208,7 @@ export interface LevelData {
   words: Word[];
   categories: Record<string, string>;
   totalSteps: number;
+  visuals?: LevelVisuals;
   hierarchy?: HierarchyInfo;
   chapter?: {
     id: string;

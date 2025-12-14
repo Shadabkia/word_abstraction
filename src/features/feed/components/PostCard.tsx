@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Send, Bookmark } from 'lucide-react';
 import { StoryPost } from '@/core/domain/types';
+import { type CarouselApi, Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel';
 
 interface PostCardProps {
   post: StoryPost;
@@ -12,6 +13,35 @@ interface PostCardProps {
 export function PostCard({ post, authorName, authorAvatar }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  const body = post.body;
+  const location = post.location ?? 'Tehran, Iran';
+
+  const isCarousel = body?.type === 'carousel' && !!body.slides?.length;
+  const carouselCount = body?.slides?.length ?? 0;
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    const sync = () => setCarouselIndex(carouselApi.selectedScrollSnap());
+    sync();
+    carouselApi.on('select', sync);
+    carouselApi.on('reInit', sync);
+    return () => {
+      carouselApi.off('select', sync);
+      carouselApi.off('reInit', sync);
+    };
+  }, [carouselApi]);
+
+  const mediaContainerClassName = useMemo(() => {
+    // Instagram: images size to their natural aspect ratio (not always square).
+    if (body?.type === 'image' || body?.type === 'carousel') {
+      return 'w-full bg-black relative overflow-hidden';
+    }
+    // Typography/text posts still feel best as a square “card” in the feed.
+    return 'w-full aspect-square bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative overflow-hidden';
+  }, [body?.type]);
 
   return (
     <motion.div 
@@ -37,7 +67,7 @@ export function PostCard({ post, authorName, authorAvatar }: PostCardProps) {
           <div>
             <div className="text-sm font-bold text-slate-800 leading-none">{authorName}</div>
             <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1">
-              📍 Tehran, Iran
+              📍 {location}
             </div>
           </div>
         </motion.div>
@@ -50,16 +80,61 @@ export function PostCard({ post, authorName, authorAvatar }: PostCardProps) {
         </motion.button>
       </div>
 
-      {/* Image */}
-      <motion.div 
-        className="w-full aspect-square bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative overflow-hidden"
+      {/* Body */}
+      <motion.div
+        className={mediaContainerClassName}
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.3 }}
       >
-        {post.image ? (
-          <img src={post.image} alt="Post" className="w-full h-full object-cover" />
+        {/* Carousel */}
+        {body?.type === 'carousel' && body.slides && body.slides.length > 0 ? (
+          <Carousel setApi={setCarouselApi} opts={{ loop: false, align: 'start' }} className="w-full">
+            <CarouselContent className="ml-0">
+              {body.slides.map((s, idx) => (
+                <CarouselItem key={idx} className="pl-0">
+                  <div className="w-full flex items-center justify-center bg-black">
+                    <img
+                      src={s.src}
+                      alt=""
+                      className="w-full h-auto max-h-[70vh] object-contain block"
+                      loading="lazy"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        ) : body?.type === 'image' && body.src ? (
+          <div className="w-full flex items-center justify-center bg-black">
+            <img
+              src={body.src}
+              alt="Post"
+              className="w-full h-auto max-h-[70vh] object-contain block"
+              loading="lazy"
+            />
+          </div>
+        ) : body?.type === 'html' && body.html ? (
+          <div
+            className="w-full h-full flex items-center justify-center p-8"
+            // Content is authored locally (no user input). Keep HTML simple (no scripts).
+            dangerouslySetInnerHTML={{ __html: body.html }}
+          />
+        ) : body?.type === 'text' && body.text ? (
+          <div className="w-full h-full flex items-center justify-center p-10 text-center">
+            <p className="text-slate-800 text-xl font-semibold whitespace-pre-line">{body.text}</p>
+          </div>
+        ) : post.image ? (
+          // Legacy fallback
+          <div className="w-full flex items-center justify-center bg-black">
+            <img
+              src={post.image}
+              alt="Post"
+              className="w-full h-auto max-h-[70vh] object-contain block"
+              loading="lazy"
+            />
+          </div>
         ) : (
-          <motion.span 
+          <motion.span
             className="text-slate-300 text-6xl"
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -67,11 +142,30 @@ export function PostCard({ post, authorName, authorAvatar }: PostCardProps) {
             📷
           </motion.span>
         )}
-        
+
+        {/* Carousel indicators (Instagram-like) */}
+        {isCarousel && carouselCount > 1 && (
+          <>
+            {/* Top-right count pill */}
+            <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur pointer-events-none">
+              {carouselIndex + 1}/{carouselCount}
+            </div>
+            {/* Bottom dots */}
+            <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-none">
+              {Array.from({ length: carouselCount }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                    i === carouselIndex ? 'bg-white' : 'bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         {/* Gradient overlay on hover */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity"
-        />
+        <motion.div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
       </motion.div>
 
       {/* Actions */}

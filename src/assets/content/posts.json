@@ -2,108 +2,158 @@
   "version": 1,
   "posts": [
     {
-      "id": "post_001",
+      "id": "feed_ch1_001_mom_container",
       "authorId": "npc_mom",
-      "image": "",
-      "caption": "Kian left his job today. I don't understand why. He had a good position! 😢 Kids these days...",
-      "likes": 42,
+      "authorType": "family",
+      "location": "Home",
+      "body": {
+        "type": "image",
+        "src": "/feed/images/feed_ch1_001_mom_container.png"
+      },
+      "caption": "Cold again.\nDon’t forget to eat.",
+      "likes": 31,
       "comments": [
         {
-          "id": "c1",
-          "authorId": "npc_boss",
-          "text": "Irresponsible. Return immediately.",
-          "likes": 1,
+          "id": "feed_ch1_001_c1",
+          "authorId": "npc_aunt_shirin",
+          "text": "God bless 🌸",
+          "likes": 6,
           "timestamp": 1000
-        }
-      ],
-      "timestamp": 1000,
-      "unlockCondition": {
-        "type": "level_complete",
-        "targetId": "level_1"
-      }
-    },
-    {
-      "id": "post_002",
-      "authorId": "npc_darvish",
-      "image": "",
-      "caption": "The road opens when the heart is ready. 🛣️✨ #wisdom",
-      "likes": 108,
-      "comments": [
+        },
         {
-          "id": "c2",
-          "authorId": "npc_mom",
-          "text": "What does that even mean?!",
-          "likes": 15,
-          "timestamp": 2000
+          "id": "feed_ch1_001_c2",
+          "authorId": "npc_neighbor",
+          "text": "Looks warm",
+          "likes": 2,
+          "timestamp": 1100
         }
       ],
-      "timestamp": 2000,
-      "unlockCondition": {
-        "type": "level_complete",
-        "targetId": "level_2"
-      }
+      "timestamp": 1200
     },
     {
-      "id": "post_003",
+      "id": "feed_ch1_002_mechanic_typo",
       "authorId": "npc_ali",
-      "image": "",
-      "caption": "Fixed up The Onion today. She's ready for the journey! 🚐🔧",
-      "likes": 89,
-      "comments": [],
-      "timestamp": 3000,
-      "unlockCondition": {
-        "type": "level_complete",
-        "targetId": "level_3"
-      }
-    },
-    {
-      "id": "post_004",
-      "authorId": "npc_boss",
-      "image": "",
-      "caption": "Unauthorized absence will result in termination. Report to Sector 7 immediately. 😡",
-      "likes": 3,
+      "authorType": "friend",
+      "location": "Azadi Auto Repair",
+      "body": {
+        "type": "html",
+        "html": "<div style=\"width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f7f2ea;border-radius:22px;box-shadow:inset 0 0 0 2px rgba(15,23,42,0.06)\"><div style=\"text-align:center;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;line-height:1.05\"><div style=\"font-weight:900;font-size:64px;letter-spacing:2px;color:#0f172a\">ENGINES</div><div style=\"font-weight:900;font-size:64px;letter-spacing:2px;color:#0f172a\">DON'T</div><div style=\"font-weight:900;font-size:64px;letter-spacing:2px;color:#0f172a\">LIE</div><div style=\"height:18px\"></div><div style=\"font-weight:800;font-size:40px;letter-spacing:1px;color:#334155\">THEY JUST</div><div style=\"font-weight:900;font-size:56px;letter-spacing:1px;color:#0f172a\">WAIT</div></div></div>"
+      },
+      "caption": "Cold mornings reveal everything.",
+      "likes": 78,
       "comments": [
         {
-          "id": "c3",
-          "authorId": "npc_mom",
-          "text": "Leave my son alone!",
-          "likes": 67,
-          "timestamp": 4000
+          "id": "feed_ch1_002_c1",
+          "authorId": "npc_random_driver",
+          "text": "Mine coughs 😬",
+          "likes": 4,
+          "timestamp": 2000,
+          "replies": [
+            {
+              "id": "feed_ch1_002_c1_r1",
+              "authorId": "npc_ali",
+              "text": "That’s not coughing. That’s honesty.",
+              "likes": 9,
+              "timestamp": 2100
+            }
+          ]
         }
       ],
-      "timestamp": 4000,
-      "unlockCondition": {
-        "type": "level_complete",
-        "targetId": "level_1"
-      }
+      "timestamp": 2200
     },
     {
-      "id": "post_005",
-      "authorId": "npc_kian",
-      "image": "",
-      "caption": "First day on the road. Tehran is behind me. The future is ahead. 🌅",
-      "likes": 156,
+      "id": "feed_ch1_003_classmate_carousel",
+      "authorId": "npc_reza",
+      "authorType": "friend",
+      "location": "Frankfurt",
+      "body": {
+        "type": "carousel",
+        "slides": [
+          { "src": "/feed/images/feed_ch1_003_classmate_carousel_01.png" },
+          { "src": "/feed/images/feed_ch1_003_classmate_carousel_02.png" },
+          { "src": "/feed/images/feed_ch1_003_classmate_carousel_03.png" }
+        ]
+      },
+      "caption": "New city.\nSame brain.\nLess noise.",
+      "likes": 104,
       "comments": [
         {
-          "id": "c4",
-          "authorId": "npc_mom",
-          "text": "Call me when you stop! Be safe! ❤️",
-          "likes": 45,
+          "id": "feed_ch1_003_c1",
+          "authorId": "npc_uni_friend",
+          "text": "Proud of you 👏",
+          "likes": 8,
+          "timestamp": 3000
+        },
+        {
+          "id": "feed_ch1_003_c2",
+          "authorId": "npc_friend_2",
+          "text": "When are you visiting?",
+          "likes": 3,
+          "timestamp": 3100
+        }
+      ],
+      "timestamp": 3200
+    },
+    {
+      "id": "feed_ch1_004_traffic_meme",
+      "authorId": "npc_tehran_traffic",
+      "authorType": "system",
+      "location": "Valiasr Street",
+      "body": {
+        "type": "image",
+        "src": "/feed/images/feed_ch1_004_traffic_meme.png"
+      },
+      "caption": "Morning traffic update:\nIt’s calm.\nWe don’t trust it either.",
+      "likes": 221,
+      "comments": [
+        {
+          "id": "feed_ch1_004_c1",
+          "authorId": "npc_random_1",
+          "text": "Fake",
+          "likes": 12,
+          "timestamp": 4000
+        },
+        {
+          "id": "feed_ch1_004_c2",
+          "authorId": "npc_random_2",
+          "text": "Don’t say it out loud",
+          "likes": 19,
+          "timestamp": 4050
+        }
+      ],
+      "timestamp": 4200
+    },
+    {
+      "id": "feed_ch1_005_passenger_minicarousel",
+      "authorId": "npc_lost_voice_notes",
+      "authorType": "stranger",
+      "location": "Inside a Snap",
+      "body": {
+        "type": "carousel",
+        "slides": [
+          { "src": "/feed/images/feed_ch1_005_passenger_minicarousel_01.png" },
+          { "src": "/feed/images/feed_ch1_005_passenger_minicarousel_02.png" }
+        ]
+      },
+      "caption": "Told a stranger everything.\nHe didn’t interrupt.\n\nThat mattered.",
+      "likes": 67,
+      "comments": [
+        {
+          "id": "feed_ch1_005_c1",
+          "authorId": "npc_random_3",
+          "text": "Drivers hear too much",
+          "likes": 5,
           "timestamp": 5000
         },
         {
-          "id": "c5",
-          "authorId": "npc_darvish",
-          "text": "The onion peels reveal truth...",
-          "likes": 12,
+          "id": "feed_ch1_005_c2",
+          "authorId": "npc_random_4",
+          "text": "Silence is rare",
+          "likes": 7,
           "timestamp": 5100
         }
       ],
-      "timestamp": 5000,
-      "unlockCondition": {
-        "type": "level_complete",
-        "targetId": "level_5"
-      }
+      "timestamp": 5200
     }
   ]
 }
