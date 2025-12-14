@@ -83,3 +83,5 @@ The feed changes over time, triggered by:
 
 ## Final Essence
 The Feed Tab is a daily-updating Instagram-style timeline of NPC posts, with a Stories row for daily challenges. Posts include images, captions, and NPC comments. The feed evolves as the player progresses, providing worldbuilding and charm without gameplay pressure.
+
+

@@ -47,6 +47,123 @@ interface CampaignData {
   chapters: CampaignChapter[];
 }
 
+// --- Narrative content (per-level JSON + assets) ---
+type SocialComicSlide = {
+  id: string;
+  title?: string;
+  panelCount?: number;
+  image?: string; // asset path relative to campaign/images
+  beats?: string[]; // optional supporting text (often baked into the art)
+};
+
+type LevelNarrativeContent = {
+  version: number;
+  id: string; // e.g. CH1-L01
+  level?: {
+    campaignLevelId?: string;
+    levelNumberInChapter?: number;
+    name?: string;
+    location?: string;
+    time?: string;
+    mood?: string[];
+    narrativeRole?: string;
+  };
+  post?: {
+    caption?: string;
+    comments?: Comment[];
+  };
+  comic?: {
+    slides?: SocialComicSlide[];
+  };
+  startScreen?: {
+    image?: string; // asset path relative to campaign/images
+  };
+};
+
+export type CampaignPostCarouselSlide =
+  | {
+      type: 'comic';
+      id: string;
+      title?: string;
+      panelCount?: number;
+      imageUrl?: string;
+      imageCandidates?: string[];
+      beats?: string[];
+    }
+  | {
+      type: 'legacy';
+      id: string;
+      title?: string;
+      text?: string;
+      backgroundColor?: string;
+      imageUrl?: string;
+      imageCandidates?: string[];
+    };
+
+export type CampaignLevelPost = {
+  levelId: string;
+  author: {
+    name: string;
+    username: string;
+    avatar: string;
+  };
+  location: string;
+  timestamp: string;
+  carousel: {
+    slides: CampaignPostCarouselSlide[];
+    startScreenImageUrl?: string;
+    startScreenImageCandidates?: string[];
+  };
+  caption: string;
+  likes: number;
+  comments: Comment[];
+  gameId: string;
+  gameLevelNumber: number;
+};
+
+const narrativeJsonModules = import.meta.glob('/src/assets/content/campaign/levels/**/*.json', {
+  eager: true,
+}) as Record<string, { default: LevelNarrativeContent }>;
+
+function pad2(n: number) {
+  return String(n).padStart(2, '0');
+}
+
+function resolveCampaignImage(assetPath?: string): string | undefined {
+  if (!assetPath) return undefined;
+  // Images live under public/ so they are served from the site root.
+  // Example: public/campaign/images/ch1/CH1-L01/slide1.png → /campaign/images/ch1/CH1-L01/slide1.png
+  return `/campaign/images/${assetPath}`;
+}
+
+const CAMPAIGN_IMAGE_EXTS = ['webp', 'png', 'jpg', 'jpeg', 'svg'] as const;
+
+function uniqueStrings(items: Array<string | undefined | null>) {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const i of items) {
+    if (!i) continue;
+    if (seen.has(i)) continue;
+    seen.add(i);
+    out.push(i);
+  }
+  return out;
+}
+
+function buildInferredFolder(chapterIndex: number, levelNumberInChapter: number) {
+  return `ch${chapterIndex}/CH${chapterIndex}-L${pad2(levelNumberInChapter)}`;
+}
+
+function buildAssetCandidates(folder: string, baseName: string) {
+  return CAMPAIGN_IMAGE_EXTS.map((ext) => `/campaign/images/${folder}/${baseName}.${ext}`);
+}
+
+function getNarrativeKey(chapterIndex: number, levelNumberInChapter: number) {
+  return `/src/assets/content/campaign/levels/ch${chapterIndex}/CH${chapterIndex}-L${pad2(
+    levelNumberInChapter,
+  )}.json`;
+}
+
 /**
  * Campaign Content Manager
  * Provides access to campaign chapters, levels, and story content
@@ -131,25 +248,115 @@ class CampaignManager {
   /**
    * Convert campaign level to post format for LevelPostView
    */
-  getLevelAsPost(levelId: string) {
-    const level = this.getLevel(levelId);
-    if (!level) return null;
+  getLevelAsPost(levelId: string): CampaignLevelPost | null {
+    let foundChapter: CampaignChapter | undefined;
+    let foundLevel: CampaignLevel | undefined;
+    let levelIndexInChapter = -1;
+
+    for (const chapter of this.data.chapters) {
+      const idx = chapter.levels.findIndex((l) => l.id === levelId);
+      if (idx >= 0) {
+        foundChapter = chapter;
+        foundLevel = chapter.levels[idx];
+        levelIndexInChapter = idx + 1; // 1-based within chapter
+        break;
+      }
+    }
+
+    if (!foundLevel || !foundChapter) return null;
+
+    // Try narrative JSON first (CHx-Lyy)
+    const narrativeKey = getNarrativeKey(foundChapter.index, levelIndexInChapter);
+    const narrative = narrativeJsonModules[narrativeKey]?.default;
+
+    const caption = narrative?.post?.caption ?? foundLevel.caption;
+    const comments = narrative?.post?.comments ?? foundLevel.comments;
+    const location = narrative?.level?.location ?? foundLevel.location;
+
+    const inferredFolder = buildInferredFolder(foundChapter.index, levelIndexInChapter);
+
+    const comicSlides = (narrative?.comic?.slides ?? []).map((s, i): CampaignPostCarouselSlide => {
+      const explicit = resolveCampaignImage(s.image);
+      const inferredCandidates = buildAssetCandidates(inferredFolder, `slide${i + 1}`);
+      return {
+        type: 'comic',
+        id: s.id,
+        title: s.title,
+        panelCount: s.panelCount,
+        imageUrl: explicit,
+        imageCandidates: uniqueStrings([explicit, ...inferredCandidates]),
+        beats: s.beats,
+      };
+    });
+
+    const legacyStorySlides = foundLevel.slides
+      .filter((s) => s.type !== 'game')
+      .map((s, idx): CampaignPostCarouselSlide => {
+        const explicit = resolveCampaignImage(s.image);
+        const inferredCandidates = buildAssetCandidates(inferredFolder, `slide${idx + 1}`);
+        return {
+          type: 'legacy',
+          id: `legacy_${idx + 1}`,
+          title: s.title,
+          text: s.text,
+          backgroundColor: s.backgroundColor,
+          imageUrl: explicit,
+          imageCandidates: uniqueStrings([explicit, ...inferredCandidates]),
+        };
+      });
+
+    const slides =
+      comicSlides.length > 0
+        ? comicSlides
+        : legacyStorySlides.length > 0
+          ? legacyStorySlides
+          : [
+              {
+                type: 'legacy',
+                id: 'legacy_1',
+                title: foundLevel.title,
+                text: foundLevel.caption,
+                backgroundColor: '#0b0b0f',
+              } satisfies CampaignPostCarouselSlide,
+            ];
+
+    // If legacy content provides fewer than 4, pad with quiet blanks so the swipe rhythm stays stable.
+    const paddedSlides =
+      slides.length >= 4
+        ? slides
+        : [
+            ...slides,
+            ...Array.from({ length: 4 - slides.length }).map((_, i) => ({
+              type: 'legacy' as const,
+              id: `pad_${i + 1}`,
+              title: '',
+              text: '',
+              backgroundColor: '#0b0b0f',
+            })),
+          ];
 
     return {
-      levelId: level.id,
+      levelId: foundLevel.id,
       author: {
         name: 'Kian',
         username: '@kian_ontheroad',
         avatar: '',
       },
-      location: level.location,
-      timestamp: level.timestamp,
-      slides: level.slides,
-      caption: level.caption,
-      likes: level.likes,
-      comments: level.comments,
+      location,
+      timestamp: foundLevel.timestamp,
+      carousel: {
+        slides: paddedSlides,
+        startScreenImageUrl: resolveCampaignImage(narrative?.startScreen?.image),
+        startScreenImageCandidates: uniqueStrings([
+          resolveCampaignImage(narrative?.startScreen?.image),
+          ...buildAssetCandidates(inferredFolder, 'start'),
+        ]),
+      },
+      caption,
+      likes: foundLevel.likes,
+      comments,
       gameId: 'word-connect',
-      gameLevelNumber: level.wordConnectLevel,
+      gameLevelNumber: foundLevel.wordConnectLevel,
     };
   }
 }

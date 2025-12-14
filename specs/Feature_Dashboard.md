@@ -115,3 +115,5 @@ The Dashboard includes an adaptive, context-aware recommendation banner that int
 
 ## Final Essence
 The Dashboard is the player’s home base — a warm, tactile hub centered on the Hero Card (“Continue Journey”), with shortcuts to Arcade modes, dynamic narrative context (location + greeting), and progression widgets. It is the most inviting part of the app and the main bridge into the story.
+
+

@@ -119,19 +119,29 @@ When tapping a level tile, the player enters a post-like detail view.
 ### 2. Carousel Content
 The main gameplay narrative lives here:
 
-**Slide 1 — Cover Slide**
-- Title of the level
-- Comic-style artwork
-- One-line hook
+#### Canonical Narrative Format: “Social Comic Post”
+The campaign post is sequential visual storytelling optimized for mobile reading.
 
-**Slides 2–X — Story Panels**
-- Illustrated storytelling (comic strips)
-- Narration in the same Dahl-esque voice
-- Builds narrative context for the puzzle
+**Hard rules**
+- **Comic slide count:** Exactly **4** slides.
+- **Panels per slide:** **1–3** panels (intentional variation).
+- **Text density:** Minimal. Either diegetic dialogue, or short narrator captions.
+- **No exposition dumps, no spoilers, no heroic framing.**
 
-**Final Slide — Start Screen**
-- Level description + puzzle rules
-- “Start Puzzle” CTA button (bold, sticker-like)
+**Slide structure**
+- **Slide 1 — Establishing**: atmosphere + Kian-in-context + status gag.
+- **Slide 2 — First attempt**: action → partial response → pause.
+- **Slide 3 — Repetition/absurdity**: repeated action + ironic beat + restrained reaction.
+- **Slide 4 — Temporary resolution**: stabilizes without triumph.
+
+#### Silent Start Screen (separate from the 4 comic slides)
+After the 4th slide, the post shows a **silent start screen frame**:
+- **Image only** (no narration, no dialogue in UI).
+- Same location, calm neutral composition.
+- Signals “now you play” without instruction.
+- UI overlays (CTA) are **not part of the artwork**.
+
+The “Start Puzzle” CTA appears as UI (bold, sticker-like), not baked into the art.
 
 ### 3. Footer
 - Heart (likes)
@@ -141,6 +151,12 @@ The main gameplay narrative lives here:
     - NPCs leave funny comments related to the level (e.g., Mr. Ghoulian: “This tea break is unauthorized.”, Mom: “Did you eat? You look pale.”)
 
 This blends world-building with UI familiarity.
+
+### 4. Content Loading (Data-Driven)
+Campaign post content (comic slides, start screen frame, comments, caption) is authored as JSON and loaded dynamically.
+- **Per-level narrative JSON:** `src/assets/content/campaign/levels/**`
+- **Comic/start-screen images:** `public/campaign/images/**` (served as `/campaign/images/**`)
+- The runtime resolves image URLs from the images directory (build-friendly).
 
 ## Progression Features
 
@@ -167,3 +183,5 @@ Progression signals include:
 
 ## Final Essence
 The Profile Tab is an Instagram-like narrative hub where the player browses Kian’s life as a series of “posts,” selects chapters and levels through highlight circles and a photo grid, and experiences the campaign story as a social media profile of his journey across Iran.
+
+

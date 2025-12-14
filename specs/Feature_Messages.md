@@ -82,3 +82,5 @@ Messages appear based on:
 
 ## Final Essence
 The Messages Tab is a simple, Instagram-like DM inbox where NPCs send read-only messages. These DMs deliver quests, hints, lore, and story updates as the player progresses. Unread chats highlight at the top, and each conversation opens into a clean, narrative-driven chat view with no reply box.
+
+

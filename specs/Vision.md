@@ -137,3 +137,5 @@ Everything happens inside a single “fictional social app” that the player gr
 ## Final Essence
 
 Pars Ra Pas is a platform of playful Persian word games wrapped inside a narrative social-media interface. By browsing NPC posts, reading DMs, playing mini-games, and scrolling through Kian’s evolving profile, the player experiences a comedic, emotional road trip across Iran — one post, one memory, and one puzzle at a time.
+
+

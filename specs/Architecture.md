@@ -96,6 +96,9 @@ Content is stored in `src/assets/content` as JSON and managed by `ContentManager
 -   `posts.json`: Social feed posts with unlock conditions
 -   `messages.json`: Message threads with unlock conditions
 -   `chapters.json`: Campaign chapters with prerequisites
+-   `campaign.json`: Campaign chapter/level index (IDs, mapping to game levels)
+-   `campaign/levels/**`: Per-level narrative JSON (“Social Comic Post” content)
+-   `public/campaign/images/**`: Comic slide images + silent start screen frames (served as `/campaign/images/**`)
 
 ### 5.2 Unlock Conditions
 Content can have unlock conditions:
