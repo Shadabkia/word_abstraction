@@ -41,13 +41,17 @@ A horizontal strip of circular “story bubbles,” exactly like Instagram.
 ### 2. Feed Posts (NPC Content Only)
 A vertical feed of posts authored by NPCs from the game’s world.
 
-**Post Content:**
-- NPC avatar + username
-- Location tag (optional)
-- Picture (travel snapshot, comic panel, object photo, joke image)
-- Caption (Dahl-esque humor, emotion, culture flavor)
-- Comments section (NPCs only)
-- Like icon (cosmetic only)
+**Post Content (Instagram-like):**
+- Header: NPC identity (name/handle), optional location
+- Body: one of several content types (image, carousel, typography, plain text)
+- Caption: 1–5 short lines (no lore dumping)
+- Comments: 2–6 comments, optional 1-level replies
+- Like icon: cosmetic only (Kian is mostly a “like”, not a commenter)
+
+**Media sizing (Instagram-like)**
+- Feed post media is **not forced square**.
+- Images/carousels render at **full width** and preserve the full image (no cropping).
+- Typography posts can remain square for readability and consistency.
 
 **NPC Examples:** Mr. Ghoulian (angry boss), Mom (overprotective), The Darvish (cryptic), Mechanic Ali.
 
@@ -59,10 +63,12 @@ The feed changes over time, triggered by:
 - Unlocking a daily challenge
 
 ### 3. Post Types
-- **Photo Posts:** Street photos, food, office snapshots, travel humor.
-- **Comic Panel Posts:** Small illustrated moments.
-- **Text + Image Posts:** Notes, sarcastic rants, poetic captions.
-- **Chapter Milestone Posts:** NPCs reacting to Kian’s arrival in a new city.
+Each post uses exactly one body format:
+
+- **Image (single)**: one photo/illustration.
+- **Carousel (2–5 slides)**: multiple images, sequential or associative.
+- **Typography / Quote (HTML)**: text rendered as the main visual (mechanic/system/philosophical accounts).
+- **Plain Text (no image)**: rare, rushed, emotional, unpolished.
 
 ## User Interaction
 
@@ -83,5 +89,19 @@ The feed changes over time, triggered by:
 
 ## Final Essence
 The Feed Tab is a daily-updating Instagram-style timeline of NPC posts, with a Stories row for daily challenges. Posts include images, captions, and NPC comments. The feed evolves as the player progresses, providing worldbuilding and charm without gameplay pressure.
+
+## Canonical Content Model (Feed Post)
+Feed posts are authored in `src/assets/content/posts.json`.
+
+- **Identity**: `authorId`, optional `authorType`, optional `location`
+- **Body**: `body.type` + content fields depending on type
+- **Caption**: `caption` (1–5 short lines)
+- **Comments**: `comments[]` with optional `replies[]` (1 level deep)
+
+Body types:
+- `image`: `{ src }`
+- `carousel`: `{ slides: [{ src }] }` (2–5)
+- `html`: `{ html }` (rendered inside a square “post body”)
+- `text`: `{ text }` (plain text fallback)
 
 

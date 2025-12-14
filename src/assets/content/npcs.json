@@ -34,6 +34,90 @@
       "handle": "@ali_fixes_things",
       "avatar": "",
       "bio": "Best mechanic in Tehran. Saved The Onion from retirement."
+    },
+    {
+      "id": "npc_tehran_traffic",
+      "name": "Tehran Traffic",
+      "handle": "@TehranTraffic",
+      "avatar": "",
+      "bio": "Officially unofficial updates. Calm is suspicious."
+    },
+    {
+      "id": "npc_aunt_shirin",
+      "name": "Aunt Shirin",
+      "handle": "@shirin_auntie",
+      "avatar": "",
+      "bio": "Family aunt. Blessings, emojis, and unsolicited advice."
+    },
+    {
+      "id": "npc_neighbor",
+      "name": "Neighbor",
+      "handle": "@nextdoor_tea",
+      "avatar": "",
+      "bio": "Knows everything. Shares nothing directly."
+    },
+    {
+      "id": "npc_random_driver",
+      "name": "Random Driver",
+      "handle": "@car_noise_daily",
+      "avatar": "",
+      "bio": "The engine and I have history."
+    },
+    {
+      "id": "npc_reza",
+      "name": "Reza",
+      "handle": "@reza_phd_life",
+      "avatar": "",
+      "bio": "New city, same brain. Lab lights and quiet mornings."
+    },
+    {
+      "id": "npc_uni_friend",
+      "name": "University Friend",
+      "handle": "@uni_friend",
+      "avatar": "",
+      "bio": "Always supportive. Always online."
+    },
+    {
+      "id": "npc_friend_2",
+      "name": "Friend",
+      "handle": "@friend_2",
+      "avatar": "",
+      "bio": "Sends voice notes longer than life."
+    },
+    {
+      "id": "npc_lost_voice_notes",
+      "name": "lost_in_voice_notes",
+      "handle": "@lost_in_voice_notes",
+      "avatar": "",
+      "bio": "Posts feelings. Deletes none."
+    },
+    {
+      "id": "npc_random_1",
+      "name": "User",
+      "handle": "@user_001",
+      "avatar": "",
+      "bio": ""
+    },
+    {
+      "id": "npc_random_2",
+      "name": "User",
+      "handle": "@user_002",
+      "avatar": "",
+      "bio": ""
+    },
+    {
+      "id": "npc_random_3",
+      "name": "User",
+      "handle": "@user_003",
+      "avatar": "",
+      "bio": ""
+    },
+    {
+      "id": "npc_random_4",
+      "name": "User",
+      "handle": "@user_004",
+      "avatar": "",
+      "bio": ""
     }
   ]
 }

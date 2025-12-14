@@ -1,6 +1,7 @@
 {
   "version": 1,
   "id": "CH1-L02",
+  "gameRef": { "gameId": "word-connect", "levelId": 2 },
   "chapter": {
     "id": "chapter_1",
     "index": 1,

@@ -71,12 +71,29 @@ export interface Comment {
   text: string;
   likes: number;
   timestamp: number; // Relative time or timestamp
+  replies?: Comment[]; // 1 level deep max
 }
 
 export interface StoryPost {
   id: string;
   authorId: string;
+  authorType?: 'family' | 'friend' | 'stranger' | 'system';
+  location?: string;
+  /**
+   * Legacy single-image field. Prefer `body`.
+   */
   image?: string;
+  body?: {
+    type: 'image' | 'carousel' | 'html' | 'text';
+    // image
+    src?: string;
+    // carousel
+    slides?: Array<{ src: string }>;
+    // html typography post
+    html?: string;
+    // plain text post (no image)
+    text?: string;
+  };
   caption: string;
   likes: number;
   comments: Comment[];

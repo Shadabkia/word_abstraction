@@ -84,6 +84,17 @@ interface GameModuleProps {
 }
 ```
 
+### 4.2 Game Launch Reference (Canonical)
+All game launches in the app use a structured reference:
+
+```ts
+type GameLaunchRef = {
+  gameId: string;                  // e.g. "word-connect"
+  levelId: string | number;        // game-specific level address (number for Word Connect)
+  campaignLevelId?: string;        // set when launched from Campaign so progression updates the correct campaign level
+};
+```
+
 ### 4.2 Current Games
 -   **Word Connect**: 4x4 grid word categorization puzzle (fully integrated)
 -   Future: Word Search, Crossword, Guess The Word, etc.
@@ -99,6 +110,13 @@ Content is stored in `src/assets/content` as JSON and managed by `ContentManager
 -   `campaign.json`: Campaign chapter/level index (IDs, mapping to game levels)
 -   `campaign/levels/**`: Per-level narrative JSON (“Social Comic Post” content)
 -   `public/campaign/images/**`: Comic slide images + silent start screen frames (served as `/campaign/images/**`)
+
+#### Campaign Level → Game Mapping
+Each campaign level must specify which game session it launches via a `gameRef`:
+- `gameId` (which game module)
+- `levelId` (which level inside that game)
+
+This mapping may live in `campaign.json` and can be overridden per-level in `campaign/levels/**` for authoring convenience.
 
 ### 5.2 Unlock Conditions
 Content can have unlock conditions:

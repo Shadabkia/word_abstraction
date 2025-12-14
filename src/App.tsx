@@ -6,17 +6,16 @@ import { FeedScreen } from './features/feed/FeedScreen';
 import { ArcadeScreen } from './features/arcade/ArcadeScreen';
 import { MessagesScreen } from './features/messages/MessagesScreen';
 import { ProfileScreen } from './features/profile/ProfileScreen';
-import WordConnectGame from './games/word-connect/WordConnectGame';
 import { DebugOverlay } from './shared/components/DebugOverlay';
 import { DeviceSimulatorBar, DeviceModel } from './shared/components/DeviceSimulatorBar';
 import { useGameState } from './core/state/gameState';
+import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
 
 type Tab = 'feed' | 'arcade' | 'dashboard' | 'messages' | 'profile';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [activeGame, setActiveGame] = useState<string | null>(null);
-  const [currentLevel, setCurrentLevel] = useState(1);
+  const [activeGame, setActiveGame] = useState<GameLaunchRef | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
   const [deviceModel, setDeviceModel] = useState<DeviceModel>('iphone-14-pro');
   const [scale, setScale] = useState(100);
@@ -37,9 +36,8 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handlePlayGame = (gameId: string, levelNumber?: number) => {
-    setActiveGame(gameId);
-    setCurrentLevel(levelNumber || 1);
+  const handlePlayGame = (ref: GameLaunchRef) => {
+    setActiveGame(ref);
   };
 
   const handleExitGame = () => {
@@ -47,9 +45,10 @@ export default function App() {
   };
 
   const handleGameComplete = (score: number) => {
-    // Update game state with completed level
-    const levelId = `level_${currentLevel}`;
-    completeLevel(levelId, score, 3); // 3 stars for now
+    // Update campaign progression only when launched from campaign.
+    if (activeGame?.campaignLevelId) {
+      completeLevel(activeGame.campaignLevelId, score, 3); // 3 stars for now
+    }
     
     // Show success, then return to previous tab
     setTimeout(() => {
@@ -92,12 +91,14 @@ export default function App() {
   const isFullscreen = deviceModel === 'fullscreen';
 
   const renderContent = () => {
-    if (activeGame === 'word-connect') {
+    if (activeGame) {
+      const entry = gameRegistry[activeGame.gameId];
+      const GameComponent = entry.Component;
       return (
-        <WordConnectGame 
-          onExit={handleExitGame} 
+        <GameComponent
+          onExit={handleExitGame}
           onComplete={handleGameComplete}
-          initialLevel={currentLevel}
+          {...entry.buildProps(activeGame)}
         />
       );
     }

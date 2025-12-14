@@ -138,7 +138,12 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       ref={carouselRef}
-      className="overflow-hidden"
+      className={cn(
+        "overflow-hidden select-none",
+        // Allow horizontal swipe inside vertical scrolling surfaces (Feed).
+        // For a horizontal carousel, we keep vertical scroll available.
+        orientation === "horizontal" ? "touch-pan-y" : "touch-pan-x",
+      )}
       data-slot="carousel-content"
     >
       <div

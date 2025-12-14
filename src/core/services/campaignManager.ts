@@ -3,7 +3,11 @@ import campaignData from '../../assets/content/campaign.json';
 export interface CampaignLevel {
   id: string;
   levelNumber: number;
-  wordConnectLevel: number;
+  wordConnectLevel?: number;
+  gameRef?: {
+    gameId: 'word-connect';
+    levelId: number;
+  };
   title: string;
   titleEn: string;
   location: string;
@@ -59,6 +63,10 @@ type SocialComicSlide = {
 type LevelNarrativeContent = {
   version: number;
   id: string; // e.g. CH1-L01
+  gameRef?: {
+    gameId: 'word-connect';
+    levelId: number;
+  };
   level?: {
     campaignLevelId?: string;
     levelNumberInChapter?: number;
@@ -102,6 +110,7 @@ export type CampaignPostCarouselSlide =
 
 export type CampaignLevelPost = {
   levelId: string;
+  campaignLevelId: string;
   author: {
     name: string;
     username: string;
@@ -117,7 +126,7 @@ export type CampaignLevelPost = {
   caption: string;
   likes: number;
   comments: Comment[];
-  gameId: string;
+  gameId: 'word-connect';
   gameLevelNumber: number;
 };
 
@@ -219,6 +228,24 @@ class CampaignManager {
   }
 
   /**
+   * Get thumbnail URL candidates for a level tile (Profile grid).
+   *
+   * Convention:
+   * public/campaign/images/chX/CHX-LYY/thumbnail.(webp|png|jpg|jpeg|svg)
+   *
+   * Returns candidates in preferred order (webp → png → jpg → jpeg → svg).
+   */
+  getLevelThumbnailCandidates(levelId: string): string[] {
+    for (const chapter of this.data.chapters) {
+      const idx = chapter.levels.findIndex((l) => l.id === levelId);
+      if (idx < 0) continue;
+      const inferredFolder = buildInferredFolder(chapter.index, idx + 1);
+      return buildAssetCandidates(inferredFolder, 'thumbnail');
+    }
+    return [];
+  }
+
+  /**
    * Get unlocked chapters based on completed levels
    */
   getUnlockedChapters(completedLevelNumbers: number[]): CampaignChapter[] {
@@ -272,6 +299,15 @@ class CampaignManager {
     const caption = narrative?.post?.caption ?? foundLevel.caption;
     const comments = narrative?.post?.comments ?? foundLevel.comments;
     const location = narrative?.level?.location ?? foundLevel.location;
+
+    // Resolve which game session this campaign level launches.
+    // Priority: narrative override → campaign.json gameRef → legacy wordConnectLevel.
+    const gameRef =
+      narrative?.gameRef ??
+      foundLevel.gameRef ??
+      (typeof foundLevel.wordConnectLevel === 'number'
+        ? { gameId: 'word-connect' as const, levelId: foundLevel.wordConnectLevel }
+        : { gameId: 'word-connect' as const, levelId: foundLevel.levelNumber });
 
     const inferredFolder = buildInferredFolder(foundChapter.index, levelIndexInChapter);
 
@@ -337,6 +373,7 @@ class CampaignManager {
 
     return {
       levelId: foundLevel.id,
+      campaignLevelId: `level_${foundLevel.levelNumber}`,
       author: {
         name: 'Kian',
         username: '@kian_ontheroad',
@@ -355,8 +392,8 @@ class CampaignManager {
       caption,
       likes: foundLevel.likes,
       comments,
-      gameId: 'word-connect',
-      gameLevelNumber: foundLevel.wordConnectLevel,
+      gameId: gameRef.gameId,
+      gameLevelNumber: gameRef.levelId,
     };
   }
 }

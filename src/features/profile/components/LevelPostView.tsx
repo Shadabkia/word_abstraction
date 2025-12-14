@@ -12,7 +12,7 @@ import type { CampaignLevelPost, CampaignPostCarouselSlide, Comment } from '@/co
 interface LevelPostViewProps {
   post: CampaignLevelPost;
   onClose: () => void;
-  onStartGame: (gameId: string, levelNumber: number) => void;
+  onStartGame: (gameId: 'word-connect', levelNumber: number, campaignLevelId: string) => void;
 }
 
 function FallbackImage({
@@ -253,7 +253,7 @@ export function LevelPostView({ post, onClose, onStartGame }: LevelPostViewProps
             {isOnStartSlide && (
               <div className="mt-2 mb-4">
                 <button
-                  onClick={() => onStartGame(post.gameId, post.gameLevelNumber)}
+                  onClick={() => onStartGame(post.gameId, post.gameLevelNumber, post.campaignLevelId)}
                   className="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors"
                 >
                   Start Puzzle

@@ -102,4 +102,9 @@ No comments, no likes, no NPC reactions — Arcade is purely mechanical.
 ## Final Essence
 The Arcade Tab is a clean, scrollable list of all available games. Each game opens to a list of its levels, and each level opens to a simple start screen. No search, no categories — just instant access to quick-play sessions.
 
+## Launch Contract
+Arcade launches games using a `gameRef`:
+- `gameId`
+- `levelId`
+
 

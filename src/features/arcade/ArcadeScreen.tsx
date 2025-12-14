@@ -7,7 +7,7 @@ import { getAllWordConnectLevels } from '@/games/word-connect/data/levels/levelR
 import { useGameState } from '@/core/state/gameState';
 
 interface ArcadeScreenProps {
-  onPlayGame: (gameId: string, levelNumber?: number) => void;
+  onPlayGame: (ref: { gameId: 'word-connect'; levelId: number }) => void;
 }
 
 const containerVariants = {
@@ -57,7 +57,7 @@ export function ArcadeScreen({ onPlayGame }: ArcadeScreenProps) {
         levels={levels}
         onSelectLevel={(levelNumber) => {
           setSelectedGame(null);
-          onPlayGame('word-connect', levelNumber);
+          onPlayGame({ gameId: 'word-connect', levelId: levelNumber });
         }}
         onBack={() => setSelectedGame(null)}
       />

@@ -97,6 +97,11 @@ A 3-column grid, mimicking Instagram’s gallery.
     - Current: Animated bounce or glow.
     - Locked: Grayscale + padlock.
 
+**Thumbnail Asset Convention (for the grid)**
+- Each level folder may include a square thumbnail:
+  - `public/campaign/images/chX/CHX-LYY/thumbnail.(webp|png|jpg|jpeg|svg)`
+- The UI will try common extensions in a preferred order (webp → png → jpg → jpeg → svg).
+
 **Sorting**
 - Ordered left → right, top → bottom.
 - Levels grouped by chapter.
@@ -157,6 +162,13 @@ Campaign post content (comic slides, start screen frame, comments, caption) is a
 - **Per-level narrative JSON:** `src/assets/content/campaign/levels/**`
 - **Comic/start-screen images:** `public/campaign/images/**` (served as `/campaign/images/**`)
 - The runtime resolves image URLs from the images directory (build-friendly).
+
+### 5. Launching the Game (Campaign → Puzzle)
+Each campaign post launches a specific game session using a `gameRef`:
+- **gameId**: which game module to mount (e.g. `word-connect`)
+- **levelId**: which level inside that game to load (number for Word Connect)
+
+`gameRef` is defined in `campaign.json` and may be overridden per-level in `campaign/levels/**` so the narrative file can be the “single source of truth” for that level.
 
 ## Progression Features
 
