@@ -23,7 +23,7 @@ export interface LevelMetadata {
  */
 export function getAllWordConnectLevels(): LevelMetadata[] {
   const chapters = [
-    { meta: chapter1Meta, folder: 'chapter1', startLevel: 1 },
+    { meta: chapter1Meta, folder: 'chapter1', startLevel: 0 },
     { meta: chapter2Meta, folder: 'chapter2', startLevel: 6 },
     { meta: chapter3Meta, folder: 'chapter3', startLevel: 11 },
     { meta: chapter4Meta, folder: 'chapter4', startLevel: 16 },

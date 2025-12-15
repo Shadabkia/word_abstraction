@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "id": "lvl_1_0_daily_life",
+    "chapter": 1,
+    "level_index": 0,
+    "version": "1.0.0",
+    "title": "زندگی روزمره",
+    "description": "Welcome! Organize items from your daily life: breakfast and wardrobe.",
+    "difficulty": 1,
+    "tags": ["tutorial", "intro", "food", "clothing", "static"],
+    "constraints": {
+      "no_initial_matches": true
+    },
+    "visuals": {
+      "background": {
+        "src": "/backgrounds/CH01L01.png",
+        "position": "center"
+      }
+    }
+  },
+
+  "dictionary": {
+    "tiles": [
+      { "id": "t_cheese", "text": "پنیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_butter", "text": "کره", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_cream", "text": "خامه", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+      { "id": "t_milk",   "text": "شیر", "type": "word", "visuals": { "color_hex": "#FFFDD0" } },
+
+      { "id": "t_sangak", "text": "نان سنگک", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_barbari","text": "نان بربری", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_toast",  "text": "نان تست", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+      { "id": "t_lavash", "text": "نان لواش", "type": "word", "visuals": { "color_hex": "#DEB887" } },
+
+      { "id": "t_jam",    "text": "مربا", "type": "word", "visuals": { "color_hex": "#FF69B4" } },
+      { "id": "t_honey",  "text": "عسل", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_tea",    "text": "چای شیرین", "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sugar",  "text": "شکر", "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+
+      { "id": "t_suit",     "text": "کت‌شلوار", "type": "word", "visuals": { "color_hex": "#2F4F4F" } },
+      { "id": "t_shirt",    "text": "پیراهن",   "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_tie",      "text": "کراوات",   "type": "word", "visuals": { "color_hex": "#DC143C" } },
+      { "id": "t_vest",     "text": "جلیقه",    "type": "word", "visuals": { "color_hex": "#708090" } },
+
+      { "id": "t_scarf",    "text": "شال‌گردن", "type": "word", "visuals": { "color_hex": "#FF8C00" } },
+      { "id": "t_hat",      "text": "کلاه",     "type": "word", "visuals": { "color_hex": "#8B0000" } },
+      { "id": "t_gloves",   "text": "دستکش",    "type": "word", "visuals": { "color_hex": "#A0522D" } },
+      { "id": "t_jacket",   "text": "کاپشن",    "type": "word", "visuals": { "color_hex": "#00008B" } },
+
+      { "id": "t_shoes",    "text": "کفش",      "type": "word", "visuals": { "color_hex": "#8B4513" } },
+      { "id": "t_sneakers", "text": "کتونی",    "type": "word", "visuals": { "color_hex": "#FFFFFF" } },
+      { "id": "t_boots",    "text": "چکمه",     "type": "word", "visuals": { "color_hex": "#000000" } },
+      { "id": "t_sandals",  "text": "صندل",     "type": "word", "visuals": { "color_hex": "#D2B48C" } }
+    ]
+  },
+
+  "mechanics": {
+    "groups": [
+      {
+        "id": "grp_dairy",
+        "display_name": "لبنیات (Dairy)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_cheese", "t_butter", "t_cream", "t_milk"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_breads",
+        "display_name": "نان‌ها (Breads)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_sangak", "t_barbari", "t_toast", "t_lavash"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_sweet",
+        "display_name": "شیرینی‌جات (Sweets)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_jam", "t_honey", "t_tea", "t_sugar"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_formal",
+        "display_name": "لباس رسمی (Formal)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_suit", "t_shirt", "t_tie", "t_vest"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_winter",
+        "display_name": "لباس گرم (Winter)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_scarf", "t_hat", "t_gloves", "t_jacket"]
+        },
+        "outcomes": { "action": "lock_row" }
+      },
+      {
+        "id": "grp_footwear",
+        "display_name": "پاپوش (Footwear)",
+        "behavior": "final",
+        "requirements": {
+          "trigger_ids": ["t_shoes", "t_sneakers", "t_boots", "t_sandals"]
+        },
+        "outcomes": { "action": "lock_row" }
+      }
+    ]
+  },
+
+  "layout": {
+    "rows": 6,
+    "cols": 4,
+    "initial_grid": [
+      ["t_cheese",  "t_suit",    "t_butter",  "t_sangak"],
+      ["t_scarf",   "t_barbari", "t_hat",     "t_toast"],
+      ["t_jam",     "t_shoes",   "t_honey",   "t_cream"],
+      ["t_shirt",   "t_lavash",  "t_tie",     "t_sneakers"],
+      ["t_gloves",  "t_tea",     "t_jacket",  "t_sugar"],
+      ["t_vest",    "t_boots",   "t_milk",    "t_sandals"]
+    ],
+    "shuffle_logic": "Interwoven Pattern: Each row contains tiles from 2-3 different categories, creating a mixed daily life scenario. Dairy items are distributed across rows 1, 3, and 6. Breads in rows 1, 2, and 4. Sweets in rows 3 and 5. Formal wear in rows 1, 4, and 6. Winter clothes in rows 2 and 5. Footwear in rows 3, 4, and 6."
+  }
+}
+
