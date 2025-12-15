@@ -26,12 +26,8 @@ export function CategoryRow({ name, words }: CategoryRowProps) {
               <span className="font-bold text-[var(--color-climate-text-primary)] text-base sm:text-lg truncate drop-shadow-sm">{name}</span>
               <Star className="w-3.5 h-3.5 text-[var(--color-climate-highlight)] fill-[var(--color-climate-highlight)] drop-shadow-sm" />
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {words.map((word, i) => (
-                <span key={i} className="inline-block bg-white/60 px-2.5 py-0.5 rounded-md text-[var(--color-climate-text-primary)] text-sm font-semibold whitespace-nowrap border border-white/40 shadow-sm">
-                  {word}
-                </span>
-              ))}
+            <div className="text-[var(--color-climate-text-primary)] text-sm font-semibold truncate leading-relaxed opacity-90">
+              {words.join(', ')}
             </div>
           </div>
         </div>
