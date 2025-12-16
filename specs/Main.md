@@ -12,6 +12,9 @@ This document serves as the entry point for all specifications.
 - **[Architecture](Architecture.md)**: Technical stack, directory structure, and module design.
 - **[Architectural Principles](Architectural_Principles.md)**: Core design philosophies, data-driven content approach, and debugging strategy.
 
+## Business & Operations
+- **[Business Plan](Business_Plan.md)**: Revenue model, monetization strategy, and growth milestones.
+
 ## Feature Specifications
 
 ### The Five Core Tabs
