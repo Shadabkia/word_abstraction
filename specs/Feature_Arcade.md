@@ -13,8 +13,8 @@
 ----------------------------
 |   Title: Arcade          |
 ----------------------------
-|   List of Game Cards     |
-|   (vertical scroll)      |
+|   Grid of Game Modes     |
+|   (2 columns)            |
 ----------------------------
 ```
 
@@ -22,20 +22,19 @@
 - No categories.
 - Minimal UI footprint.
 
-## Game List (Main Screen)
+## Game Grid (Main Screen)
 
-A vertical list of Game Cards. Each card represents a single game type in the Pars Ra Pas ecosystem.
+A 2-column grid of large, colorful cards representing different **Game Types**.
 
 **Game Card Contents**
-- Game Icon (illustrative, sticker-like)
-- Game Title
+- Game Icon (large, centered)
+- Game Title (e.g., "Word Connect", "Word Search")
 - Short subtitle (1-line explanation)
-- Optional small badges: “NEW”, “Updated”, “Unfinished”
-- Small indicator showing: X Levels Available, Progress (e.g., 7/20)
+- Vibrant gradient background specific to game
 
 **Interaction**
-- Tap → opens Game Detail View.
-- Card has subtle bounce on tap (Instagram-like delight).
+- Tap → opens Game Detail View (Level Selector).
+- Card has distinct "press" animation (tactile feel).
 
 ## Game Detail View
 
@@ -106,5 +105,6 @@ The Arcade Tab is a clean, scrollable list of all available games. Each game ope
 Arcade launches games using a `gameRef`:
 - `gameId`
 - `levelId`
+
 
 

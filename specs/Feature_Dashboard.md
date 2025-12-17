@@ -56,12 +56,16 @@ This is the main call-to-action of the entire game.
 - **Behavior**: Pulses softly; always visible above the fold; tapping opens the Level Post View for the next campaign level.
 - **Narrative**: Feels like “Kian’s next memory waiting to be posted.”
 
-### 3. Quick Access Cards (Shortcuts to Arcade)
-Directly below the Hero Card are 2–4 small square cards pointing into popular Arcade content.
+### 3. Quick Access Buttons (Daily Actions)
+Directly below the Hero Card are 3 large, tappable buttons for key daily actions.
 
-- **Examples**: Daily Puzzle, Time Attack, Zen Mode, Random Game.
-- **Visuals**: Sticker-like icon, Header + short line, light tap animation.
-- **Purpose**: Let players jump into bite-sized gameplay without switching tabs.
+- **Structure**: 3-column layout.
+- **Buttons**:
+  1. **Daily Gift** (Red/Pink): Access daily rewards.
+  2. **Garage** (Blue): Customize the Van.
+  3. **Gallery** (Purple): View collected memories/images.
+- **Visuals**: Large icon, label below, distinct colorful gradients.
+- **Purpose**: High-value daily retention actions.
 
 ### 4. Status Widgets
 Two compact widgets visually representing player progression.
@@ -115,5 +119,6 @@ The Dashboard includes an adaptive, context-aware recommendation banner that int
 
 ## Final Essence
 The Dashboard is the player’s home base — a warm, tactile hub centered on the Hero Card (“Continue Journey”), with shortcuts to Arcade modes, dynamic narrative context (location + greeting), and progression widgets. It is the most inviting part of the app and the main bridge into the story.
+
 
 

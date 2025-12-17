@@ -8,9 +8,10 @@ interface QuickAccessCardProps {
   color: string;
   onClick: () => void;
   badge?: string;
+  className?: string;
 }
 
-export function QuickAccessCard({ title, icon: Icon, color, onClick, badge }: QuickAccessCardProps) {
+export function QuickAccessCard({ title, icon: Icon, color, onClick, badge, className }: QuickAccessCardProps) {
   // Map color names to gradient and shadow styles
   const colorStyles: Record<string, { gradient: string; shadow: string; text: string }> = {
     blue: {
@@ -38,6 +39,11 @@ export function QuickAccessCard({ title, icon: Icon, color, onClick, badge }: Qu
       shadow: 'shadow-pink-200',
       text: 'text-pink-600'
     },
+    red: {
+      gradient: 'from-red-400 to-red-600',
+      shadow: 'shadow-red-200',
+      text: 'text-red-600'
+    },
   };
 
   const style = colorStyles[color] || colorStyles.blue;
@@ -47,7 +53,7 @@ export function QuickAccessCard({ title, icon: Icon, color, onClick, badge }: Qu
       onClick={onClick}
       whileHover={{ y: -5, scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-lg border-2 border-slate-100 hover:border-slate-200 transition-all cursor-pointer"
+      className={`flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-lg border-2 border-slate-100 hover:border-slate-200 transition-all cursor-pointer ${className || ''}`}
     >
       <motion.div 
         className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${style.gradient} flex items-center justify-center mb-2 ${style.shadow} shadow-lg relative`}

@@ -90,48 +90,51 @@ export function ArcadeScreen({ onPlayGame }: ArcadeScreenProps) {
         <p className="text-slate-600 text-sm ml-1">Quick games for short breaks. 🎮</p>
       </motion.div>
       
-      <div className="space-y-5 pb-20">
+      <div className="grid grid-cols-2 gap-4 pb-20">
         <motion.div variants={itemVariants}>
           <GameCard
             title="Word Connect"
-            description="Connect letters to find hidden words in this classic puzzle."
+            description="Connect letters to find words"
             icon="🧩"
             color="indigo"
-            progress="50 Levels"
             onPlay={() => setSelectedGame('word-connect')}
+            variant="grid"
           />
         </motion.div>
 
         <motion.div variants={itemVariants}>
           <GameCard
             title="Word Search"
-            description="Find all the hidden words in the grid."
+            description="Find hidden words in the grid"
             icon="🔍"
             color="green"
             onPlay={() => console.log('Word Search')}
             isComingSoon
+            variant="grid"
           />
         </motion.div>
 
         <motion.div variants={itemVariants}>
           <GameCard
             title="Crossword"
-            description="Fill the grid with words from clues."
+            description="Solve clues to fill the board"
             icon="📝"
             color="orange"
             onPlay={() => console.log('Crossword')}
             isComingSoon
+            variant="grid"
           />
         </motion.div>
         
         <motion.div variants={itemVariants}>
           <GameCard
-            title="Guess The Word"
-            description="Can you guess the word in 6 tries?"
+            title="Guess It"
+            description="Guess the word in 6 tries"
             icon="🤔"
             color="pink"
             onPlay={() => console.log('Guess')}
             isComingSoon
+            variant="grid"
           />
         </motion.div>
       </div>

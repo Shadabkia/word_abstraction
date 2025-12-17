@@ -11,18 +11,63 @@ interface GameCardProps {
   progress?: string;
   onPlay: () => void;
   isComingSoon?: boolean;
+  variant?: 'list' | 'grid';
 }
 
-export function GameCard({ title, description, icon, color, progress, onPlay, isComingSoon = false }: GameCardProps) {
+export function GameCard({ title, description, icon, color, progress, onPlay, isComingSoon = false, variant = 'list' }: GameCardProps) {
   // Dynamic gradient based on color prop
   const gradients: Record<string, string> = {
     indigo: 'from-indigo-500 via-purple-500 to-pink-500',
     pink: 'from-pink-500 via-rose-500 to-orange-400',
     orange: 'from-orange-500 via-amber-500 to-yellow-500',
     green: 'from-emerald-500 via-teal-500 to-cyan-500',
+    red: 'from-red-500 via-red-600 to-orange-500',
+    blue: 'from-blue-400 via-blue-500 to-indigo-500',
   };
 
   const gradientClass = gradients[color] || gradients.indigo;
+
+  if (variant === 'grid') {
+    return (
+      <motion.div 
+        onClick={!isComingSoon ? onPlay : undefined}
+        whileHover={!isComingSoon ? { scale: 1.05, y: -5 } : {}}
+        whileTap={!isComingSoon ? { scale: 0.95 } : {}}
+        className={`
+          relative bg-gradient-to-br from-white to-slate-50 p-4 rounded-3xl shadow-xl border-2 border-slate-100 
+          flex flex-col items-center text-center gap-3 h-full
+          ${!isComingSoon ? 'cursor-pointer' : 'opacity-60'}
+          transition-all duration-150 overflow-hidden
+        `}
+      >
+        <motion.div 
+          className={`
+            w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-lg relative
+            bg-gradient-to-br ${isComingSoon ? 'from-slate-200 to-slate-300' : gradientClass}
+          `}
+        >
+           <span className="drop-shadow-lg">{icon}</span>
+        </motion.div>
+
+        <div>
+          <h3 className={`font-bold text-lg leading-tight ${isComingSoon ? 'text-slate-400' : 'text-slate-800'}`}>
+            {title}
+          </h3>
+          <p className="text-slate-500 text-xs mt-1 line-clamp-2">
+            {description}
+          </p>
+        </div>
+
+        {isComingSoon && (
+          <div className="mt-auto">
+             <span className="bg-slate-100 text-slate-400 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+               Soon
+             </span>
+          </div>
+        )}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div 

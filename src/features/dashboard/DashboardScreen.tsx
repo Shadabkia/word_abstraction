@@ -4,7 +4,7 @@ import { useGameState } from '@/core/state/gameState';
 import { contentManager } from '@/core/services/contentManager';
 import { HeroCard } from './components/HeroCard';
 import { QuickAccessCard } from './components/QuickAccessCard';
-import { Calendar, Zap, Trophy, Gift } from 'lucide-react';
+import { Gift, Truck, Grid } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -88,38 +88,30 @@ export function DashboardScreen() {
         />
       </motion.div>
 
-      {/* Quick Access Grid */}
+      {/* Quick Access Grid - Updated to match design (3 main buttons) */}
       <motion.div variants={itemVariants}>
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <span className="text-lg">⚡</span>
-          Daily Activities
-        </h3>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="flex gap-4">
           <QuickAccessCard 
-            title="Daily" 
-            icon={Calendar} 
-            color="green" 
-            onClick={() => console.log('Daily')} 
-            badge="1"
-          />
-          <QuickAccessCard 
-            title="Challenges" 
-            icon={Zap} 
-            color="orange" 
-            onClick={() => console.log('Challenges')} 
-          />
-          <QuickAccessCard 
-            title="Rankings" 
-            icon={Trophy} 
-            color="blue" 
-            onClick={() => console.log('Rankings')} 
-          />
-          <QuickAccessCard 
-            title="Rewards" 
+            title="Daily Gift" 
             icon={Gift} 
+            color="red" 
+            onClick={() => console.log('Daily Gift')} 
+            badge="FREE"
+            className="flex-1 aspect-square"
+          />
+          <QuickAccessCard 
+            title="Garage" 
+            icon={Truck} 
+            color="blue" 
+            onClick={() => console.log('Garage')}
+            className="flex-1 aspect-square" 
+          />
+          <QuickAccessCard 
+            title="Gallery" 
+            icon={Grid} 
             color="purple" 
-            onClick={() => console.log('Rewards')} 
-            badge="Free"
+            onClick={() => console.log('Gallery')}
+            className="flex-1 aspect-square" 
           />
         </div>
       </motion.div>

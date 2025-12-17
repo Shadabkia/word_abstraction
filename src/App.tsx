@@ -107,6 +107,9 @@ export default function App() {
       <>
         <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden ${isFullscreen ? 'h-screen' : ''}`}>
           
+          {/* Background Texture */}
+          <div className="absolute inset-0 bg-pattern-subtle opacity-[0.03] pointer-events-none" />
+
           {/* Decorative floating elements - hidden (portrait-first) */}
           <div className="hidden absolute inset-0 pointer-events-none overflow-hidden opacity-30">
             <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '0s' }} />
@@ -123,12 +126,12 @@ export default function App() {
             {activeTab === 'profile' && <ProfileScreen onPlayGame={handlePlayGame} />}
           </div>
 
-          {/* Bottom Navigation Bar - Enhanced */}
+          {/* Bottom Navigation Bar - Enhanced Floating Pill */}
           <motion.div 
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-            className={`absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 px-6 py-4 pb-6 flex items-center justify-between rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.08)] z-40 ${isFullscreen ? 'max-w-md mx-auto rounded-t-3xl mb-4' : ''}`}
+            className={`absolute bottom-6 left-4 right-4 bg-white/90 backdrop-blur-xl border border-white/50 px-2 py-2 flex items-center justify-between rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-40 ${isFullscreen ? 'max-w-md mx-auto mb-4' : ''}`}
           >
             
             <NavButton 
@@ -143,9 +146,9 @@ export default function App() {
               icon={Grid}
             />
             
-            {/* Center Dashboard Button - Enhanced */}
+            {/* Center Dashboard Button - Floating */}
             <motion.div 
-              className="relative -top-6"
+              className="relative -top-8 mx-2"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -154,7 +157,7 @@ export default function App() {
                 className={`
                   w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
                   ${activeTab === 'dashboard' 
-                    ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 scale-110 ring-4 ring-indigo-100 shadow-indigo-200' 
+                    ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 scale-110 ring-4 ring-indigo-50 shadow-indigo-300/50' 
                     : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-indigo-200'
                   }
                 `}
@@ -229,23 +232,23 @@ function NavButton({ active, onClick, icon: Icon, badge }: { active: boolean, on
       onClick={onClick}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      className={`p-2 rounded-xl transition-all relative ${
+      className={`p-3 rounded-full transition-all relative ${
         active 
-          ? 'text-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-md' 
+          ? 'text-indigo-600 bg-indigo-50 shadow-inner' 
           : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
       }`}
     >
       <motion.div
-        animate={active ? { y: [0, -2, 0] } : {}}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatType: "loop" }}
+        animate={active ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+        transition={{ duration: 0.5 }}
       >
-        <Icon className={`w-7 h-7 ${active ? 'fill-current' : ''}`} strokeWidth={active ? 2.5 : 2} />
+        <Icon className={`w-6 h-6 ${active ? 'fill-current' : ''}`} strokeWidth={active ? 2.5 : 2} />
       </motion.div>
       {badge !== undefined && badge > 0 && (
         <motion.div 
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+          className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
         >
           <span className="text-white text-[10px] font-bold">{badge > 9 ? '9+' : badge}</span>
         </motion.div>
