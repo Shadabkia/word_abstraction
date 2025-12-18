@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GameCard } from './components/GameCard';
 import { LevelSelector } from './components/LevelSelector';
 import { Gamepad2 } from 'lucide-react';
 import { getAllWordConnectLevels } from '@/games/word-connect/data/levels/levelRegistry';
-import { useGameState } from '@/core/state/gameState';
 
 interface ArcadeScreenProps {
   onPlayGame: (ref: { gameId: 'word-connect'; levelId: number }) => void;
+  selectedGameId?: string | null;
+  onSelectGame?: (gameId: string) => void;
+  onCloseGameSelector?: () => void;
 }
 
 const containerVariants = {
@@ -32,9 +34,14 @@ const itemVariants = {
   }
 };
 
-export function ArcadeScreen({ onPlayGame }: ArcadeScreenProps) {
-  const [selectedGame, setSelectedGame] = useState<string | null>(null);
-  const { progress } = useGameState();
+export function ArcadeScreen({
+  onPlayGame,
+  selectedGameId,
+  onSelectGame,
+  onCloseGameSelector,
+}: ArcadeScreenProps) {
+  const [uncontrolledSelectedGame, setUncontrolledSelectedGame] = useState<string | null>(null);
+  const selectedGame = selectedGameId !== undefined ? selectedGameId : uncontrolledSelectedGame;
 
   // If Word Connect is selected, show level selector
   if (selectedGame === 'word-connect') {
@@ -56,10 +63,16 @@ export function ArcadeScreen({ onPlayGame }: ArcadeScreenProps) {
         gameName="Word Connect"
         levels={levels}
         onSelectLevel={(levelNumber) => {
-          setSelectedGame(null);
+          if (!onSelectGame && !onCloseGameSelector) setUncontrolledSelectedGame(null);
           onPlayGame({ gameId: 'word-connect', levelId: levelNumber });
         }}
-        onBack={() => setSelectedGame(null)}
+        onBack={() => {
+          if (onCloseGameSelector) {
+            onCloseGameSelector();
+            return;
+          }
+          setUncontrolledSelectedGame(null);
+        }}
       />
     );
   }
@@ -97,7 +110,13 @@ export function ArcadeScreen({ onPlayGame }: ArcadeScreenProps) {
             description="Connect letters to find words"
             icon="🧩"
             color="indigo"
-            onPlay={() => setSelectedGame('word-connect')}
+            onPlay={() => {
+              if (onSelectGame) {
+                onSelectGame('word-connect');
+                return;
+              }
+              setUncontrolledSelectedGame('word-connect');
+            }}
             variant="grid"
           />
         </motion.div>

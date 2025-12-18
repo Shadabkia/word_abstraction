@@ -127,6 +127,12 @@ A 3-column grid with generous spacing, optimized for touch interaction.
 
 When tapping a level tile, the player enters a post-like detail view.
 
+### Navigation Contract (Mobile Back)
+- Back from the post view returns to the Profile grid (chapter + level tiles).
+- If the player launches a puzzle from the post view:
+  - Back from the puzzle returns to the exact place they came from (typically the post view).
+  - The experience should feel like a natural “drill-in / drill-out” stack, not a tab jump.
+
 ### 1. Header
 - Kian’s avatar + username
 - “Location” field (auto-filled by chapter city)

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, MapPin } from 'lucide-react';
 import { useGameState } from '@/core/state/gameState';
@@ -7,6 +7,9 @@ import { LevelPostView } from './components/LevelPostView';
 
 interface ProfileScreenProps {
   onPlayGame?: (ref: { gameId: 'word-connect'; levelId: number; campaignLevelId: string }) => void;
+  selectedLevelId?: string | null;
+  onOpenLevel?: (levelId: string) => void;
+  onCloseLevel?: () => void;
 }
 
 function FallbackImage({
@@ -34,10 +37,16 @@ function FallbackImage({
   );
 }
 
-export function ProfileScreen({ onPlayGame }: ProfileScreenProps) {
+export function ProfileScreen({
+  onPlayGame,
+  selectedLevelId,
+  onOpenLevel,
+  onCloseLevel,
+}: ProfileScreenProps) {
   const { user, progress } = useGameState();
   const [selectedChapter, setSelectedChapter] = useState('chapter_1');
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const [uncontrolledSelectedLevel, setUncontrolledSelectedLevel] = useState<string | null>(null);
+  const selectedLevel = selectedLevelId !== undefined ? selectedLevelId : uncontrolledSelectedLevel;
 
   // Convert completed level IDs to numbers for campaign manager
   const completedLevelNumbers = progress.completedLevels
@@ -54,24 +63,38 @@ export function ProfileScreen({ onPlayGame }: ProfileScreenProps) {
 
   // Handle level click
   const handleLevelClick = (levelId: string) => {
-    setSelectedLevel(levelId);
+    if (onOpenLevel) {
+      onOpenLevel(levelId);
+      return;
+    }
+    setUncontrolledSelectedLevel(levelId);
   };
 
   // Close post view
   const handleClosePost = () => {
-    setSelectedLevel(null);
+    if (onCloseLevel) {
+      onCloseLevel();
+      return;
+    }
+    setUncontrolledSelectedLevel(null);
   };
 
   // Start game from post view
   const handleStartGame = (gameId: 'word-connect', levelNumber: number, campaignLevelId: string) => {
-    setSelectedLevel(null);
+    // If this screen is controlled by the app shell, keep the post in history so back returns here.
+    if (!onOpenLevel && !onCloseLevel) {
+      setUncontrolledSelectedLevel(null);
+    }
     if (onPlayGame) {
       onPlayGame({ gameId, levelId: levelNumber, campaignLevelId });
     }
   };
 
   // Get post data for selected level
-  const selectedLevelPost = selectedLevel ? campaignManager.getLevelAsPost(selectedLevel) : null;
+  const selectedLevelPost = useMemo(
+    () => (selectedLevel ? campaignManager.getLevelAsPost(selectedLevel) : null),
+    [selectedLevel]
+  );
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">

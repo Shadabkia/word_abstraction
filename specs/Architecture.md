@@ -143,7 +143,10 @@ All JSON files include a `"version": 1` field to allow future migrations.
 -   The `App.tsx` shell manages the top-level 5-tab navigation.
 -   When a game is active (`activeGame` state is not null), the shell unmounts tabs and renders the game module full-screen.
 -   On game completion, `onComplete` callback updates `gameState`, which triggers content unlocks across Feed/Messages/Profile.
--   Exit button returns to the Arcade tab.
+-   **Back behavior (mobile-first):**
+    -   Back from an in-tab “detail” view (e.g., campaign post) returns to its tab root.
+    -   Back from a game returns to the exact previous in-app view (tab root or in-tab detail).
+    -   Tab switching does not add to the back stack (back should not “walk tabs”).
 
 ## 7. Future Enhancements
 -   **Debug Overlay**: Inspect state, unlock all content, jump to levels

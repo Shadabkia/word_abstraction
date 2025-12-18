@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Truck, Grid, MessageCircle, User, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
@@ -10,12 +10,16 @@ import { DebugOverlay } from './shared/components/DebugOverlay';
 import { DeviceSimulatorBar, DeviceModel } from './shared/components/DeviceSimulatorBar';
 import { useGameState } from './core/state/gameState';
 import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
-
-type Tab = 'feed' | 'arcade' | 'dashboard' | 'messages' | 'profile';
+import type { AppTab } from '@/core/navigation/types';
+import * as historyNav from '@/core/navigation/historyNav';
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [activeGame, setActiveGame] = useState<GameLaunchRef | null>(null);
+  const [nav, setNav] = useState<historyNav.NavState>(() => {
+    if (typeof window === 'undefined') return { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
+    return historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
+  });
   const [debugOpen, setDebugOpen] = useState(false);
   const [deviceModel, setDeviceModel] = useState<DeviceModel>('iphone-14-pro');
   const [scale, setScale] = useState(100);
@@ -25,6 +29,30 @@ export default function App() {
   const unreadCount = inbox.activeThreads.length - inbox.readMessages.length;
 
   // Debug shortcut: Press Ctrl+Shift+D to open debug panel
+  useEffect(() => {
+    // Ensure we have a root history entry and subscribe to back/forward.
+    const initial = historyNav.init('dashboard');
+    setNav(initial);
+    const unsub = historyNav.subscribe(setNav);
+    return unsub;
+  }, []);
+
+  // Android hardware back: pop in-app stack; root exits.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    const remove = CapacitorApp.addListener('backButton', () => {
+      const current = historyNav.getNavState();
+      if (historyNav.canGoBack(current)) {
+        historyNav.back();
+        return;
+      }
+      CapacitorApp.exitApp();
+    });
+    return () => {
+      remove.then((h) => h.remove());
+    };
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'D') {
@@ -36,12 +64,37 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const activeGame: GameLaunchRef | null = nav.kind === 'game' ? nav.ref : null;
+  const activeTab: AppTab = useMemo(() => {
+    switch (nav.kind) {
+      case 'tab':
+        return nav.tab;
+      case 'profilePost':
+        return 'profile';
+      case 'arcadeGame':
+        return 'arcade';
+      case 'game':
+        // Should not matter; game view hides tabs.
+        return 'dashboard';
+    }
+  }, [nav]);
+
+  const profileSelectedLevelId = nav.kind === 'profilePost' ? nav.levelId : null;
+  const arcadeSelectedGameId = nav.kind === 'arcadeGame' ? nav.gameId : null;
+
+  const setTab = (tab: AppTab) => {
+    // Mobile-friendly: tab switches do NOT add to the back stack.
+    historyNav.replace({ kind: 'tab', tab, v: 1, depth: 0 });
+    setNav({ kind: 'tab', tab, v: 1, depth: 0 });
+  };
+
   const handlePlayGame = (ref: GameLaunchRef) => {
-    setActiveGame(ref);
+    historyNav.push({ kind: 'game', ref, v: 1, depth: 2 });
+    setNav({ kind: 'game', ref, v: 1, depth: 2 });
   };
 
   const handleExitGame = () => {
-    setActiveGame(null);
+    historyNav.backOrReplaceTab('arcade');
   };
 
   const handleGameComplete = (score: number) => {
@@ -52,8 +105,8 @@ export default function App() {
     
     // Show success, then return to previous tab
     setTimeout(() => {
-      setActiveGame(null);
-      // Return to arcade or profile based on context
+      // Return to wherever the player was before the game.
+      historyNav.backOrReplaceTab('arcade');
     }, 2000);
   };
 
@@ -121,9 +174,29 @@ export default function App() {
           <div className="flex-1 overflow-y-auto pb-20 scrollbar-hide relative z-10">
             {activeTab === 'dashboard' && <DashboardScreen />}
             {activeTab === 'feed' && <FeedScreen />}
-            {activeTab === 'arcade' && <ArcadeScreen onPlayGame={handlePlayGame} />}
+            {activeTab === 'arcade' && (
+              <ArcadeScreen
+                onPlayGame={handlePlayGame}
+                selectedGameId={arcadeSelectedGameId}
+                onSelectGame={(gameId) => {
+                  historyNav.push({ kind: 'arcadeGame', tab: 'arcade', gameId, v: 1, depth: 1 });
+                  setNav({ kind: 'arcadeGame', tab: 'arcade', gameId, v: 1, depth: 1 });
+                }}
+                onCloseGameSelector={() => historyNav.backOrReplaceTab('arcade')}
+              />
+            )}
             {activeTab === 'messages' && <MessagesScreen />}
-            {activeTab === 'profile' && <ProfileScreen onPlayGame={handlePlayGame} />}
+            {activeTab === 'profile' && (
+              <ProfileScreen
+                onPlayGame={handlePlayGame}
+                selectedLevelId={profileSelectedLevelId}
+                onOpenLevel={(levelId) => {
+                  historyNav.push({ kind: 'profilePost', tab: 'profile', levelId, v: 1, depth: 1 });
+                  setNav({ kind: 'profilePost', tab: 'profile', levelId, v: 1, depth: 1 });
+                }}
+                onCloseLevel={() => historyNav.backOrReplaceTab('profile')}
+              />
+            )}
           </div>
 
           {/* Bottom Navigation Bar - Enhanced Floating Pill */}
@@ -136,13 +209,13 @@ export default function App() {
             
             <NavButton 
               active={activeTab === 'feed'} 
-              onClick={() => setActiveTab('feed')}
+              onClick={() => setTab('feed')}
               icon={Zap}
             />
             
             <NavButton 
               active={activeTab === 'arcade'} 
-              onClick={() => setActiveTab('arcade')}
+              onClick={() => setTab('arcade')}
               icon={Grid}
             />
             
@@ -153,7 +226,7 @@ export default function App() {
               whileTap={{ scale: 0.95 }}
             >
               <button 
-                onClick={() => setActiveTab('dashboard')}
+                onClick={() => setTab('dashboard')}
                 className={`
                   w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
                   ${activeTab === 'dashboard' 
@@ -175,14 +248,14 @@ export default function App() {
 
             <NavButton 
               active={activeTab === 'messages'} 
-              onClick={() => setActiveTab('messages')}
+              onClick={() => setTab('messages')}
               icon={MessageCircle}
               badge={unreadCount > 0 ? unreadCount : undefined}
             />
             
             <NavButton 
               active={activeTab === 'profile'} 
-              onClick={() => setActiveTab('profile')}
+              onClick={() => setTab('profile')}
               icon={User}
             />
           </motion.div>
