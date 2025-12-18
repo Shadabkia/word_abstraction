@@ -15,30 +15,53 @@ The Messages Tab is a simple, Instagram-style messaging inbox where NPCs send me
 
 ```
 -----------------------------------
-|  Header: Messages               |
+|  Header: "Inbox" (centered)    |
+|           + Compose icon        |
 -----------------------------------
-|  Chat List (NPC conversations) |
+|  Chat List (Card-based)        |
 -----------------------------------
 ```
 
-A vertical DM inbox, almost identical to Instagram’s message list.
+A clean, card-based vertical inbox with Instagram-style aesthetics.
 
 ## Components
 
-### 1. Chat List (Inbox)
-Each NPC chat appears as a row.
+### 1. Header
+- **Title**: "Inbox" centered (24px, bold)
+- **Compose Icon**: Edit/pencil icon in top-right corner (touch-optimized)
+- **Background**: White with subtle bottom border
+- **Layout**: Three-column flex (empty, title, icon) for perfect centering
 
-- **Content**:
-    - NPC avatar (round, expressive)
-    - NPC name
-    - Preview of the latest message (1 line)
-    - Timestamp
-    - Unread highlight if new
-    - Optional: icon indicating quest/hint
-- **Sorting**: Unread chats top; others by recency.
-- **Unread State**: Bold name, blue dot, slight elevation.
+### 2. Chat List (Inbox)
+Each NPC chat appears as a white card with rounded corners.
 
-### 2. Chat View (Inside a Conversation)
+- **Card Design**:
+    - White background with rounded corners (16px border-radius)
+    - Shadow on card for depth
+    - 12px spacing between cards
+    - Touch-optimized with scale-down feedback on tap
+    
+- **Card Content**:
+    - **Avatar**: 56px circular with gradient ring (Instagram style)
+      - Outer gradient border matching NPC color
+      - White separator ring
+      - Avatar content inside
+    - **Name**: Bold, 17px, black text
+    - **Preview**: Two lines showing message content
+      - First line: 15px, medium weight, black
+      - Second line: 14px, gray text (repeated preview for emphasis)
+    - **Unread Badge**: Red circular badge (24px) with white number
+      - Positioned on the right side
+      - Only shown when unreadCount > 0
+      
+- **Layout**: Light gray background (#FAFAFA) with padding
+- **Sorting**: Unread chats top; others by recency
+- **Touch Optimization**: 
+  - Minimum 44x44px touch targets
+  - Active state with scale and shadow change
+  - No timestamp shown (simplified design)
+
+### 3. Chat View (Inside a Conversation)
 When tapping a row, player sees a chat history view.
 
 **Structure**:
@@ -56,7 +79,7 @@ When tapping a row, player sees a chat history view.
 - **Bubbles**: NPC messages left-aligned. If Kian “speaks”, it is a system bubble.
 - **No Input Box**: Intentional. Player cannot type. Keeps narrative one-directional.
 
-### 3. Message Types
+### 4. Message Types
 
 - **Quest Messages**: Trigger events leading to new levels (e.g., “Come find me on Enghelab Street”). Tapping may reveal a “Play Level” button.
 - **Lore Messages**: NPC commentary (Mom worrying, Boss yelling).
@@ -74,13 +97,19 @@ Messages appear based on:
 
 ## Design Feel
 
-- Clean, airy, Instagram-style DM layout.
-- Persian warmth in color palette.
-- Soft bounce on new messages.
-- “Typing…” indicator for dramatic effect (NPC-only).
-- Subtle sticker animations.
+- **Card-Based Design**: White cards on light gray background for modern, clean aesthetic
+- **Instagram Influence**: Gradient-ringed avatars, centered header, minimalist layout
+- **Touch-Optimized**: Generous spacing, large touch targets, responsive feedback
+- **Visual Hierarchy**: Bold names, two-line previews, prominent unread badges
+- **Color System**: 
+  - NPC-specific gradient colors for avatars
+  - Red badges for unread (not blue) for stronger contrast
+  - Grayscale text hierarchy for readability
+- **Animations**: Scale-down on tap, smooth transitions
+- **Persian warmth** in NPC gradient color palette
 
 ## Final Essence
-The Messages Tab is a simple, Instagram-like DM inbox where NPCs send read-only messages. These DMs deliver quests, hints, lore, and story updates as the player progresses. Unread chats highlight at the top, and each conversation opens into a clean, narrative-driven chat view with no reply box.
+The Messages Tab is a card-based, Instagram-inspired inbox where NPCs send read-only messages. White cards with gradient-ringed avatars float on a light gray background, creating a clean, modern aesthetic. Each card shows the NPC name and a two-line message preview, with red badges marking unread conversations. The design is fully touch-optimized with generous spacing and responsive feedback. Conversations deliver quests, hints, lore, and story updates, and each opens into a narrative-driven chat view with no reply box.
+
 
 

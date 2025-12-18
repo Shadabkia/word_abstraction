@@ -36,49 +36,63 @@ Vertical scroll is allowed, but the screen is mostly above the fold.
 ## Components
 
 ### 1. Top Bar
-A friendly header that conveys story context.
+A clean, minimalist header that conveys story context.
 
-- **Player Profile Picture** (small circular) → tapping jumps to the Profile tab
-- **Greeting text** (dynamic): “Good Morning, Kian.”, “Evening on the road…”, etc.
-- **Location label**: “Location: Kashan”, “Location: Highway 7”
-- **Small icons**: Messages (DM/Quests), Settings
-- **Subtle animations**: shifting sun/moon icon depending on narrative time.
+- **Greeting text** (26px, bold): "Good Morning, {Player Name}"
+- **Notification Bell**: Top-right corner with red dot indicator for unread notifications
+  - Touch-optimized with padding
+  - Scale-down animation on tap
+- **Location label**: Below greeting with pin icon
+  - Format: "Location, {City}"
+  - 14px, gray text
+- **Layout**: White background, generous padding (20px horizontal, 16px top)
+- **No profile picture** on Dashboard - keeps focus on content
 
-### 2. The Hero Card (Continue Story Button)
-This is the main call-to-action of the entire game.
+### 2. Hero Card Carousel
+The main call-to-action area, featuring a swipeable carousel of featured content.
 
 - **Structure**:
-    - Large illustrated card of the current chapter environment
-    - Title: Next Level Name
-    - Subtitle: short teaser for the level
-    - “Continue Journey” button, big and bouncy
-    - Progress bar for the current chapter (e.g., “Level 12 of 20”)
-- **Behavior**: Pulses softly; always visible above the fold; tapping opens the Level Post View for the next campaign level.
-- **Narrative**: Feels like “Kian’s next memory waiting to be posted.”
+    - **Carousel**: Swipeable cards with spring animations
+    - **Content**:
+      1. **Main Campaign**: Large illustrated card of current chapter (Van icon)
+      2. **Zen Mode**: "Daily Meditation" card (Yoga/Lotus icon)
+      3. **Challenge Mode**: "Time Attack" card (Stopwatch/Timer icon)
+    - **Visuals**:
+      - Large centered icon/emoji (120px)
+      - Rich gradient background specific to content type
+      - Glassmorphism effects for text overlay
+      - Rounded corners (32px)
+      - Bottom text overlay with tag (e.g., "Hero Card") and title
+    - **Navigation**: Dot indicators below the carousel (Red for active, Gray for inactive)
+
+- **Behavior**: 
+  - Auto-advance (optional) or manual swipe
+  - Smooth transitions between cards
+  - Tapping performs the primary action for that card (Play Level, Start Mode)
+  - Scale-down animation on tap
+
+- **Narrative**: Feels like "Kian's next memory waiting to be posted."
 
 ### 3. Quick Access Buttons (Daily Actions)
-Directly below the Hero Card are 3 large, tappable buttons for key daily actions.
+Directly below the Hero Carousel are 3 tappable buttons for key daily actions.
 
-- **Structure**: 3-column layout.
+- **Structure**: 3-column layout with generous spacing.
+- **Card Design**:
+  - **Icon Box**: Gradient-filled rounded square (22px radius) containing the icon
+  - **Label**: Text below the icon box
+  - **Shadows**: Soft shadows for depth
+  - **Touch**: Scale-down effect on tap
 - **Buttons**:
-  1. **Daily Gift** (Red/Pink): Access daily rewards.
-  2. **Garage** (Blue): Customize the Van.
-  3. **Gallery** (Purple): View collected memories/images.
-- **Visuals**: Large icon, label below, distinct colorful gradients.
-- **Purpose**: High-value daily retention actions.
+  1. **Daily Gift** (Orange): Access daily rewards.
+  2. **Garage** (Purple): Customize the Van.
+  3. **Gallery** (Teal): View collected memories/images.
+- **Visuals**: Clean, modern, "app icon" style aesthetic.
 
-### 4. Status Widgets
-Two compact widgets visually representing player progression.
+### 4. Status Widgets (Future Implementation)
+Status widgets like Fuel Gauge and Vibe Meter may be added in future iterations. Currently removed to maintain clean, focused dashboard design.
 
-- **Fuel Gauge (Energy)**: Styled like a retro van dashboard meter. Fills over time. Used for campaign levels.
-- **Vibe Meter (Soft Currency)**: A small bottle, bowl, or abstract “heart spark” container. Shows accumulated Vibes.
-
-### 5. Micro Feed Preview / Notifications
-Small horizontal section at the bottom containing:
-- Latest NPC posts (1–2 thumbnails)
-- Active quests (icon + badge)
-- “New chapter unlocked!” messages
-- “Your followers reacted to your last post!”
+### 5. Notifications
+Handled via notification bell icon in top bar with red dot indicator for unread items.
 
 ## Smart Recommendation Layer (Adaptive Dashboard)
 
@@ -111,14 +125,20 @@ The Dashboard includes an adaptive, context-aware recommendation banner that int
 
 ## Design Philosophy
 
-- **Warm and Alive**: The dashboard feels like Kian is checking his phone each morning.
-- **Narrative-Driven**: Greeting, location, chapter progress all reinforce the story.
-- **Friction-Free**: One tap from Home to gameplay.
-- **Iconic Element**: The Van icon is always centered in the tab bar.
-- **Playful**: Tactile animations, confetti on milestones.
+- **Clean and Modern**: Card-based design with generous spacing and prominent gradients
+- **Touch-First**: Every element optimized for mobile touch interaction
+  - Minimum 44x44px touch targets
+  - Scale-down feedback on all taps
+  - Generous spacing between cards (12px)
+- **Warm and Alive**: The dashboard feels like Kian is checking his phone each morning
+- **Narrative-Driven**: Greeting, location, chapter context reinforce the story
+- **Friction-Free**: One tap from Hero Card to gameplay
+- **Visual Hierarchy**: 
+  - Bold greeting (26px) draws attention
+  - Large hero carousel (4:3 aspect ratio) is the primary CTA
+  - Colorful gradient cards for secondary actions
+- **Instagram Influence**: Clean white background, card-based layout, notification bell
+- **Carousel Ready**: Designed to support multiple hero cards with smooth transitions
 
 ## Final Essence
-The Dashboard is the player’s home base — a warm, tactile hub centered on the Hero Card (“Continue Journey”), with shortcuts to Arcade modes, dynamic narrative context (location + greeting), and progression widgets. It is the most inviting part of the app and the main bridge into the story.
-
-
-
+The Dashboard is the player's home base — a clean, modern hub with a bold greeting, carousel of hero cards, and three vibrant quick-access cards. The design is Instagram-inspired with card-based layout, prominent gradients, and generous spacing. Touch-optimized with scale-down feedback and proper touch targets. The hero carousel is the primary CTA, designed to expand with multiple cards in the future. Every element reinforces the narrative (location, greeting, chapter context) while maintaining a friction-free path to gameplay.

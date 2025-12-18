@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
 import { ChatRow } from './components/ChatRow';
 import { ChatView } from './components/ChatView';
-import { Edit, MessageCircle } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { useGameState } from '@/core/state/gameState';
 import { contentManager } from '@/core/services/contentManager';
 import { useState } from 'react';
@@ -46,52 +46,39 @@ export function MessagesScreen() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white to-slate-50 h-full flex flex-col relative">
+    <div className="bg-[#FAFAFA] h-full flex flex-col relative">
       {/* Hidden overlay prevents interaction with list when chat is open */}
       {selectedThreadId && (
         <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setSelectedThreadId(null)} />
       )}
-      {/* Header - Enhanced */}
-      <div className="px-4 py-4 flex items-center justify-between border-b-2 border-slate-100 bg-white shadow-sm shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <MessageCircle className="w-5 h-5 text-white" />
-          </div>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Messages
-          </h1>
-        </div>
-        <button 
-          className="text-slate-600 active:text-indigo-600 transition-colors p-2 active:bg-indigo-50 rounded-xl touch-manipulation"
-        >
-          <Edit className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Search (Optional placeholder) - Enhanced */}
-      <div className="px-4 py-3 shrink-0">
-        <div className="bg-gradient-to-r from-slate-100 to-slate-50 rounded-2xl h-11 flex items-center px-4 text-slate-400 text-sm border border-slate-200 shadow-sm">
-          🔍 Search
+      {/* Header */}
+      <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
+        <div className="flex-1" />
+        <h1 className="text-2xl font-bold text-slate-900">
+          Inbox
+        </h1>
+        <div className="flex-1 flex justify-end">
+          <button 
+            className="text-slate-700 active:text-slate-900 transition-colors p-2 -m-2 touch-manipulation"
+          >
+            <Edit className="w-6 h-6" strokeWidth={1.5} />
+          </button>
         </div>
       </div>
 
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-        <div className="py-3">
-          <div className="px-4 pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-            <span className="text-base">💬</span>
-            Primary
-          </div>
-          {threads.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <span className="text-4xl">💬</span>
-              </div>
-              <p className="text-slate-400 text-sm font-medium">No messages yet</p>
-              <p className="text-slate-300 text-xs mt-1">Complete levels to unlock conversations!</p>
+      <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+        {threads.length === 0 ? (
+          <div className="p-12 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-4xl">💬</span>
             </div>
-          ) : (
-            threads.map((thread) => {
+            <p className="text-slate-400 text-sm font-medium">No messages yet</p>
+            <p className="text-slate-300 text-xs mt-1">Complete levels to unlock conversations!</p>
+          </div>
+        ) : (
+          <div className="space-y-3 pb-4">
+            {threads.map((thread) => {
               const npc = npcMap[thread.participantId];
               return (
                 <ChatRow 
@@ -105,9 +92,9 @@ export function MessagesScreen() {
                   onClick={() => setSelectedThreadId(thread.id)}
                 />
               );
-            })
-          )}
-        </div>
+            })}
+          </div>
+        )}
       </div>
 
       {/* Chat View Overlay */}

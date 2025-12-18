@@ -10,39 +10,45 @@ interface ChatRowProps {
   onClick: () => void;
 }
 
-export function ChatRow({ id, name, lastMessage, time, unreadCount, avatarColor, onClick }: ChatRowProps) {
+export function ChatRow({ name, lastMessage, unreadCount, avatarColor, onClick }: ChatRowProps) {
   return (
-    <div 
+    <button 
       onClick={onClick}
-      className={`flex items-center gap-3 p-4 active:bg-slate-100 cursor-pointer transition-colors touch-manipulation ${unreadCount > 0 ? 'bg-indigo-50/50' : ''}`}
+      className="w-full bg-white rounded-2xl shadow-sm active:shadow-md active:scale-[0.98] transition-all touch-manipulation p-4"
     >
-      {/* Avatar */}
-      <div className={`w-14 h-14 rounded-full ${avatarColor} flex items-center justify-center border-2 border-white shadow-sm shrink-0`}>
-        <span className="text-white font-bold text-lg">{name[0]}</span>
-      </div>
+      <div className="flex items-center gap-3">
+        {/* Avatar with gradient ring */}
+        <div className="relative flex-shrink-0">
+          <div className={`w-14 h-14 rounded-full p-[2px] ${avatarColor}`}>
+            <div className="w-full h-full rounded-full bg-white p-[2px]">
+              <div className={`w-full h-full rounded-full ${avatarColor} flex items-center justify-center overflow-hidden`}>
+                <span className="text-white font-bold text-lg">{name[0]}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-baseline mb-1">
-          <h3 className={`text-sm truncate ${unreadCount > 0 ? 'font-bold text-slate-900' : 'font-medium text-slate-700'}`}>
+        {/* Content */}
+        <div className="flex-1 min-w-0 text-left">
+          <h3 className="text-[17px] font-bold text-slate-900 mb-1 truncate">
             {name}
           </h3>
-          <span className={`text-xs whitespace-nowrap ${unreadCount > 0 ? 'text-indigo-600 font-bold' : 'text-slate-400'}`}>
-            {time}
-          </span>
-        </div>
-        <div className="flex justify-between items-center">
-          <p className={`text-sm truncate pr-2 ${unreadCount > 0 ? 'font-bold text-slate-800' : 'text-slate-500'}`}>
+          <p className="text-[15px] text-slate-900 font-medium truncate mb-0.5">
             {lastMessage}
           </p>
-          {unreadCount > 0 && (
-            <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center shrink-0">
-              <span className="text-white text-[10px] font-bold">{unreadCount}</span>
-            </div>
-          )}
+          <p className="text-[14px] text-slate-500 truncate">
+            {lastMessage}
+          </p>
         </div>
+
+        {/* Unread Badge */}
+        {unreadCount > 0 && (
+          <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center ml-2">
+            <span className="text-white text-xs font-bold">{unreadCount}</span>
+          </div>
+        )}
       </div>
-    </div>
+    </button>
   );
 }
 

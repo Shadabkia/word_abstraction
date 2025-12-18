@@ -38,64 +38,80 @@ The layout scrolls vertically as a single feed.
 
 ### 1. Profile Header
 
+**Top Bar**
+- Username displayed as title (20px, semibold)
+- Settings icon in top-right corner (gear icon, touch-optimized with padding)
+
 **Profile Picture**
-- Circular avatar, Instagram-style border.
-- Evolves as the campaign progresses (e.g., Office Kian → Darvish Book Kian → Van Kian → Road Kian → Desert Kian).
-- Subtle animation when updated (pulse glow).
+- Circular avatar (80px) with Instagram-style gradient ring:
+  - Outer gradient ring: Purple → Pink → Orange (2.5px)
+  - White separator ring (2.5px)
+  - Avatar content inside
+- Touch-interactive button with scale-down feedback
+- Evolves as the campaign progresses (e.g., Office Kian → Darvish Book Kian → Van Kian → Road Kian → Desert Kian)
 
 **Username & Display Name**
-- Display Name: Kian
-- Username: @pars_ra_pas or dynamically updated username.
+- Display Name appears both in top bar and above bio
+- Bio-section name: bold, 14px
 
 **Bio Section**
-- Short 2–3 lines.
-- Changes as the story progresses (e.g., “Former engineer. Current runaway.” → “Driver of The Onion.” → “Seeker of Vibes.”).
-- Bio updates after some chapters to show personal growth.
+- Short 2–3 lines, 14px
+- Changes as the story progresses (e.g., "Former engineer. Current runaway." → "Driver of The Onion." → "Seeker of Vibes.")
+- Location info below bio with pin icon (13px, gray text)
 
 ### 2. Stats Row
-Styled like Instagram’s “Posts / Followers / Following.”
+Styled like Instagram's "Followers / Following."
 
-- **Posts:** Total completed levels.
-- **Followers:** Increases with story milestones; gives a feeling of narrative progression.
-- **Following:** Mostly static or small changes for humor (e.g., Kian follows 1 person: “Mom”).
+- **Followers:** Displayed with "K" suffix (e.g., "26K"), increases with story milestones; gives a feeling of narrative progression.
+- **Following:** Displayed with "+" suffix (e.g., "80+"), mostly static or small changes for humor (e.g., Kian follows a few NPCs).
 
-Optional additional metrics (shown by tapping a small “stats” button):
-- Vibes collected
-- Regions visited
-- Campaign completion %
+Note: Posts count is not displayed in the stats row to keep focus on social metrics.
 
 ### 3. Chapter Selector (Story Circles)
-A horizontal row of circular icons — Instagram highlight style.
+A horizontal row of circular icons — Instagram highlight style with "Highlights" title.
 
 **Structure**
-- Each circle contains:
-    - Mini illustration (chapter icon)
-    - Chapter number
-    - Lock overlay (if locked)
+- Bold "Highlights" section title (15px, bold)
+- Each circle (70px diameter) contains:
+    - Gradient ring border (3px):
+      - Selected: Purple/pink/orange gradient
+      - Complete: Green gradient with checkmark badge
+      - In-progress: Gray gradient
+      - Locked: Plain gray
+    - White inner border (2px) for separation
+    - Chapter icon/emoji inside circle
+    - Chapter label below (13px)
 
 **Interaction**
-- Scroll horizontally to reveal more chapters.
-- Tap a chapter → level grid filters to show only levels from that chapter.
-- Selected chapter circle expands slightly (zoom 5–10%).
+- Touch-optimized buttons with haptic-like feedback
+- Scroll horizontally to reveal more chapters
+- Tap a chapter → level grid filters to show only levels from that chapter
+- Active state: scale down to 0.90 on tap
 
 **Visual State**
-- Unlocked: Full color.
-- Current Chapter: Pulsing outline.
-- Locked: Greyed with lock icon.
-- Completed: Gradient ring or checkmark.
+- Unlocked: Full color gradient ring based on state
+- Selected: Purple/pink/orange gradient ring
+- Locked: Gray with lock emoji
+- Completed: Green gradient ring + checkmark badge in bottom-right corner
 
 ### 4. Level Grid (Posts Grid)
-A 3-column grid, mimicking Instagram’s gallery.
+A 3-column grid with generous spacing, optimized for touch interaction.
 
 **Level Tile Content**
-- Each tile = one level.
+- Each tile = one level with rounded corners (12px border-radius).
 - Level cover image (comic-style preview or symbolic illustration).
-- Lock overlay if not yet unlocked.
-- Level number (small badge).
-- Completion state:
-    - Solved: Full color.
-    - Current: Animated bounce or glow.
-    - Locked: Grayscale + padlock.
+- Status label below each tile ("completed", "current", "locked", "available").
+- Visual indicators:
+  - **Completed**: Large white checkmark overlay (64px), centered
+  - **Current**: Orange/red ring border (3px), with "current" label
+  - **Locked**: Large white lock icon (48px), grayscale image
+  - **Available**: Full color, no overlay
+
+**Touch Optimization**
+- Minimum spacing of 12px between tiles for comfortable tapping
+- Touch-manipulation CSS for better mobile responsiveness
+- Active state feedback with scale animations (0.95 on tap)
+- All interactive elements meet 44x44px minimum touch target standards
 
 **Thumbnail Asset Convention (for the grid)**
 - Each level folder may include a square thumbnail:
@@ -106,11 +122,6 @@ A 3-column grid, mimicking Instagram’s gallery.
 - Ordered left → right, top → bottom.
 - Levels grouped by chapter.
 - Levels update live after completion.
-
-**Additional Info (optional small overlays)**
-- Difficulty tag
-- Stars or rating
-- Mini icon showing the type of gameplay mode
 
 ## Single Level View (Post View)
 
@@ -190,10 +201,29 @@ Progression signals include:
 - **Familiar but whimsical:** Instagram-like layout but with warm Persian motifs and playful micro-animations.
 - **Narrative-first:** Profile = storybook; Levels = posts; Chapters = highlights.
 - **Clear progression:** Lock states, completion badges, follower growth.
-- **Tactile:** Sticker-like UI, bouncy animations, soft shadows, “satisfying” interactions.
+- **Tactile:** Sticker-like UI, bouncy animations, soft shadows, "satisfying" interactions.
 - **Persian identity:** Typography, icons, subtle textures, cultural cues embedded in visuals.
+- **Polished aesthetics:** 
+  - Profile header with gradient-ringed avatar (Instagram story style)
+  - Settings icon for profile management
+  - Bold "Highlights" section title
+  - Chapter highlights with gradient rings (purple/pink/orange for selected, green for complete, gray for in-progress)
+  - Clean 3-column level grid with 12px gaps on light background (#FAFAFA)
+  - Prominent status labels below each level tile ("completed", "current", "locked")
+  - Large, centered visual indicators (checkmarks, lock icons)
+  - Current level marked with orange ring border
+  - Rounded corners (12px) on all level tiles
+- **Touch-optimized for mobile:**
+  - All interactive elements meet 44x44px minimum touch targets
+  - Generous spacing (12px) between grid items
+  - Touch-manipulation CSS for responsive feedback
+  - Scale-down animations on tap (0.90-0.95)
+  - Active state feedback on all buttons
+  - Optimized for thumb-based navigation
+  - No hover-dependent interactions
 
 ## Final Essence
 The Profile Tab is an Instagram-like narrative hub where the player browses Kian’s life as a series of “posts,” selects chapters and levels through highlight circles and a photo grid, and experiences the campaign story as a social media profile of his journey across Iran.
+
 
 
