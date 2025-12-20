@@ -95,3 +95,5 @@ export const CustomDragPreview: React.FC = () => {
 
   return createPortal(preview, document.body);
 };
+
+
