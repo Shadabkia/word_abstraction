@@ -12,6 +12,7 @@ import { useGameState } from './core/state/gameState';
 import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
 import type { AppTab } from '@/core/navigation/types';
 import * as historyNav from '@/core/navigation/historyNav';
+import * as backGuards from '@/core/navigation/backGuards';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 
@@ -41,6 +42,7 @@ export default function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     const remove = CapacitorApp.addListener('backButton', () => {
+      if (backGuards.tryHandleBack()) return;
       const current = historyNav.getNavState();
       if (historyNav.canGoBack(current)) {
         historyNav.back();
@@ -103,11 +105,8 @@ export default function App() {
       completeLevel(activeGame.campaignLevelId, score, 3); // 3 stars for now
     }
     
-    // Show success, then return to previous tab
-    setTimeout(() => {
-      // Return to wherever the player was before the game.
-      historyNav.backOrReplaceTab('arcade');
-    }, 2000);
+    // Game modules own their celebration UX; completion means "ready to leave".
+    historyNav.backOrReplaceTab('arcade');
   };
 
   const getContainerStyle = (model: DeviceModel) => {

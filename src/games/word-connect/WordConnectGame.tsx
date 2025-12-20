@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, type CSSProperties } from 'react';
+import { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
@@ -11,11 +11,14 @@ import { LanguageProvider } from '../../contexts/LanguageContext';
 import { DragProvider } from '../../contexts/DragContext';
 import { Word, LevelData, LevelJSON } from './data/types';
 import { loadLevel, getAvailableLevels, loadAllLevelMetadata } from './utils/levelLoader';
-import confetti from 'canvas-confetti';
 import { soundManager } from './utils/soundManager';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { gameStorage } from './utils/gameStorage';
 import { Toaster } from '../../shared/ui/sonner';
+import { ConfirmDialog } from '@/shared/ui/dialogs/ConfirmDialog';
+import { CelebrationDialog } from '@/shared/ui/dialogs/CelebrationDialog';
+import { burstConfetti } from '@/shared/effects/confetti';
+import * as backGuards from '@/core/navigation/backGuards';
 
 interface CompletedCategory {
   name: string;
@@ -50,6 +53,9 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [glowingSubcategoryId, setGlowingSubcategoryId] = useState<string | null>(null);
   const [hintedWords, setHintedWords] = useState<Map<string, string>>(new Map());
+  const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
+  const [winOpen, setWinOpen] = useState(false);
+  const levelCompletedRef = useRef(false);
   
   // Level data state
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
@@ -82,6 +88,8 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
     setIsLoading(true);
     setMergedSubcategoriesCount(0);
     setHintedWords(new Map());
+    setWinOpen(false);
+    levelCompletedRef.current = false;
     gameStorage.saveCurrentLevel(level);
     
     loadLevel(level).then(async data => {
@@ -135,6 +143,31 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   }, [shuffledWords, hiddenWordsPool]);
 
   const totalSteps = currentLevelData?.totalSteps || 6;
+
+  const nextLevel = useMemo(() => {
+    const sorted = [...availableLevels].sort((a, b) => a - b);
+    const idx = sorted.indexOf(level);
+    return idx >= 0 ? sorted[idx + 1] ?? null : null;
+  }, [availableLevels, level]);
+
+  const requestExit = () => {
+    if (!onExit) return;
+    setExitConfirmOpen(true);
+  };
+
+  const triggerWin = () => {
+    if (levelCompletedRef.current) return;
+    levelCompletedRef.current = true;
+    setWinOpen(true);
+  };
+
+  useEffect(() => {
+    if (!onExit) return;
+    return backGuards.registerBackGuard(() => {
+      setExitConfirmOpen(true);
+      return true;
+    });
+  }, [onExit]);
 
   // ----------------------------
   // Visual system (JSON-driven)
@@ -291,14 +324,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
         } else {
           soundManager.playSuccess();
           triggerHapticFeedback();
-          // Reduced confetti intensity for "Calm"
-          confetti({
-            particleCount: 30,
-            spread: 40,
-            origin: { y: 0.6 },
-            colors: ['#A8D8EA', '#AA96DA'], // Softer colors
-            disableForReducedMotion: true
-          });
+          void burstConfetti({ preset: 'soft' });
           const newGridRows = [...rows];
           newGridRows[rowIndex] = {
             type: 'completed',
@@ -318,9 +344,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
           const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
           
           if (newTotalCompleted >= totalSteps) {
-            setTimeout(() => {
-              if (onComplete) onComplete(1000);
-            }, 1000);
+            triggerWin();
           }
         }
         
@@ -393,12 +417,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       // Regular category - show as completed row
       soundManager.playSuccess();
       triggerHapticFeedback();
-      confetti({
-        particleCount: 50,
-        spread: 50,
-        origin: { y: 0.6 },
-        colors: ['#6C5DD3', '#FFA2C0']
-      });
+      void burstConfetti({ preset: 'soft' });
       
       const newGridRows = [...rows];
       newGridRows[rowIndex] = {
@@ -420,12 +439,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       // Check for level completion
       const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
       if (newTotalCompleted >= totalSteps) {
-        // Level complete!
-        setTimeout(() => {
-          if (onComplete) {
-            onComplete(1000); // Score/points could be calculated
-          }
-        }, 1500); // Give time for confetti/celebration
+        triggerWin();
       }
     }
   };
@@ -656,7 +670,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
                         <span className="font-medium">{coins}</span>
                      </div>
                      {onExit && (
-                        <button onClick={onExit} className="text-[var(--color-climate-text-secondary)] hover:text-red-500 transition-colors">
+                        <button onClick={requestExit} className="text-[var(--color-climate-text-secondary)] hover:text-red-500 transition-colors">
                             <X className="w-5 h-5" />
                         </button>
                     )}
@@ -754,6 +768,46 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       </DragProvider>
 
       <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
+      <ConfirmDialog
+        open={exitConfirmOpen}
+        onOpenChange={setExitConfirmOpen}
+        title="Leave the puzzle?"
+        description="Your progress here won’t be lost, but you’ll exit the current game screen."
+        confirmLabel="Exit"
+        cancelLabel="Stay"
+        confirmVariant="destructive"
+        onConfirm={() => {
+          setExitConfirmOpen(false);
+          onExit?.();
+        }}
+      />
+      <CelebrationDialog
+        open={winOpen}
+        onOpenChange={setWinOpen}
+        title="You did it!"
+        description="Level complete. That was smooth."
+        primaryLabel={onComplete ? 'Continue' : nextLevel ? 'Next level' : 'Play again'}
+        secondaryLabel={onComplete ? undefined : 'Stay here'}
+        onPrimary={() => {
+          setWinOpen(false);
+          if (onComplete) {
+            onComplete(1000);
+            return;
+          }
+          if (nextLevel) {
+            setLevel(nextLevel);
+            return;
+          }
+          setLevel(level);
+        }}
+        onSecondary={() => setWinOpen(false)}
+        onCelebrate={() => {
+          soundManager.playSuccess();
+          triggerHapticFeedback();
+          void burstConfetti({ preset: 'win' });
+        }}
+        icon="🎉"
+      />
       <Toaster />
     </LanguageProvider>
   );
