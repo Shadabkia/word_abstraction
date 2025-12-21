@@ -352,7 +352,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
             // Delay win dialog to allow completion animation to finish and user to appreciate it
             setTimeout(() => {
               triggerWin();
-            }, 1200);
+            }, 1000);
           }
         }
         
@@ -713,7 +713,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
                   {gridRows.map((row, rowIndex) => (
                     <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
                       {row.type === 'completed' && row.completed ? (
-                        <CategoryRow name={row.completed.name} words={row.completed.words} />
+                        <CategoryRow name={row.completed.name} words={row.completed.words} index={rowIndex} />
                       ) : (
                         <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
                           {row.words?.map((word, colIndex) => (
@@ -841,10 +841,15 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
                     Completed Categories
                 </div>
                 {gridRows
-                    .filter(row => row.type === 'completed' && row.completed)
-                    .map((row, idx) => (
-                      <div key={idx} className="scale-90 origin-top">
-                        <CategoryRow name={row.completed!.name} words={row.completed!.words} />
+                    .map((row, originalIndex) => ({ row, originalIndex }))
+                    .filter(({ row }) => row.type === 'completed' && row.completed)
+                    .map(({ row, originalIndex }) => (
+                      <div key={originalIndex} className="scale-90 origin-top">
+                        <CategoryRow 
+                          name={row.completed!.name} 
+                          words={row.completed!.words} 
+                          index={originalIndex}
+                        />
                       </div>
                 ))}
             </div>
