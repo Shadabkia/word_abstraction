@@ -12,6 +12,7 @@ import { useGameState } from './core/state/gameState';
 import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
 import type { AppTab } from '@/core/navigation/types';
 import * as historyNav from '@/core/navigation/historyNav';
+import * as backGuards from '@/core/navigation/backGuards';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 
@@ -41,6 +42,7 @@ export default function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     const remove = CapacitorApp.addListener('backButton', () => {
+      if (backGuards.tryHandleBack()) return;
       const current = historyNav.getNavState();
       if (historyNav.canGoBack(current)) {
         historyNav.back();
@@ -103,11 +105,8 @@ export default function App() {
       completeLevel(activeGame.campaignLevelId, score, 3); // 3 stars for now
     }
     
-    // Show success, then return to previous tab
-    setTimeout(() => {
-      // Return to wherever the player was before the game.
-      historyNav.backOrReplaceTab('arcade');
-    }, 2000);
+    // Game modules own their celebration UX; completion means "ready to leave".
+    historyNav.backOrReplaceTab('arcade');
   };
 
   const getContainerStyle = (model: DeviceModel) => {
@@ -219,32 +218,31 @@ export default function App() {
               icon={Grid}
             />
             
-            {/* Center Dashboard Button - Floating */}
-            <motion.div 
-              className="relative -top-8 mx-2"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <button 
+            {/* Center Dashboard Button - The "Home" Anchor */}
+            <div className="relative px-2">
+              <motion.button 
                 onClick={() => setTab('dashboard')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className={`
-                  w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300
+                  relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300
                   ${activeTab === 'dashboard' 
-                    ? 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 scale-110 ring-4 ring-indigo-50 shadow-indigo-300/50' 
-                    : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-indigo-200'
+                    ? 'bg-indigo-50 text-indigo-600 shadow-lg ring-2 ring-indigo-100' 
+                    : 'bg-white text-slate-400 border border-slate-100 shadow-sm'
                   }
                 `}
               >
+                {/* "Cheron" / Ripple / Glow Animation Layer */}
                 {activeTab === 'dashboard' && (
                   <motion.div
-                    className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear", repeatType: "loop" }}
+                    className="absolute inset-0 rounded-full border-2 border-indigo-200"
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   />
                 )}
-                <Truck className={`w-8 h-8 relative z-10 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
-              </button>
-            </motion.div>
+                <Truck className="w-7 h-7 relative z-10" strokeWidth={activeTab === 'dashboard' ? 2.5 : 2} />
+              </motion.button>
+            </div>
 
             <NavButton 
               active={activeTab === 'messages'} 
