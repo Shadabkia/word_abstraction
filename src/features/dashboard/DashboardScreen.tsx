@@ -57,7 +57,7 @@ export function DashboardScreen() {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isShopOpen, setIsShopOpen] = useState(false);
 
-  // We only have 3 cards, so we wrap the page index around 0-2
+  // We only have 4 cards now, so we wrap the page index around 0-3
   const heroCardsData = [
     {
       levelNumber: progress.completedLevels.length + 1,
@@ -66,7 +66,18 @@ export function DashboardScreen() {
       description: "Continue your journey...",
       color: "from-sky-300 via-cyan-200 to-emerald-300",
       icon: "🚐",
-      tag: "Hero Card"
+      tag: "Hero Card",
+      isPremium: false
+    },
+    {
+      levelNumber: 0,
+      chapterTitle: "Premium Story",
+      levelTitle: "The Lost Garden",
+      description: "Unlock exclusive memories",
+      color: "from-purple-400 via-fuchsia-300 to-pink-400",
+      icon: "🌸",
+      tag: "Premium Story",
+      isPremium: true
     },
     {
       levelNumber: 0,
@@ -75,7 +86,8 @@ export function DashboardScreen() {
       description: "Find peace in the dunes",
       color: "from-amber-200 via-orange-100 to-rose-200",
       icon: "🧘‍♂️",
-      tag: "Zen Mode"
+      tag: "Zen Mode",
+      isPremium: false
     },
     {
       levelNumber: 0,
@@ -84,7 +96,8 @@ export function DashboardScreen() {
       description: "Race against time",
       color: "from-indigo-300 via-purple-300 to-pink-300",
       icon: "⏱️",
-      tag: "Challenge"
+      tag: "Challenge",
+      isPremium: false
     }
   ];
 
@@ -97,15 +110,15 @@ export function DashboardScreen() {
   const handleDotClick = (index: number) => {
     // Calculate direction based on current index
     const direction = index > heroIndex ? 1 : -1;
-    // We update page to exact index but need to keep it consistent with the wrap logic
-    // Actually, simple way: reset to the clicked index and set direction
-    // But since we use modulo on 'page', we should probably just update page to that index + current cycle
-    // For simplicity with dots, let's just jump to that index if possible or update page
-    // A simple hack for small number of items:
     setPage([index, direction]);
   };
 
   const handlePlayLevel = () => {
+    const currentCard = heroCardsData[heroIndex];
+    if (currentCard.isPremium) {
+      setIsShopOpen(true);
+      return;
+    }
     console.log('Playing next level...');
   };
 

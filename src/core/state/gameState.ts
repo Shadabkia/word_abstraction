@@ -7,6 +7,7 @@ interface UserState {
   avatar: string;
   coins: number;
   vibes: number; // Soft currency / XP
+  badges: string[]; // List of owned badge IDs
   streak: number;
   followers: number;
   following: number;
@@ -39,6 +40,7 @@ interface GameState {
   spendCoins: (amount: number) => boolean;
   addVibes: (amount: number) => void;
   spendVibes: (amount: number) => boolean;
+  addBadge: (badgeId: string) => void;
   completeLevel: (levelId: string, score: number, stars: number) => void;
   unlockChapter: (chapterId: string) => void;
   markMessageRead: (messageId: string) => void;
@@ -52,6 +54,7 @@ const initialUser: UserState = {
   avatar: 'default_avatar',
   coins: 100,
   vibes: 100,
+  badges: [],
   streak: 0,
   followers: 42,
   following: 12,
@@ -94,6 +97,16 @@ export const useGameState = create<GameState>()(
         set({ user: { ...user, vibes: user.vibes - amount } });
         return true;
       },
+
+      addBadge: (badgeId) =>
+        set((state) => ({
+          user: {
+            ...state.user,
+            badges: state.user.badges.includes(badgeId)
+              ? state.user.badges
+              : [...state.user.badges, badgeId],
+          },
+        })),
 
       completeLevel: (levelId, score, stars) =>
         set((state) => {
