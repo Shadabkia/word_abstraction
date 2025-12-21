@@ -3,7 +3,7 @@ import { useForge } from '@/forge-ui/context';
 import GameButton from '@/forge-ui/components/primitives/GameButton';
 import { Sparkles, X } from 'lucide-react';
 
-export type CelebrationDialogProps = {
+export type WinDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
@@ -14,9 +14,10 @@ export type CelebrationDialogProps = {
   onSecondary?: () => void;
   onCelebrate?: () => void;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
-export function CelebrationDialog({
+export function WinDialog({
   open,
   onOpenChange,
   title,
@@ -27,7 +28,8 @@ export function CelebrationDialog({
   onSecondary,
   onCelebrate,
   icon,
-}: CelebrationDialogProps) {
+  children,
+}: WinDialogProps) {
   const { theme, isAlive } = useForge();
   const styles = theme.components.dialog;
   const celebratedForThisOpen = useRef(false);
@@ -99,6 +101,13 @@ export function CelebrationDialog({
           </div>
         )}
 
+        {/* Custom Content */}
+        {children && (
+          <div className="mt-4">
+            {children}
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex flex-col gap-3 mt-6">
           <GameButton 
@@ -126,5 +135,4 @@ export function CelebrationDialog({
     </div>
   );
 }
-
 

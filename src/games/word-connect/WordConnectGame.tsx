@@ -15,7 +15,7 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { gameStorage } from './utils/gameStorage';
 import { Toaster } from '../../shared/ui/sonner';
 import { ConfirmDialog } from '@/shared/ui/dialogs/ConfirmDialog';
-import { CelebrationDialog } from '@/shared/ui/dialogs/CelebrationDialog';
+import { WinDialog } from './components/WinDialog';
 import { burstConfetti } from '@/shared/effects/confetti';
 import * as backGuards from '@/core/navigation/backGuards';
 
@@ -352,7 +352,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
             // Delay win dialog to allow completion animation to finish and user to appreciate it
             setTimeout(() => {
               triggerWin();
-            }, 2500);
+            }, 1200);
           }
         }
         
@@ -449,7 +449,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
         // Delay win dialog to allow completion animation to finish and user to appreciate it
         setTimeout(() => {
           triggerWin();
-        }, 2500);
+        }, 1200);
       }
     }
   };
@@ -791,7 +791,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
           onExit?.();
         }}
       />
-      <CelebrationDialog
+      <WinDialog
         open={winOpen}
         onOpenChange={(open) => {
           setWinOpen(open);
@@ -823,7 +823,33 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
           void burstConfetti({ preset: 'win' });
         }}
         icon="🎉"
-      />
+      >
+        <div className="flex flex-col gap-4 w-full mt-2">
+            {/* Career Mode Coin Reward */}
+            {gameMode === 'career' && (
+                <div className="flex items-center justify-center gap-2 bg-yellow-400/10 rounded-xl py-3 border border-yellow-500/20 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center shadow-sm text-yellow-900 font-bold text-lg">
+                        $
+                    </div>
+                    <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">+10 Coins</span>
+                </div>
+            )}
+
+            {/* Completed Words List */}
+            <div className="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10">
+                <div className="text-xs font-medium text-[var(--color-climate-text-secondary)] uppercase tracking-wider text-center mb-1 opacity-70">
+                    Completed Categories
+                </div>
+                {gridRows
+                    .filter(row => row.type === 'completed' && row.completed)
+                    .map((row, idx) => (
+                      <div key={idx} className="scale-90 origin-top">
+                        <CategoryRow name={row.completed!.name} words={row.completed!.words} />
+                      </div>
+                ))}
+            </div>
+        </div>
+      </WinDialog>
       <Toaster />
     </LanguageProvider>
   );
