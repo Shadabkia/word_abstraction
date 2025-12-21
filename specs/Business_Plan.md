@@ -21,50 +21,69 @@ Pars Ra Pas operates as a free-to-play (F2P) mobile game with in-app purchases (
 
 ### Revenue Streams (IAP-Only)
 
-#### 1. Premium Currency: Vibe s
-**Purpose**: Accelerate progress and enhance personalization without breaking core gameplay
+#### 1. Premium Levels (Story Unlocks) via “Kian’s Shop”
+**Purpose**: Fund story creation while keeping the early game accessible and ad-free.
 
-**Purchase Options**:
-- Small packs (100 Vibes: $0.99)
-- Medium packs (500 Vibes: $4.99)
-- Large packs (1200 Vibes + bonus: $9.99)
-- Mega packs (2500 Vibes + bonus: $19.99)
+**Rules**:
+- Initial levels are free.
+- Some levels are **Premium** and show a **premium sign** on the level tile (corner of the game item picture).
+- Tapping a premium level opens **Kian’s Shop** (the purchase page).
 
-**Vibes Usage**:
-- Skip challenging puzzles
-- Unlock bonus story content
-- Purchase cosmetic upgrades
-- Access premium mini-games
+**Purchase Experience (Kian’s Shop)**:
+- The shop offers items Kian sells: **Coffee**, **Antiques**, **Stickers**.
+- The shop includes an explanation:
+  - “In order for Kian to continue his adventure, he generates income by selling coffee and stickers.”
+- A **question mark** icon opens a dialog explaining:
+  - “The game developers need your support to create stories.”
+- **Stickers** purchased are added to the player’s **Badges** page.
 
-#### 2. Energy System: Fuel
-**Purpose**: Create natural engagement rhythm while providing monetization opportunities
+**Coins on Premium Purchase**:
+- When the player buys a premium level, they receive **Coins** proportional to the purchase value.
 
-**Mechanics**:
-- Limited daily fuel for campaign levels (3-5 attempts)
-- Free regeneration over time (30 minutes per fuel)
-- IAP options for instant refills
+#### 2. Coins (Soft Currency)
+**Purpose**: A flexible player currency used for convenience, progression gates, and playful customization.
 
-**Purchase Options**:
-- Single refill (1 Fuel: $0.49)
-- Pack of 3 refills ($1.99)
-- Unlimited fuel for 24 hours ($2.99)
+**UI**:
+- Coins are displayed at the **top-right** of gameplay UI:
+  - Coin icon
+  - Current coin balance
+  - **Plus (+)** button
+- Tapping the **Plus (+)** opens **Kian’s Shop**.
 
-#### 3. Cosmetic Personalization
-**Purpose**: Allow players to express cultural identity and journey progression
+**Planned Uses (Current Decisions)**:
+- Game guides (help solving puzzles)
+- Unlocking arcade game levels
+- Faster access to mini-games
+- Getting stickers to install on **Kian’s car**
 
-**Categories**:
-- **Van Customization**: Paint jobs, stickers, and accessories for "The Onion"
-- **Character Outfits**: Kian's clothing reflecting story stages
-- **Profile Themes**: Persian cultural motifs and special borders
-- **Achievement Cosmetics**: Premium badge designs and animations
+**How Players Earn Coins**:
+- Premium purchases grant coins proportional to purchase value
+- Successful level completion grants coins
+- Daily and weekly challenges grant coins
 
-#### 4. Content Expansion Packs
-**Purpose**: Extend the narrative experience with optional story branches
+#### 3. Energy / Vibes (Engagement Meter)
+**Purpose**: A narrative rhythm system that ties “playing the journey” to “consuming the feed.”
 
-**Types**:
-- **Director's Cut Chapters**: Enhanced story content with exclusive memories
-- **Alternate Endings**: "What if" storylines exploring different paths
-- **Cultural Deep Dives**: Expanded Persian cultural content and locations
+**UI**:
+- Energy (Vibes) is displayed with an icon **next to Coins**.
+
+**Behavior**:
+- Playing **career (campaign) levels** increases energy.
+- Viewing **social media posts** consumes energy.
+- Each chapter contains a set of social posts that become viewable by playing and gaining energy.
+
+#### 4. Cosmetic Collectibles (Badges, Stickers, Car Customization)
+**Purpose**: Express identity and progress through tactile, story-aligned collectibles.
+
+**Categories (Initial)**:
+- **Badges page stickers** (from Kian’s Shop)
+- **Car stickers** installed on Kian’s car
+
+### Note on Future Revenue Ideas
+We may add additional monetization later (e.g., optional content expansions), but the core near-term plan is:
+- Premium story unlocks via Kian’s Shop
+- Coins as soft currency (earned through play + premium purchases)
+- Vibes as an engagement meter (earned/spent through play and feed consumption)
 
 ## Future Phase: Advertising Integration (Post-100K MAU)
 
@@ -75,7 +94,7 @@ Pars Ra Pas operates as a free-to-play (F2P) mobile game with in-app purchases (
 
 ### Planned Ad Integration
 **Non-Intrusive Ad Types**:
-- **Rewarded Video Ads**: Optional ads for bonus fuel/vibes
+- **Rewarded Video Ads**: Optional ads for bonus coins / bonus vibes
 - **Banner Ads**: Subtle placements in social feed areas
 - **Interstitial Ads**: Between major story transitions (skippable)
 

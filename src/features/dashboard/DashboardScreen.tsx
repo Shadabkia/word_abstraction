@@ -4,7 +4,8 @@ import { useGameState } from '@/core/state/gameState';
 import { contentManager } from '@/core/services/contentManager';
 import { HeroCard } from './components/HeroCard';
 import { QuickAccessCard } from './components/QuickAccessCard';
-import { Gift, Warehouse, Image, Bell, MapPin } from 'lucide-react';
+import { KianShop } from '@/features/shop/KianShop';
+import { Gift, Warehouse, Image, Bell, MapPin, Coins, Zap, Plus } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -54,8 +55,9 @@ const swipePower = (offset: number, velocity: number) => {
 export function DashboardScreen() {
   const { user, progress } = useGameState();
   const [[page, direction], setPage] = useState([0, 0]);
+  const [isShopOpen, setIsShopOpen] = useState(false);
 
-  // We only have 3 cards, so we wrap the page index around 0-2
+  // We only have 4 cards now, so we wrap the page index around 0-3
   const heroCardsData = [
     {
       levelNumber: progress.completedLevels.length + 1,
@@ -64,7 +66,18 @@ export function DashboardScreen() {
       description: "Continue your journey...",
       color: "from-sky-300 via-cyan-200 to-emerald-300",
       icon: "🚐",
-      tag: "Hero Card"
+      tag: "Hero Card",
+      isPremium: false
+    },
+    {
+      levelNumber: 0,
+      chapterTitle: "Premium Story",
+      levelTitle: "The Lost Garden",
+      description: "Unlock exclusive memories",
+      color: "from-purple-400 via-fuchsia-300 to-pink-400",
+      icon: "🌸",
+      tag: "Premium Story",
+      isPremium: true
     },
     {
       levelNumber: 0,
@@ -73,7 +86,8 @@ export function DashboardScreen() {
       description: "Find peace in the dunes",
       color: "from-amber-200 via-orange-100 to-rose-200",
       icon: "🧘‍♂️",
-      tag: "Zen Mode"
+      tag: "Zen Mode",
+      isPremium: false
     },
     {
       levelNumber: 0,
@@ -82,7 +96,8 @@ export function DashboardScreen() {
       description: "Race against time",
       color: "from-indigo-300 via-purple-300 to-pink-300",
       icon: "⏱️",
-      tag: "Challenge"
+      tag: "Challenge",
+      isPremium: false
     }
   ];
 
@@ -95,15 +110,15 @@ export function DashboardScreen() {
   const handleDotClick = (index: number) => {
     // Calculate direction based on current index
     const direction = index > heroIndex ? 1 : -1;
-    // We update page to exact index but need to keep it consistent with the wrap logic
-    // Actually, simple way: reset to the clicked index and set direction
-    // But since we use modulo on 'page', we should probably just update page to that index + current cycle
-    // For simplicity with dots, let's just jump to that index if possible or update page
-    // A simple hack for small number of items:
     setPage([index, direction]);
   };
 
   const handlePlayLevel = () => {
+    const currentCard = heroCardsData[heroIndex];
+    if (currentCard.isPremium) {
+      setIsShopOpen(true);
+      return;
+    }
     console.log('Playing next level...');
   };
 
@@ -118,23 +133,51 @@ export function DashboardScreen() {
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="px-6 pt-5 pb-3">
+        {/* Top Bar: Location & Status */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <MapPin className="w-4 h-4" strokeWidth={2} />
+            <span className="text-[13px] font-medium tracking-wide">
+              {currentChapter?.city || 'Tehran'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+             {/* Vibes Widget */}
+             <div className="flex items-center gap-1.5 bg-slate-100 rounded-full pl-2 pr-3 py-1">
+              <Zap className="w-3.5 h-3.5 text-indigo-500 fill-indigo-500" />
+              <span className="text-xs font-bold text-slate-700">{user.vibes}</span>
+            </div>
+
+            {/* Coins Widget */}
+            <button 
+              onClick={() => setIsShopOpen(true)}
+              className="flex items-center gap-1.5 bg-amber-100 rounded-full pl-2 pr-1 py-0.5 active:scale-95 transition-transform"
+            >
+              <Coins className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
+              <span className="text-xs font-bold text-amber-800">{user.coins}</span>
+              <div className="bg-white rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                <Plus className="w-3 h-3 text-amber-600" strokeWidth={3} />
+              </div>
+            </button>
+          </div>
+        </div>
+
         <div className="flex items-start justify-between mb-2">
           <h1 className="text-[28px] font-bold text-slate-900 leading-tight">
             Good Morning, {user.name}
           </h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
-            className="relative p-2 -m-2 touch-manipulation"
+            className="relative p-2 -m-2 touch-manipulation mt-1"
           >
-            <Bell className="w-7 h-7 text-slate-900" strokeWidth={2} />
-            <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+            <Bell className="w-6 h-6 text-slate-900" strokeWidth={2} />
+            <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
           </motion.button>
         </div>
-        <div className="flex items-center gap-1.5 text-slate-500 pl-0.5">
-          <MapPin className="w-4 h-4" strokeWidth={2} />
-          <span className="text-[15px] font-medium">Location, {currentChapter?.city || 'Tehran'}</span>
-        </div>
       </motion.div>
+
+      <KianShop isOpen={isShopOpen} onClose={() => setIsShopOpen(false)} />
 
       {/* Hero Carousel */}
       <motion.div variants={itemVariants} className="px-6 mb-8 mt-2">

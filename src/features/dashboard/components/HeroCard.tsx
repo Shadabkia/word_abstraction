@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
+import { Lock, Crown } from 'lucide-react';
 
 interface HeroCardProps {
   levelNumber: number;
@@ -7,6 +7,7 @@ interface HeroCardProps {
   levelTitle: string;
   description: string;
   isLocked?: boolean;
+  isPremium?: boolean;
   onPlay: () => void;
   color?: string; // New prop for gradient customization
   icon?: string; // New prop for custom icon/illustration
@@ -19,6 +20,7 @@ export function HeroCard({
   levelTitle, 
   description, 
   isLocked = false,
+  isPremium = false,
   onPlay,
   color = "from-sky-300 via-cyan-200 to-emerald-300",
   icon = "🚐",
@@ -43,12 +45,24 @@ export function HeroCard({
         <div className="absolute top-20 right-10 w-32 h-10 bg-white/20 rounded-full blur-xl" />
       </div>
 
+      {/* Premium Badge */}
+      {isPremium && (
+        <div className="absolute top-4 right-4 bg-amber-400 text-amber-900 rounded-full p-2 shadow-lg z-10">
+          <Crown className="w-5 h-5 fill-current" />
+        </div>
+      )}
+
       {/* Bottom Text Overlay */}
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-24 text-left">
         <p className="text-white/90 text-[15px] font-medium mb-1.5">{tag}</p>
         <h2 className="text-white text-[22px] font-bold leading-tight tracking-tight">
           {levelTitle}
         </h2>
+        {isPremium && (
+          <p className="text-amber-300 text-sm font-bold mt-1 flex items-center gap-1">
+            <Crown className="w-3 h-3 fill-current" /> Premium Level
+          </p>
+        )}
       </div>
       
       {/* Lock Overlay */}
