@@ -113,7 +113,7 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
                     <HelpCircle className="w-6 h-6" />
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="bg-white">
                   <DialogHeader>
                     <DialogTitle>Why Support Kian?</DialogTitle>
                     <DialogDescription className="pt-3 text-base leading-relaxed">

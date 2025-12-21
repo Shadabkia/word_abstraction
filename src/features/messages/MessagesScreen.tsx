@@ -21,8 +21,8 @@ export function MessagesScreen() {
   const { progress } = useGameState();
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   
-  // Get unlocked threads based on completed levels
-  const threads = contentManager.getUnlockedThreads(progress.completedLevels);
+  // Get unlocked threads based on completed career levels
+  const threads = contentManager.getUnlockedThreads(progress.career.completedLevels);
   const npcs = contentManager.getNPCs();
   
   // Create a map of NPC data

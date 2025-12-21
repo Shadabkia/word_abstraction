@@ -7,8 +7,15 @@ export type GameLaunchRef = {
   gameId: GameId;
   levelId: string | number;
   /**
+   * The mode this game was launched from.
+   * - 'career': Story campaign mode (Dashboard/Profile)
+   * - 'arcade': Standalone arcade mode
+   */
+  mode: 'career' | 'arcade';
+  /**
    * When set, completion should mark this campaign level as complete.
    * Example: "level_1"
+   * Only used in career mode.
    */
   campaignLevelId?: string;
 };
@@ -29,6 +36,7 @@ export const gameRegistry: Record<GameId, GameRegistryEntry> = {
     Component: WordConnectGame,
     buildProps: (ref) => ({
       initialLevel: typeof ref.levelId === 'number' ? ref.levelId : Number(ref.levelId),
+      gameMode: ref.mode, // Pass the mode to the game
     }),
   },
 };

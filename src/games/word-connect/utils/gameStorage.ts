@@ -24,19 +24,39 @@ export interface GameState {
   levelProgress: { [levelNumber: number]: LevelProgress };
 }
 
-const STORAGE_KEY = 'wordAbstractionGameState';
+const STORAGE_KEY_PREFIX = 'wordAbstractionGameState';
 
 class GameStorage {
+  // Track current mode (career or arcade)
+  private currentMode: 'career' | 'arcade' = 'career';
+  
+  /**
+   * Set the game mode (career or arcade)
+   * This affects which storage key is used
+   */
+  setMode(mode: 'career' | 'arcade'): void {
+    this.currentMode = mode;
+    console.log(`[GameStorage] Mode set to: ${mode}`);
+  }
+  
+  /**
+   * Get the storage key for the current mode
+   */
+  private getStorageKey(): string {
+    return `${STORAGE_KEY_PREFIX}_${this.currentMode}`;
+  }
+  
   /**
    * Save the current game state
    */
   async saveGameState(state: GameState): Promise<void> {
     try {
+      const key = this.getStorageKey();
       await Preferences.set({
-        key: STORAGE_KEY,
+        key,
         value: JSON.stringify(state)
       });
-      console.log('Game state saved successfully');
+      console.log(`[GameStorage] State saved to ${key}`);
     } catch (error) {
       console.error('Failed to save game state:', error);
     }
@@ -47,10 +67,11 @@ class GameStorage {
    */
   async loadGameState(): Promise<GameState | null> {
     try {
-      const { value } = await Preferences.get({ key: STORAGE_KEY });
+      const key = this.getStorageKey();
+      const { value } = await Preferences.get({ key });
       if (value) {
         const state = JSON.parse(value) as GameState;
-        console.log('Game state loaded successfully');
+        console.log(`[GameStorage] State loaded from ${key}`);
         return state;
       }
       return null;

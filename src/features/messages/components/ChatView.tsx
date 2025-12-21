@@ -25,7 +25,7 @@ export function ChatView({ threadId, npcName, npcHandle, avatarColor, onBack }: 
   const visibleMessages = thread?.messages.filter(msg => {
     if (!msg.unlockCondition) return true;
     if (msg.unlockCondition.type === 'level_complete') {
-      return progress.completedLevels.includes(msg.unlockCondition.targetId);
+      return progress.career.completedLevels.includes(msg.unlockCondition.targetId);
     }
     return true;
   }) || [];

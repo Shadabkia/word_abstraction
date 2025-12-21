@@ -15,7 +15,7 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { gameStorage } from './utils/gameStorage';
 import { Toaster } from '../../shared/ui/sonner';
 import { ConfirmDialog } from '@/shared/ui/dialogs/ConfirmDialog';
-import { CelebrationDialog } from '@/shared/ui/dialogs/CelebrationDialog';
+import { WinDialog } from './components/WinDialog';
 import { burstConfetti } from '@/shared/effects/confetti';
 import * as backGuards from '@/core/navigation/backGuards';
 
@@ -44,9 +44,10 @@ interface WordConnectGameProps {
   onExit?: () => void;
   onComplete?: (score: number) => void;
   initialLevel?: number;
+  gameMode?: 'career' | 'arcade';
 }
 
-export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }: WordConnectGameProps) {
+export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, gameMode = 'career' }: WordConnectGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [coins] = useState(10);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
@@ -55,6 +56,12 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const levelCompletedRef = useRef(false);
+  
+  // Set the game storage mode when component mounts or mode changes
+  useEffect(() => {
+    gameStorage.setMode(gameMode);
+    console.log(`[WordConnectGame] Running in ${gameMode} mode`);
+  }, [gameMode]);
   
   // Level data state
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
@@ -323,7 +330,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
         } else {
           soundManager.playSuccess();
           triggerHapticFeedback();
-          void burstConfetti({ preset: 'soft' });
           const newGridRows = [...rows];
           newGridRows[rowIndex] = {
             type: 'completed',
@@ -343,7 +349,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
           const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
           
           if (newTotalCompleted >= totalSteps) {
-            triggerWin();
+            // Delay win dialog to allow completion animation to finish and user to appreciate it
+            setTimeout(() => {
+              triggerWin();
+            }, 1000);
           }
         }
         
@@ -416,7 +425,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       // Regular category - show as completed row
       soundManager.playSuccess();
       triggerHapticFeedback();
-      void burstConfetti({ preset: 'soft' });
       
       const newGridRows = [...rows];
       newGridRows[rowIndex] = {
@@ -438,7 +446,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
       // Check for level completion
       const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
       if (newTotalCompleted >= totalSteps) {
-        triggerWin();
+        // Delay win dialog to allow completion animation to finish and user to appreciate it
+        setTimeout(() => {
+          triggerWin();
+        }, 1200);
       }
     }
   };
@@ -702,7 +713,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
                   {gridRows.map((row, rowIndex) => (
                     <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
                       {row.type === 'completed' && row.completed ? (
-                        <CategoryRow name={row.completed.name} words={row.completed.words} />
+                        <CategoryRow name={row.completed.name} words={row.completed.words} index={rowIndex} />
                       ) : (
                         <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
                           {row.words?.map((word, colIndex) => (
@@ -780,9 +791,15 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
           onExit?.();
         }}
       />
-      <CelebrationDialog
+      <WinDialog
         open={winOpen}
-        onOpenChange={setWinOpen}
+        onOpenChange={(open) => {
+          setWinOpen(open);
+          // Mark level as complete when dialog closes (any way: button, backdrop, ESC, back)
+          if (!open && onComplete && levelCompletedRef.current) {
+            onComplete(1000);
+          }
+        }}
         title="You did it!"
         description="Level complete. That was smooth."
         primaryLabel={onComplete ? 'Continue' : nextLevel ? 'Next level' : 'Play again'}
@@ -790,7 +807,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
         onPrimary={() => {
           setWinOpen(false);
           if (onComplete) {
-            onComplete(1000);
+            // onComplete will be called by onOpenChange when dialog closes
             return;
           }
           if (nextLevel) {
@@ -806,7 +823,38 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
           void burstConfetti({ preset: 'win' });
         }}
         icon="🎉"
-      />
+      >
+        <div className="flex flex-col gap-4 w-full mt-2">
+            {/* Career Mode Coin Reward */}
+            {gameMode === 'career' && (
+                <div className="flex items-center justify-center gap-2 bg-yellow-400/10 rounded-xl py-3 border border-yellow-500/20 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center shadow-sm text-yellow-900 font-bold text-lg">
+                        $
+                    </div>
+                    <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">+10 Coins</span>
+                </div>
+            )}
+
+            {/* Completed Words List */}
+            <div className="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-black/10 dark:scrollbar-thumb-white/10">
+                <div className="text-xs font-medium text-[var(--color-climate-text-secondary)] uppercase tracking-wider text-center mb-1 opacity-70">
+                    Completed Categories
+                </div>
+                {gridRows
+                    .map((row, originalIndex) => ({ row, originalIndex }))
+                    .filter(({ row }) => row.type === 'completed' && row.completed)
+                    .map(({ row, originalIndex }) => (
+                      <div key={originalIndex} className="scale-90 origin-top">
+                        <CategoryRow 
+                          name={row.completed!.name} 
+                          words={row.completed!.words} 
+                          index={originalIndex}
+                        />
+                      </div>
+                ))}
+            </div>
+        </div>
+      </WinDialog>
       <Toaster />
     </LanguageProvider>
   );

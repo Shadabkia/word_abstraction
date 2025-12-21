@@ -7,7 +7,7 @@ import { campaignManager } from '@/core/services/campaignManager';
 import { LevelPostView } from './components/LevelPostView';
 
 interface ProfileScreenProps {
-  onPlayGame?: (ref: { gameId: 'word-connect'; levelId: number; campaignLevelId: string }) => void;
+  onPlayGame?: (ref: { gameId: 'word-connect'; levelId: number; mode: 'career'; campaignLevelId: string }) => void;
   selectedLevelId?: string | null;
   onOpenLevel?: (levelId: string) => void;
   onCloseLevel?: () => void;
@@ -50,8 +50,8 @@ export function ProfileScreen({
   const [uncontrolledSelectedLevel, setUncontrolledSelectedLevel] = useState<string | null>(null);
   const selectedLevel = selectedLevelId !== undefined ? selectedLevelId : uncontrolledSelectedLevel;
 
-  // Convert completed level IDs to numbers for campaign manager
-  const completedLevelNumbers = progress.completedLevels
+  // Convert completed career level IDs to numbers for campaign manager
+  const completedLevelNumbers = progress.career.completedLevels
     .map(id => parseInt(id.replace('level_', '')))
     .filter(n => !isNaN(n));
 
@@ -88,7 +88,7 @@ export function ProfileScreen({
       setUncontrolledSelectedLevel(null);
     }
     if (onPlayGame) {
-      onPlayGame({ gameId, levelId: levelNumber, campaignLevelId });
+      onPlayGame({ gameId, levelId: levelNumber, mode: 'career', campaignLevelId });
     }
   };
 
@@ -166,7 +166,7 @@ export function ProfileScreen({
             const isUnlocked = unlockedChapters.some(ch => ch.id === chapter.id);
             const isSelected = selectedChapter === chapter.id;
             const completedLevels = chapter.levels.filter(l => 
-              progress.completedLevels.includes(`level_${l.levelNumber}`)
+              progress.career.completedLevels.includes(`level_${l.levelNumber}`)
             ).length;
             const totalLevels = chapter.levels.length;
             const isComplete = completedLevels === totalLevels;
@@ -252,7 +252,7 @@ export function ProfileScreen({
         <div className="grid grid-cols-3 gap-3">
           {levels.map((level) => {
             const levelId = `level_${level.levelNumber}`;
-            const isCompleted = progress.completedLevels.includes(levelId);
+            const isCompleted = progress.career.completedLevels.includes(levelId);
             const isCurrent = !isCompleted && level.levelNumber === (completedLevelNumbers.length + 1);
             const isLocked = !isCompleted && level.levelNumber > (completedLevelNumbers.length + 1);
             const thumbnailCandidates = campaignManager.getLevelThumbnailCandidates(level.id);

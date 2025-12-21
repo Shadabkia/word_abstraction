@@ -24,13 +24,28 @@ export default function App() {
   const { theme } = useForge();
   const [nav, setNav] = useState<historyNav.NavState>(() => {
     if (typeof window === 'undefined') return { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
-    return historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
+    const navState = historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
+    console.log('[App] Initial nav state:', navState);
+    return navState;
   });
   const [debugOpen, setDebugOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [deviceModel, setDeviceModel] = useState<DeviceModel>('iphone-14-pro');
   const [scale, setScale] = useState(100);
-  const { completeLevel, inbox } = useGameState();
+  
+  // Add error boundary for state access
+  let gameState;
+  try {
+    gameState = useGameState();
+  } catch (error) {
+    console.error('[App] Failed to load game state:', error);
+    // Clear corrupted storage and reload
+    localStorage.removeItem('pars-ra-pas-storage');
+    window.location.reload();
+    return <div>Loading...</div>;
+  }
+  
+  const { completeLevel, inbox } = gameState;
   
   // Calculate total unread messages
   const unreadCount = inbox.activeThreads.length - inbox.readMessages.length;
@@ -106,10 +121,22 @@ export default function App() {
   };
 
   const handleGameComplete = (score: number) => {
-    // Update campaign progression only when launched from campaign.
-    if (activeGame?.campaignLevelId) {
-      completeLevel(activeGame.campaignLevelId, score, 3); // 3 stars for now
-    }
+    if (!activeGame) return;
+    
+    // Update progress based on the mode the game was launched from
+    const mode = activeGame.mode;
+    const levelId = activeGame.campaignLevelId || `${activeGame.gameId}_${activeGame.levelId}`;
+    
+    console.log('[App] Game completed:', {
+      mode,
+      levelId,
+      campaignLevelId: activeGame.campaignLevelId,
+      gameId: activeGame.gameId,
+      gameLevelId: activeGame.levelId,
+      score
+    });
+    
+    completeLevel(levelId, score, 3, mode); // 3 stars for now
     
     // Game modules own their celebration UX; completion means "ready to leave".
     historyNav.backOrReplaceTab('arcade');

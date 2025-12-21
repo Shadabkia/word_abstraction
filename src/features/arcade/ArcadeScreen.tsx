@@ -5,9 +5,10 @@ import { GameCard } from './components/GameCard';
 import { LevelSelector } from './components/LevelSelector';
 import { Gamepad2 } from 'lucide-react';
 import { getAllWordConnectLevels } from '@/games/word-connect/data/levels/levelRegistry';
+import { useGameState } from '@/core/state/gameState';
 
 interface ArcadeScreenProps {
-  onPlayGame: (ref: { gameId: 'word-connect'; levelId: number }) => void;
+  onPlayGame: (ref: { gameId: 'word-connect'; levelId: number; mode: 'arcade' }) => void;
   selectedGameId?: string | null;
   onSelectGame?: (gameId: string) => void;
   onCloseGameSelector?: () => void;
@@ -44,20 +45,27 @@ export function ArcadeScreen({
   const { theme } = useForge();
   const [uncontrolledSelectedGame, setUncontrolledSelectedGame] = useState<string | null>(null);
   const selectedGame = selectedGameId !== undefined ? selectedGameId : uncontrolledSelectedGame;
+  const { progress } = useGameState();
 
   // If Word Connect is selected, show level selector
   if (selectedGame === 'word-connect') {
     const allLevels = getAllWordConnectLevels();
     
-    // Map levels to selector format
-    const levels = allLevels.map(level => ({
-      id: level.number,
-      name: level.name,
-      difficulty: level.difficulty,
-      isLocked: false, // All levels unlocked in arcade mode
-      stars: undefined, // TODO: Get from progress if we track arcade progress
-      bestScore: undefined,
-    }));
+    // Map levels to selector format with arcade progress
+    const levels = allLevels.map(level => {
+      const arcadeLevelId = `word-connect_${level.number}`;
+      const isCompleted = progress.arcade.completedLevels.includes(arcadeLevelId);
+      const bestScore = progress.arcade.highScores[arcadeLevelId];
+      
+      return {
+        id: level.number,
+        name: level.name,
+        difficulty: level.difficulty,
+        isLocked: false, // All levels unlocked in arcade mode
+        stars: isCompleted ? 3 : undefined, // Show 3 stars if completed in arcade
+        bestScore: bestScore,
+      };
+    });
 
     return (
       <LevelSelector
@@ -66,7 +74,7 @@ export function ArcadeScreen({
         levels={levels}
         onSelectLevel={(levelNumber) => {
           if (!onSelectGame && !onCloseGameSelector) setUncontrolledSelectedGame(null);
-          onPlayGame({ gameId: 'word-connect', levelId: levelNumber });
+          onPlayGame({ gameId: 'word-connect', levelId: levelNumber, mode: 'arcade' });
         }}
         onBack={() => {
           if (onCloseGameSelector) {

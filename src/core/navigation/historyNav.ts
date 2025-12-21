@@ -214,10 +214,13 @@ function parseHash(hash: string): NavState | null {
 
     const campaignLevelId =
       queryPart?.startsWith('c=') ? decodeURIComponent(queryPart.slice(2)) : undefined;
+    
+    // Determine mode: if campaignLevelId exists, it's career mode, otherwise arcade
+    const mode: 'career' | 'arcade' = campaignLevelId ? 'career' : 'arcade';
 
     return {
       kind: 'game',
-      ref: { gameId, levelId, campaignLevelId },
+      ref: { gameId, levelId, mode, campaignLevelId },
       v: 1,
       depth: 2,
     };
