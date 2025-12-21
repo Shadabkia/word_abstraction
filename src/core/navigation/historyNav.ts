@@ -2,6 +2,8 @@ import type { AppTab } from '@/core/navigation/types';
 import type { GameLaunchRef } from '@/core/games/gameRegistry';
 import { tryHandleBack } from '@/core/navigation/backGuards';
 
+const NAV_EVENT = '__pars_nav_change';
+
 type NavBase = {
   v: 1;
   /**
@@ -40,6 +42,13 @@ export type NavState = TabNavState | ProfilePostNavState | ArcadeGameNavState | 
 type HistoryState = {
   __parsNav?: NavState;
 };
+
+function emitNav(nav: NavState): void {
+  if (typeof window === 'undefined') return;
+  // `pushState` / `replaceState` do not fire `popstate`, so we emit our own
+  // navigation event to keep React state in sync with history state.
+  window.dispatchEvent(new CustomEvent<NavState>(NAV_EVENT, { detail: nav }));
+}
 
 function getHistoryState(): HistoryState | null {
   return (window.history.state ?? null) as HistoryState | null;
@@ -118,18 +127,29 @@ export function subscribe(onChange: (nav: NavState) => void): () => void {
     onChange(fallback);
   };
 
+  const navEventHandler = (e: Event) => {
+    const nav = (e as CustomEvent<NavState>).detail;
+    if (isNavState(nav)) onChange(nav);
+  };
+
   window.addEventListener('popstate', handler);
-  return () => window.removeEventListener('popstate', handler);
+  window.addEventListener(NAV_EVENT, navEventHandler as EventListener);
+  return () => {
+    window.removeEventListener('popstate', handler);
+    window.removeEventListener(NAV_EVENT, navEventHandler as EventListener);
+  };
 }
 
 export function replace(nav: NavState): void {
   const url = hashFor(nav);
   window.history.replaceState({ ...(getHistoryState() ?? {}), __parsNav: nav } satisfies HistoryState, '', url);
+  emitNav(nav);
 }
 
 export function push(nav: NavState): void {
   const url = hashFor(nav);
   window.history.pushState({ ...(getHistoryState() ?? {}), __parsNav: nav } satisfies HistoryState, '', url);
+  emitNav(nav);
 }
 
 function isNavState(x: unknown): x is NavState {

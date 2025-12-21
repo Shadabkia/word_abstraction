@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
@@ -47,6 +48,66 @@ interface WordConnectGameProps {
   gameMode?: 'career' | 'arcade';
 }
 
+// Animation variants
+const pageVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      when: "beforeChildren",
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const topBarVariants = {
+  hidden: { y: -50, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 30 }
+  }
+};
+
+const gridContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const rowVariantsLeft = {
+  hidden: { x: -100, opacity: 0 },
+  visible: { 
+    x: 0, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100, damping: 20 }
+  }
+};
+
+const rowVariantsRight = {
+  hidden: { x: 100, opacity: 0 },
+  visible: { 
+    x: 0, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100, damping: 20 }
+  }
+};
+
+const bottomDockVariants = {
+  hidden: { y: 100, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 30, delay: 0.4 }
+  }
+};
+
 export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, gameMode = 'career' }: WordConnectGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [coins] = useState(10);
@@ -56,6 +117,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const levelCompletedRef = useRef(false);
+  const isExitingRef = useRef(false);
   
   // Set the game storage mode when component mounts or mode changes
   useEffect(() => {
@@ -170,6 +232,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   useEffect(() => {
     if (!onExit) return;
     return backGuards.registerBackGuard(() => {
+      if (isExitingRef.current) return false;
       setExitConfirmOpen(true);
       return true;
     });
@@ -659,7 +722,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   return (
     <LanguageProvider>
       <DragProvider>
-        <div
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={pageVariants}
           className="h-full transition-colors duration-700 font-display selection:bg-[var(--color-climate-accent)] overflow-hidden bg-no-repeat bg-cover"
           style={screenStyle}
         >
@@ -667,7 +733,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
           
           <div className="w-full mx-auto relative h-full flex flex-col pb-24">
             {/* Minimalist Top Bar */}
-            <div className="px-6 pt-8 pb-4 flex items-center justify-between z-10">
+            <motion.div variants={topBarVariants} className="px-6 pt-8 pb-4 flex items-center justify-between z-10">
                 <div className="flex items-center gap-3">
                     <div className="text-[var(--color-climate-text-secondary)] font-medium text-sm">
                         Lvl {level}
@@ -685,33 +751,39 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
                         </button>
                     )}
                 </div>
-            </div>
+            </motion.div>
 
             {/* Game Content - Vertically Centered */}
             <div className="flex-1 flex flex-col justify-center px-4 -mt-16">
                 
                 {/* Progress/Header Context */}
-                <div className="mb-8 px-2">
+                <motion.div variants={topBarVariants} className="mb-8 px-2">
                      <GameHeader completed={completedSteps} total={totalSteps} />
-                </div>
+                </motion.div>
 
                 {/* Level Selector (Contextual) */}
                 {!onExit && (
-                  <div className="mb-6 opacity-80 hover:opacity-100 transition-opacity">
+                  <motion.div variants={topBarVariants} className="mb-6 opacity-80 hover:opacity-100 transition-opacity">
                     <LevelSelector
                       currentLevel={level}
                       levels={levelMetadata}
                       onLevelSelect={setLevel}
                       availableLevels={availableLevels}
                     />
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* The Grid */}
                 {!isLoading && (
-                <div className="space-y-2 relative z-10 glass-panel rounded-[2rem] p-2 sm:p-3 transition-all duration-500">
+                <motion.div 
+                  variants={gridContainerVariants}
+                  className="space-y-2 relative z-10 glass-panel rounded-[2rem] p-2 sm:p-3 transition-all duration-500"
+                >
                   {gridRows.map((row, rowIndex) => (
-                    <div key={rowIndex} className="animate-fade-in-up" style={{ animationDelay: `${rowIndex * 0.05}s` }}>
+                    <motion.div 
+                      key={rowIndex} 
+                      variants={rowIndex % 2 === 0 ? rowVariantsLeft : rowVariantsRight}
+                    >
                       {row.type === 'completed' && row.completed ? (
                         <CategoryRow name={row.completed.name} words={row.completed.words} index={rowIndex} />
                       ) : (
@@ -731,9 +803,9 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
                           ))}
                         </div>
                       )}
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
                 )}
                 
                 {isLoading && (
@@ -744,7 +816,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
             </div>
             
             {/* Minimal Bottom Dock */}
-            <div className="fixed bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
+            <motion.div variants={bottomDockVariants} className="fixed bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
                 <div className="w-full mx-auto flex items-center justify-center gap-6 pointer-events-auto">
                      <button
                         onClick={() => setShowSettingsDialog(true)}
@@ -771,10 +843,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
                         </button>
                      </div>
                 </div>
-            </div>
+            </motion.div>
 
           </div>
-        </div>
+        </motion.div>
       </DragProvider>
 
       <SettingsDialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog} />
@@ -788,6 +860,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
         confirmVariant="destructive"
         onConfirm={() => {
           setExitConfirmOpen(false);
+          isExitingRef.current = true;
           onExit?.();
         }}
       />
