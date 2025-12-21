@@ -330,7 +330,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
         } else {
           soundManager.playSuccess();
           triggerHapticFeedback();
-          void burstConfetti({ preset: 'soft' });
           const newGridRows = [...rows];
           newGridRows[rowIndex] = {
             type: 'completed',
@@ -426,7 +425,6 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
       // Regular category - show as completed row
       soundManager.playSuccess();
       triggerHapticFeedback();
-      void burstConfetti({ preset: 'soft' });
       
       const newGridRows = [...rows];
       newGridRows[rowIndex] = {
