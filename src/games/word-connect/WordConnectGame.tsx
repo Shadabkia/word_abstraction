@@ -350,7 +350,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
           const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
           
           if (newTotalCompleted >= totalSteps) {
-            triggerWin();
+            // Delay win dialog to allow completion animation to finish and user to appreciate it
+            setTimeout(() => {
+              triggerWin();
+            }, 2500);
           }
         }
         
@@ -445,7 +448,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
       // Check for level completion
       const newTotalCompleted = mergedSubcategoriesCount + newCompletedCount;
       if (newTotalCompleted >= totalSteps) {
-        triggerWin();
+        // Delay win dialog to allow completion animation to finish and user to appreciate it
+        setTimeout(() => {
+          triggerWin();
+        }, 2500);
       }
     }
   };
@@ -789,7 +795,13 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
       />
       <CelebrationDialog
         open={winOpen}
-        onOpenChange={setWinOpen}
+        onOpenChange={(open) => {
+          setWinOpen(open);
+          // Mark level as complete when dialog closes (any way: button, backdrop, ESC, back)
+          if (!open && onComplete && levelCompletedRef.current) {
+            onComplete(1000);
+          }
+        }}
         title="You did it!"
         description="Level complete. That was smooth."
         primaryLabel={onComplete ? 'Continue' : nextLevel ? 'Next level' : 'Play again'}
@@ -797,7 +809,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
         onPrimary={() => {
           setWinOpen(false);
           if (onComplete) {
-            onComplete(1000);
+            // onComplete will be called by onOpenChange when dialog closes
             return;
           }
           if (nextLevel) {
