@@ -25,7 +25,7 @@ It is designed to feel like a warm home screen — part Instagram dashboard, par
 ----------------------------------------
 | Quick Access Cards (Arcade Modes)   |
 ----------------------------------------
-| Status Widgets (Fuel / Vibes)       |
+| Status Widgets (Coins / Vibes)      |
 ----------------------------------------
 | Small Feed Teaser / Notifications    |
 ----------------------------------------
@@ -88,8 +88,10 @@ Directly below the Hero Carousel are 3 tappable buttons for key daily actions.
   3. **Gallery** (Teal): View collected memories/images.
 - **Visuals**: Clean, modern, "app icon" style aesthetic.
 
-### 4. Status Widgets (Future Implementation)
-Status widgets like Fuel Gauge and Vibe Meter may be added in future iterations. Currently removed to maintain clean, focused dashboard design.
+### 4. Status Widgets (Coins / Vibes)
+The dashboard may display lightweight player status widgets:
+- **Coins**: shows coin icon + current balance and a **Plus (+)** entry point to Kian’s Shop
+- **Vibes (Energy)**: shows current energy, supporting the core loop of earning energy through campaign play and spending it on feed consumption
 
 ### 5. Notifications
 Handled via notification bell icon in top bar with red dot indicator for unread items.

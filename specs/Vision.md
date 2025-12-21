@@ -66,7 +66,7 @@ The UI is built around a familiar 5-tab navigation bar, just like Instagram, but
     - Hero Card → Continue Campaign
     - Quick access to game modes
     - Smart recommendations (time-of-day, session count, progress)
-    - Fuel gauge, Vibes meter, and world notifications
+    - Coins counter, Vibes (energy) meter, and world notifications
 - This is where the journey begins and continues.
 
 ### 4. Messages Tab — Quests & Story Beats
