@@ -8,8 +8,8 @@ This document defines the technical decisions, patterns, and structure of the pl
 ## 1. Tech Stack
 -   **Framework:** React (Vite)
 -   **Language:** TypeScript
--   **State Management:** Zustand (Global State), React Context (Theme/Language)
--   **Styling:** Tailwind CSS + Framer Motion (Animations)
+-   **State Management:** Zustand (Global State + persisted Settings), React Context (Language), Forge UI Provider (Theme)
+-   **Styling:** Forge UI (single UI source of truth) + Tailwind CSS + Framer Motion (Animations)
 -   **Icons:** Lucide React
 -   **Build Target:** Web / Capacitor (Android/iOS)
 -   **Responsiveness:** Mobile-Only (Desktop uses Device Simulator)
@@ -34,8 +34,9 @@ src/
 ├── games/                 # Pluggable Game Engines
 │   └── word-connect/      # Independent module
 ├── shared/                # Reusable across features
-│   ├── ui/                # Generic UI components (Buttons, Dialogs)
+│   ├── ui/                # Legacy UI components (temporary). New UI must come from forge-ui.
 │   └── utils/             # Helpers (iconMapper, etc.)
+├── forge-ui/              # UI system + theme registry (single source of truth)
 └── App.tsx                # Main Shell & Router
 ```
 
@@ -58,7 +59,7 @@ Tracks long-term progress.
 ### 3.2 Settings State (Zustand + LocalStorage)
 Tracks app preferences.
 -   **Store:** `useSettingsStore`
--   **State:** { language, soundEnabled, musicEnabled, hapticsEnabled }
+-   **State:** { language, soundEnabled, musicEnabled, hapticsEnabled, themeMode, themePalette, themeAlive, themeConfig }
 
 ### 3.3 Feature/Local State (React `useState`)
 UI-only state that resets on navigation.

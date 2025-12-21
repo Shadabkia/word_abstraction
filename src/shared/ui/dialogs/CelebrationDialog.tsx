@@ -1,14 +1,7 @@
 import { useEffect, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/ui/dialog';
-import { Button } from '@/shared/ui/button';
-import { cn } from '@/shared/ui/utils';
+import { useForge } from '@/forge-ui/context';
+import GameButton from '@/forge-ui/components/primitives/GameButton';
+import { Sparkles, X } from 'lucide-react';
 
 export type CelebrationDialogProps = {
   open: boolean;
@@ -35,6 +28,8 @@ export function CelebrationDialog({
   onCelebrate,
   icon,
 }: CelebrationDialogProps) {
+  const { theme, isAlive } = useForge();
+  const styles = theme.components.dialog;
   const celebratedForThisOpen = useRef(false);
 
   useEffect(() => {
@@ -47,51 +42,88 @@ export function CelebrationDialog({
     onCelebrate?.();
   }, [open, onCelebrate]);
 
+  if (!open) return null;
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
+
+  const animationClass = isAlive ? 'animate-pop' : '';
+  const successBg = theme.colors.success || 'bg-green-500';
+  const successText = successBg.replace('bg-', 'text-');
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className={cn(
-          'max-w-[420px] rounded-[2rem] border-white/60 bg-white/90 p-0 shadow-2xl backdrop-blur-xl',
-          'overflow-hidden',
+    <div 
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn ${styles.overlay}`}
+      onClick={handleBackdropClick}
+    >
+      <div className={`w-full max-w-md ${animationClass} relative ${styles.container}`}>
+        {/* Close button */}
+        <button 
+          onClick={() => onOpenChange(false)} 
+          className={`absolute top-4 right-4 z-20 ${styles.closeButton}`}
+        >
+          <X size={20} />
+        </button>
+
+        {/* Theme-specific decorations */}
+        {theme.id === 'fantasy' && (
+          <>
+            <div className="absolute -top-3 -left-3 w-8 h-8 border-t-4 border-l-4 border-amber-500 rounded-tl-lg" />
+            <div className="absolute -top-3 -right-3 w-8 h-8 border-t-4 border-r-4 border-amber-500 rounded-tr-lg" />
+          </>
         )}
-      >
-        <div className="relative px-6 pt-8 pb-6">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-400/10 to-blue-500/10" />
 
-          <DialogHeader className="relative">
-            <div className="mb-4 flex items-center justify-center">
-              <div className="grid size-16 place-items-center rounded-2xl bg-white/70 shadow-sm ring-1 ring-white/60">
-                <div className="text-3xl">{icon ?? '✨'}</div>
-              </div>
-            </div>
-            <DialogTitle className="text-center text-xl text-slate-900">{title}</DialogTitle>
-            {description ? (
-              <DialogDescription className="text-center text-slate-600">
-                {description}
-              </DialogDescription>
-            ) : null}
-          </DialogHeader>
-
-          <DialogFooter className="relative mt-6 flex-col gap-2 sm:flex-col sm:justify-center">
-            <Button
-              className="h-12 w-full rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-indigo-600 text-white shadow-md hover:opacity-95"
-              onClick={onPrimary}
-            >
-              {primaryLabel}
-            </Button>
-            {secondaryLabel ? (
-              <Button
-                variant="ghost"
-                className="h-12 w-full rounded-2xl text-slate-700 hover:bg-white/60"
-                onClick={() => onSecondary?.()}
-              >
-                {secondaryLabel}
-              </Button>
-            ) : null}
-          </DialogFooter>
+        {/* Celebration icon with sparkle effect */}
+        <div className="mb-6 flex justify-center relative">
+          <div className={`p-4 rounded-2xl ${theme.colors.background} shadow-lg ring-2 ${theme.colors.border} relative overflow-visible`}>
+            <div className="text-4xl">{icon ?? '🎉'}</div>
+            {isAlive && (
+              <>
+                <Sparkles className={`absolute -top-2 -right-2 w-5 h-5 ${successText} animate-pulse`} />
+                <Sparkles className={`absolute -bottom-1 -left-2 w-4 h-4 ${successText} animate-pulse`} style={{ animationDelay: '0.5s' }} />
+              </>
+            )}
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        {/* Title */}
+        <h2 className={`${styles.header} text-center`}>{title}</h2>
+
+        {/* Description */}
+        {description && (
+          <div className={`${styles.body} text-center`}>
+            <p className="leading-relaxed">{description}</p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex flex-col gap-3 mt-6">
+          <GameButton 
+            variant="primary" 
+            label={primaryLabel} 
+            onClick={() => {
+              onPrimary();
+              onOpenChange(false);
+            }}
+            fullWidth
+          />
+          {secondaryLabel && (
+            <GameButton 
+              variant="ghost" 
+              label={secondaryLabel} 
+              onClick={() => {
+                onSecondary?.();
+                onOpenChange(false);
+              }}
+              fullWidth
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

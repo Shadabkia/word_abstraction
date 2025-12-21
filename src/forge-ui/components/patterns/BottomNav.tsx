@@ -4,33 +4,47 @@ import { BottomNavProps } from '../../types';
 import { useForge } from '../../context';
 import { Home, Swords, Backpack, Map as MapIcon, Settings, Play } from 'lucide-react';
 
-const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, variant = 'flat' }) => {
+const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, variant = 'flat', items }) => {
   const { theme, isAlive } = useForge();
   const styles = theme.components.bottomNav;
-  
-  const tabs = [
-    { icon: Home, label: 'Home' },
-    { icon: Swords, label: 'Quest' },
-    { icon: variant === 'center' ? Play : Backpack, label: variant === 'center' ? 'Play' : 'Inv' },
-    { icon: MapIcon, label: 'Map' },
-    { icon: Settings, label: 'Menu' },
-  ];
+ 
+  const tabs =
+    items && items.length
+      ? items
+      : [
+          { key: 'home', icon: Home, label: 'Home' },
+          { key: 'quest', icon: Swords, label: 'Quest' },
+          { key: 'play', icon: variant === 'center' ? Play : Backpack, label: variant === 'center' ? 'Play' : 'Inv' },
+          { key: 'map', icon: MapIcon, label: 'Map' },
+          { key: 'menu', icon: Settings, label: 'Menu' },
+        ];
 
   let containerLayout = '';
   switch (variant) {
       case 'floating': containerLayout = 'mx-4 mb-4 rounded-full shadow-xl relative min-h-[60px] flex items-center px-2'; break;
       case 'bubbles': containerLayout = '!bg-transparent !border-none !shadow-none px-4 mb-2 gap-2 flex justify-between min-h-[60px] items-end'; break;
-      case 'center': containerLayout = 'pb-safe pt-2 relative overflow-visible min-h-[64px]'; break;
+      // Center variant: iOS-style with elevated center button
+      case 'center': containerLayout = 'relative overflow-visible pb-2 pt-2'; break;
       case 'flat': default: containerLayout = 'w-full pb-safe pt-2 relative min-h-[60px]'; break;
   }
 
   const finalContainerClass = `${styles.container} ${containerLayout}`;
 
+  // Extract primary color classes
+  const primaryBg = theme.colors.primary || 'bg-indigo-500';
+  const primaryText = primaryBg.replace('bg-', 'text-');
+
+  // Determine if primary color is light (for center button text contrast)
+  const isLightPrimary =
+    /-(50|100|200|300|400)\b/.test(primaryBg) ||
+    /(yellow|amber|lime|sky|cyan)\b/.test(primaryBg);
+
   return (
     <div className={finalContainerClass}>
-      {variant !== 'bubbles' && styles.indicator && (
+      {/* Top indicator line (hidden for center variant) */}
+      {variant !== 'bubbles' && variant !== 'center' && styles.indicator && (
            <div 
-           className={`${styles.indicator} !${theme.colors.primary}`} 
+           className={`${styles.indicator} ${primaryBg}`} 
            style={{ 
                width: `${100/tabs.length}%`, 
                left: `${activeTab * (100/tabs.length)}%`,
@@ -38,53 +52,81 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, variant =
         />
       )}
 
-      <div className={`flex items-center justify-between w-full h-full ${variant === 'bubbles' ? 'gap-2' : ''}`}>
+      <div className={`flex items-end justify-between w-full px-2 ${variant === 'bubbles' ? 'gap-2' : ''}`}>
         {tabs.map((tab, index) => {
           const Icon = tab.icon;
           const isActive = activeTab === index;
           const isCenter = variant === 'center' && index === 2;
-          
-          let activeThemeClass = isActive ? `${styles.itemActive} !${theme.colors.primary.replace('bg-', 'text-')}` : styles.itemInactive;
+
+          let activeThemeClass = isActive ? `${styles.itemActive} ${primaryText}` : styles.itemInactive;
           let structureClass = styles.item;
           
           if (variant === 'bubbles') {
               structureClass = `rounded-full aspect-square flex flex-col items-center justify-center transition-all duration-300 ${isActive ? `${theme.colors.background} shadow-md scale-110` : 'bg-black/5'}`;
-              if (isActive) activeThemeClass = `${theme.colors.primary.replace('bg-', 'text-')}`;
+              if (isActive) activeThemeClass = primaryText;
           }
 
           if (isCenter) {
-              structureClass += ` !h-16 !w-16 -mt-8 rounded-full !${theme.colors.primary} !text-white !opacity-100 shadow-lg border-4 ${theme.colors.border} z-20 flex items-center justify-center`;
-              activeThemeClass = ''; 
+              // Elevated center FAB: larger circle that sits higher than other tabs
+              const centerBg = isActive ? primaryBg : 'bg-white';
+              const centerText = isActive 
+                ? (isLightPrimary ? 'text-slate-900' : 'text-white')
+                : 'text-slate-600';
+              const centerShadow = isActive ? 'shadow-2xl' : 'shadow-lg';
+              const centerRing = isActive ? 'ring-4 ring-white' : 'ring-2 ring-slate-200';
+              
+              structureClass = `
+                flex flex-col items-center justify-center
+                w-16 h-16 rounded-full
+                ${centerBg}
+                ${centerText}
+                ${centerShadow}
+                ${centerRing}
+                -translate-y-4
+                transition-all duration-300
+                active:scale-95
+                hover:scale-105
+              `.replace(/\s+/g, ' ').trim();
+              activeThemeClass = '';
           }
 
           return (
             <button 
-                key={index}
+                key={tab.key ?? index}
                 onClick={() => onTabChange(index)}
                 className={`
                     ${structureClass} 
                     ${activeThemeClass}
-                    relative group py-1
+                    ${isCenter ? 'z-30' : 'flex-1 relative group py-2 flex flex-col items-center justify-center'}
                     ${isAlive && isActive && !isCenter ? 'animate-pulse-slow' : ''}
-                    ${isAlive && isCenter ? 'animate-bounce-small' : ''}
                 `}
+                aria-label={tab.label}
+                title={tab.label}
             >
               <Icon 
-                size={isCenter ? 32 : 24} 
+                size={isCenter ? 28 : 24} 
+                strokeWidth={isCenter ? 2.5 : 2}
                 className={`
-                    ${isCenter ? '' : 'mb-1'} 
+                    ${isCenter ? '' : 'mb-0.5'} 
                     transition-transform duration-300 
-                    ${isActive && !isCenter ? 'scale-110' : 'group-hover:scale-110'}
+                    ${isActive && !isCenter ? 'scale-110' : !isCenter ? 'group-hover:scale-110' : ''}
                 `}
               />
               
               {!isCenter && (
-                  <span className={`text-[10px] font-bold transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-70'}`}>
+                  <span className={`text-[10px] font-semibold leading-tight transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
                       {tab.label}
                   </span>
               )}
+              {!!tab.badge && tab.badge > 0 && !isCenter && (
+                <span
+                  className="absolute top-1 right-0 min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-md"
+                >
+                  {tab.badge > 9 ? '9+' : tab.badge}
+                </span>
+              )}
               {variant === 'bubbles' && isActive && (
-                  <div className={`absolute -bottom-1 w-1 h-1 rounded-full !${theme.colors.primary}`} />
+                  <div className={`absolute -bottom-1 w-1 h-1 rounded-full ${primaryBg}`} />
               )}
             </button>
           );

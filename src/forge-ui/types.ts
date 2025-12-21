@@ -174,6 +174,12 @@ export interface BottomNavProps {
   activeTab: number;
   onTabChange: (index: number) => void;
   variant?: 'flat' | 'floating' | 'bubbles' | 'center';
+  items?: Array<{
+    key: string;
+    label: string;
+    icon: any;
+    badge?: number;
+  }>;
 }
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {

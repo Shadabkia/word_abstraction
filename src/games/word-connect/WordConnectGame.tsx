@@ -4,7 +4,6 @@ import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { CustomDragPreview } from './components/CustomDragPreview';
 import { Settings, Search, Lightbulb, X } from 'lucide-react';
-import { Button } from '../../shared/ui/button';
 import { SettingsDialog } from '../../shared/ui/dialogs/SettingsDialog';
 import { LevelSelector } from './components/LevelSelector';
 import { LanguageProvider } from '../../contexts/LanguageContext';
@@ -239,9 +238,9 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
             <p className="text-[var(--color-climate-text-secondary)] mb-6 text-sm">
                 This level is currently being designed.
             </p>
-            <Button onClick={() => setLevel(1)} className="bg-[var(--color-climate-tile)] text-[var(--color-climate-text-primary)] shadow-sm hover:bg-[var(--color-climate-bg-secondary)] rounded-full px-6 py-2">
+            <button onClick={() => setLevel(1)} className="bg-[var(--color-climate-tile)] text-[var(--color-climate-text-primary)] shadow-sm hover:bg-[var(--color-climate-bg-secondary)] rounded-full px-6 py-2 active:scale-95 transition-transform">
               Go to Level 1
-            </Button>
+            </button>
         </div>
       </LanguageProvider>
     );

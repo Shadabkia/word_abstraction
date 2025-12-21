@@ -1,7 +1,8 @@
-import { Monitor, Smartphone, GripHorizontal, ChevronDown, Check, ZoomIn, ZoomOut } from 'lucide-react';
+import { Monitor, Smartphone, GripHorizontal, ChevronDown, Check, ZoomIn, ZoomOut, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import * as Select from '@radix-ui/react-select';
+import { ThemeConfigDialog } from '@/shared/components/ThemeConfigDialog';
 
 export type DeviceModel = 
   | 'iphone-se' 
@@ -37,6 +38,7 @@ const DEVICES: { id: DeviceModel; label: string; group: string }[] = [
 
 export function DeviceSimulatorBar({ currentModel, onModelChange, scale = 100, onScaleChange }: DeviceSimulatorBarProps) {
   const constraintsRef = useRef(null);
+  const [themeOpen, setThemeOpen] = useState(false);
 
   const currentLabel = DEVICES.find(d => d.id === currentModel)?.label;
 
@@ -121,6 +123,15 @@ export function DeviceSimulatorBar({ currentModel, onModelChange, scale = 100, o
             </Select.Portal>
           </Select.Root>
 
+          <div className="w-px h-4 bg-white/10" />
+          <button
+            onClick={() => setThemeOpen(true)}
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors"
+            title="Theme"
+          >
+            <Palette className="w-3.5 h-3.5" />
+          </button>
+
           {onScaleChange && (
             <>
               <div className="w-px h-4 bg-white/10" />
@@ -144,6 +155,8 @@ export function DeviceSimulatorBar({ currentModel, onModelChange, scale = 100, o
 
         </div>
       </motion.div>
+
+      <ThemeConfigDialog open={themeOpen} onOpenChange={setThemeOpen} />
     </>
   );
 }
@@ -162,6 +175,7 @@ const SelectItem = ({ children, value, ...props }: any) => {
     </Select.Item>
   );
 };
+
 
 
 

@@ -39,11 +39,19 @@ const themeRegistry: Record<ThemeMode, GameTheme> = {
   social: socialTheme,
 };
 
+export type ForgeState = {
+  currentMode: ThemeMode;
+  activePalette: string;
+  isAlive: boolean;
+  config: ThemeConfig;
+};
+
 interface ForgeContextType {
   theme: GameTheme;
   currentMode: ThemeMode;
   setTheme: (mode: ThemeMode) => void;
   availableThemes: ThemeMode[];
+  availableThemeMeta: Array<{ mode: ThemeMode; name: string; description: string }>;
   isAlive: boolean;
   toggleAlive: () => void;
   activePalette: string;
@@ -55,17 +63,25 @@ interface ForgeContextType {
 
 const ForgeContext = createContext<ForgeContextType | undefined>(undefined);
 
-export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentMode, setCurrentMode] = useState<ThemeMode>('casual');
-  const [activePalette, setActivePalette] = useState<string>('default');
-  const [isAlive, setIsAlive] = useState<boolean>(true);
-  
-  const [config, setConfig] = useState<ThemeConfig>({
-    density: 'comfortable',
-    radiusScale: 1,
-    animationSpeed: 1,
-    reducedMotion: false,
-  });
+type ForgeProviderProps = {
+  children: React.ReactNode;
+  initialState?: Partial<ForgeState>;
+  onStateChange?: (state: ForgeState) => void;
+};
+
+export const ForgeProvider: React.FC<ForgeProviderProps> = ({ children, initialState, onStateChange }) => {
+  const [currentMode, setCurrentMode] = useState<ThemeMode>(initialState?.currentMode ?? 'casual');
+  const [activePalette, setActivePalette] = useState<string>(initialState?.activePalette ?? 'default');
+  const [isAlive, setIsAlive] = useState<boolean>(initialState?.isAlive ?? true);
+
+  const [config, setConfig] = useState<ThemeConfig>(
+    initialState?.config ?? {
+      density: 'comfortable',
+      radiusScale: 1,
+      animationSpeed: 1,
+      reducedMotion: false,
+    }
+  );
 
   const baseTheme = themeRegistry[currentMode] || casualTheme;
 
@@ -85,16 +101,33 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setTheme = (mode: ThemeMode) => setCurrentMode(mode);
   const setPalette = (paletteName: string) => setActivePalette(paletteName);
-  const toggleAlive = () => setIsAlive(prev => !prev);
-  const updateConfig = (key: keyof ThemeConfig, value: any) => setConfig(prev => ({ ...prev, [key]: value }));
+  const toggleAlive = () => setIsAlive((prev) => !prev);
+  const updateConfig = (key: keyof ThemeConfig, value: any) => setConfig((prev) => ({ ...prev, [key]: value }));
 
   const availableThemes = Object.keys(themeRegistry) as ThemeMode[];
+  const availableThemeMeta = useMemo(
+    () =>
+      availableThemes.map((mode) => ({
+        mode,
+        name: themeRegistry[mode].name,
+        description: themeRegistry[mode].description,
+      })),
+    [availableThemes]
+  );
   const availablePalettes = baseTheme.palettes ? ['default', ...Object.keys(baseTheme.palettes)] : ['default'];
+
+  const effectiveIsAlive = isAlive && !config.reducedMotion;
+
+  useEffect(() => {
+    if (!onStateChange) return;
+    onStateChange({ currentMode, activePalette, isAlive, config });
+  }, [currentMode, activePalette, isAlive, config, onStateChange]);
 
   return (
     <ForgeContext.Provider value={{ 
         theme, currentMode, setTheme, availableThemes,
-        isAlive, toggleAlive, activePalette, setPalette, availablePalettes,
+        availableThemeMeta,
+        isAlive: effectiveIsAlive, toggleAlive, activePalette, setPalette, availablePalettes,
         config, updateConfig
     }}>
       {children}

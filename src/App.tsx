@@ -8,6 +8,7 @@ import { MessagesScreen } from './features/messages/MessagesScreen';
 import { ProfileScreen } from './features/profile/ProfileScreen';
 import { DebugOverlay } from './shared/components/DebugOverlay';
 import { DeviceSimulatorBar, DeviceModel } from './shared/components/DeviceSimulatorBar';
+import { ThemeConfigDialog } from './shared/components/ThemeConfigDialog';
 import { useGameState } from './core/state/gameState';
 import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
 import type { AppTab } from '@/core/navigation/types';
@@ -15,13 +16,18 @@ import * as historyNav from '@/core/navigation/historyNav';
 import * as backGuards from '@/core/navigation/backGuards';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
+import { BottomNav } from '@/forge-ui';
+import { Palette } from 'lucide-react';
+import { useForge } from '@/forge-ui';
 
 export default function App() {
+  const { theme } = useForge();
   const [nav, setNav] = useState<historyNav.NavState>(() => {
     if (typeof window === 'undefined') return { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
     return historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
   });
   const [debugOpen, setDebugOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
   const [deviceModel, setDeviceModel] = useState<DeviceModel>('iphone-14-pro');
   const [scale, setScale] = useState(100);
   const { completeLevel, inbox } = useGameState();
@@ -157,16 +163,18 @@ export default function App() {
 
     return (
       <>
-        <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden ${isFullscreen ? 'h-screen' : ''}`}>
+        <div
+          className={`flex flex-col h-full relative overflow-hidden ${isFullscreen ? 'h-screen' : ''} ${theme.colors.background} ${theme.colors.text}`}
+        >
           
           {/* Background Texture */}
           <div className="absolute inset-0 bg-pattern-subtle opacity-[0.03] pointer-events-none" />
 
           {/* Decorative floating elements - hidden (portrait-first) */}
           <div className="hidden absolute inset-0 pointer-events-none overflow-hidden opacity-30">
-            <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '0s' }} />
-            <div className="absolute top-40 right-20 w-32 h-32 bg-blue-300 rounded-full blur-3xl floating-element" style={{ animationDelay: '2s' }} />
-            <div className="absolute bottom-40 left-20 w-24 h-24 bg-pink-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '4s' }} />
+            <div className={`absolute top-20 left-10 w-20 h-20 ${theme.colors.primary} rounded-full blur-2xl floating-element opacity-30`} style={{ animationDelay: '0s' }} />
+            <div className={`absolute top-40 right-20 w-32 h-32 ${theme.colors.secondary} rounded-full blur-3xl floating-element opacity-25`} style={{ animationDelay: '2s' }} />
+            <div className={`absolute bottom-40 left-20 w-24 h-24 ${theme.colors.accent} rounded-full blur-2xl floating-element opacity-25`} style={{ animationDelay: '4s' }} />
           </div>
           
           {/* Main Content Area */}
@@ -198,69 +206,44 @@ export default function App() {
             )}
           </div>
 
-          {/* Bottom Navigation Bar - Enhanced Floating Pill */}
-          <motion.div 
+          {/* Bottom Navigation Bar (Forge UI) */}
+          <motion.div
             initial={{ y: 100 }}
             animate={{ y: 0 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-            className={`absolute bottom-6 left-4 right-4 bg-white/90 backdrop-blur-xl border border-white/50 px-2 py-2 flex items-center justify-between rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-40 ${isFullscreen ? 'max-w-md mx-auto mb-4' : ''}`}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 100 }}
+            className={`absolute bottom-0 left-0 right-0 z-40 ${isFullscreen ? 'max-w-md mx-auto' : ''}`}
           >
-            
-            <NavButton 
-              active={activeTab === 'feed'} 
-              onClick={() => setTab('feed')}
-              icon={Zap}
-            />
-            
-            <NavButton 
-              active={activeTab === 'arcade'} 
-              onClick={() => setTab('arcade')}
-              icon={Grid}
-            />
-            
-            {/* Center Dashboard Button - The "Home" Anchor */}
-            <div className="relative px-2">
-              <motion.button 
-                onClick={() => setTab('dashboard')}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`
-                  relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300
-                  ${activeTab === 'dashboard' 
-                    ? 'bg-indigo-50 text-indigo-600 shadow-lg ring-2 ring-indigo-100' 
-                    : 'bg-white text-slate-400 border border-slate-100 shadow-sm'
-                  }
-                `}
-              >
-                {/* "Cheron" / Ripple / Glow Animation Layer */}
-                {activeTab === 'dashboard' && (
-                  <motion.div
-                    className="absolute inset-0 rounded-full border-2 border-indigo-200"
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                )}
-                <Truck className="w-7 h-7 relative z-10" strokeWidth={activeTab === 'dashboard' ? 2.5 : 2} />
-              </motion.button>
-            </div>
-
-            <NavButton 
-              active={activeTab === 'messages'} 
-              onClick={() => setTab('messages')}
-              icon={MessageCircle}
-              badge={unreadCount > 0 ? unreadCount : undefined}
-            />
-            
-            <NavButton 
-              active={activeTab === 'profile'} 
-              onClick={() => setTab('profile')}
-              icon={User}
+            <BottomNav
+              variant="center"
+              items={[
+                { key: 'feed', icon: Zap, label: 'Feed' },
+                { key: 'arcade', icon: Grid, label: 'Arcade' },
+                { key: 'dashboard', icon: Truck, label: 'Home' },
+                { key: 'messages', icon: MessageCircle, label: 'Msgs', badge: unreadCount },
+                { key: 'profile', icon: User, label: 'Profile' },
+              ]}
+              activeTab={['feed', 'arcade', 'dashboard', 'messages', 'profile'].indexOf(activeTab)}
+              onTabChange={(index) => {
+                const keys: AppTab[] = ['feed', 'arcade', 'dashboard', 'messages', 'profile'];
+                const next = keys[index] ?? 'dashboard';
+                setTab(next);
+              }}
             />
           </motion.div>
         </div>
 
+        {/* Mobile-friendly Theme FAB */}
+        <button
+          onClick={() => setThemeOpen(true)}
+          className="fixed bottom-24 right-4 z-50 md:hidden bg-black/70 text-white backdrop-blur-xl border border-white/10 rounded-full shadow-xl p-3 active:scale-95 transition-transform"
+          aria-label="Theme settings"
+        >
+          <Palette className="w-5 h-5" />
+        </button>
+
         {/* Debug Overlay - Ctrl+Shift+D to open */}
         <DebugOverlay isOpen={debugOpen} onClose={() => setDebugOpen(false)} />
+        <ThemeConfigDialog open={themeOpen} onOpenChange={setThemeOpen} />
       </>
     );
   };
@@ -294,36 +277,5 @@ export default function App() {
         onScaleChange={setScale}
       />
     </div>
-  );
-}
-
-function NavButton({ active, onClick, icon: Icon, badge }: { active: boolean, onClick: () => void, icon: any, badge?: number }) {
-  return (
-    <motion.button 
-      onClick={onClick}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      className={`p-3 rounded-full transition-all relative ${
-        active 
-          ? 'text-indigo-600 bg-indigo-50 shadow-inner' 
-          : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
-      }`}
-    >
-      <motion.div
-        animate={active ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
-        transition={{ duration: 0.5 }}
-      >
-        <Icon className={`w-6 h-6 ${active ? 'fill-current' : ''}`} strokeWidth={active ? 2.5 : 2} />
-      </motion.div>
-      {badge !== undefined && badge > 0 && (
-        <motion.div 
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
-        >
-          <span className="text-white text-[10px] font-bold">{badge > 9 ? '9+' : badge}</span>
-        </motion.div>
-      )}
-    </motion.button>
   );
 }
