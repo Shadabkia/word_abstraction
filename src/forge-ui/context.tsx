@@ -19,6 +19,7 @@ import { sketchTheme } from './themes/sketch';
 import { stickerTheme } from './themes/sticker';
 import { clayTheme } from './themes/clay';
 import { socialTheme } from './themes/social';
+import { instagramTheme } from './themes/instagram';
 
 const themeRegistry: Record<ThemeMode, GameTheme> = {
   casual: casualTheme,
@@ -37,6 +38,7 @@ const themeRegistry: Record<ThemeMode, GameTheme> = {
   sticker: stickerTheme,
   clay: clayTheme,
   social: socialTheme,
+  instagram: instagramTheme,
 };
 
 export type ForgeState = {
@@ -70,7 +72,7 @@ type ForgeProviderProps = {
 };
 
 export const ForgeProvider: React.FC<ForgeProviderProps> = ({ children, initialState, onStateChange }) => {
-  const [currentMode, setCurrentMode] = useState<ThemeMode>(initialState?.currentMode ?? 'casual');
+  const [currentMode, setCurrentMode] = useState<ThemeMode>(initialState?.currentMode ?? 'instagram');
   const [activePalette, setActivePalette] = useState<string>(initialState?.activePalette ?? 'default');
   const [isAlive, setIsAlive] = useState<boolean>(initialState?.isAlive ?? true);
 

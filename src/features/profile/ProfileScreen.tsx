@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, MapPin } from 'lucide-react';
 import { useGameState } from '@/core/state/gameState';
+import { useForge } from '@/forge-ui';
 import { campaignManager } from '@/core/services/campaignManager';
 import { LevelPostView } from './components/LevelPostView';
 
@@ -44,6 +45,7 @@ export function ProfileScreen({
   onCloseLevel,
 }: ProfileScreenProps) {
   const { user, progress } = useGameState();
+  const { theme } = useForge();
   const [selectedChapter, setSelectedChapter] = useState('chapter_1');
   const [uncontrolledSelectedLevel, setUncontrolledSelectedLevel] = useState<string | null>(null);
   const selectedLevel = selectedLevelId !== undefined ? selectedLevelId : uncontrolledSelectedLevel;
@@ -97,14 +99,14 @@ export function ProfileScreen({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA]">
+    <div className={`min-h-screen ${theme.colors.background}`}>
       {/* Profile Header */}
-      <div className="bg-white px-5 pt-4 pb-5">
+      <div className={`bg-white px-5 pt-4 pb-5 ${theme.colors.border ? 'border-b ' + theme.colors.border.replace('border-', 'border-') : ''}`}>
         <div className="flex items-center justify-between mb-5">
-          <h1 className="text-xl font-semibold text-slate-900">{user.name}</h1>
+          <h1 className={`text-xl font-semibold ${theme.colors.text}`}>{user.name}</h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
-            className="text-slate-700 active:text-slate-900 transition-colors touch-manipulation p-2 -m-2"
+            className={`${theme.colors.text} opacity-80 active:opacity-100 transition-colors touch-manipulation p-2 -m-2`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -119,9 +121,9 @@ export function ProfileScreen({
             whileTap={{ scale: 0.95 }}
             className="relative flex-shrink-0 touch-manipulation"
           >
-            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-400 p-[2.5px]">
+            <div className={`w-20 h-20 rounded-full ${theme.colors.accent} p-[2.5px]`}>
               <div className="w-full h-full rounded-full bg-white p-[2.5px]">
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white shadow-lg overflow-hidden">
+                <div className={`w-full h-full rounded-full ${theme.colors.accent} flex items-center justify-center text-white shadow-lg overflow-hidden`}>
                   <User className="w-9 h-9" />
                 </div>
               </div>
@@ -131,23 +133,23 @@ export function ProfileScreen({
           {/* Stats */}
           <div className="flex-1 flex justify-around pt-1">
             <div className="flex flex-col items-center">
-              <span className="text-[17px] font-semibold text-slate-900">{user.followers}K</span>
-              <span className="text-[13px] text-slate-500 mt-0.5">followers</span>
+              <span className={`text-[17px] font-semibold ${theme.colors.text}`}>{user.followers}K</span>
+              <span className={`text-[13px] ${theme.colors.muted} mt-0.5`}>followers</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-[17px] font-semibold text-slate-900">{user.following}+</span>
-              <span className="text-[13px] text-slate-500 mt-0.5">following</span>
+              <span className={`text-[17px] font-semibold ${theme.colors.text}`}>{user.following}+</span>
+              <span className={`text-[13px] ${theme.colors.muted} mt-0.5`}>following</span>
             </div>
           </div>
         </div>
 
         {/* Bio */}
         <div className="space-y-1.5">
-          <p className="text-[14px] text-slate-900 font-medium">{user.name}</p>
-          <p className="text-[14px] text-slate-700 leading-relaxed">
+          <p className={`text-[14px] ${theme.colors.text} font-medium`}>{user.name}</p>
+          <p className={`text-[14px] ${theme.colors.text} leading-relaxed`}>
             Former office worker. Now driving across Iran in The Onion 🚐
           </p>
-          <div className="flex items-center gap-1.5 text-[13px] text-slate-500">
+          <div className={`flex items-center gap-1.5 text-[13px] ${theme.colors.muted}`}>
             <MapPin className="w-3.5 h-3.5" />
             <span>{currentChapter?.city || 'Tehran'}</span>
           </div>
@@ -155,9 +157,9 @@ export function ProfileScreen({
       </div>
 
       {/* Chapter Selector (Story Highlights) */}
-      <div className="bg-white border-b border-slate-100 px-5 py-5">
+      <div className={`bg-white border-b ${theme.colors.border || 'border-slate-100'} px-5 py-5`}>
         <div className="mb-4">
-          <h3 className="text-[15px] font-bold text-slate-900 px-0">Highlights</h3>
+          <h3 className={`text-[15px] font-bold ${theme.colors.text} px-0`}>Highlights</h3>
         </div>
         <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-1">
           {chapters.map((chapter) => {
@@ -186,9 +188,9 @@ export function ProfileScreen({
                         w-[70px] h-[70px] rounded-full p-[3px]
                         ${isUnlocked 
                           ? isSelected
-                            ? 'bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-400'
+                            ? theme.colors.accent
                             : isComplete
-                              ? 'bg-gradient-to-tr from-green-500 to-emerald-400'
+                              ? theme.colors.success
                               : 'bg-gradient-to-tr from-slate-300 to-slate-400'
                           : 'bg-slate-300'
                         }
@@ -223,7 +225,7 @@ export function ProfileScreen({
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center border-2 border-white shadow-md"
+                        className={`absolute bottom-0 right-0 w-5 h-5 ${theme.colors.success} rounded-full flex items-center justify-center border-2 border-white shadow-md`}
                       >
                         <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -234,7 +236,7 @@ export function ProfileScreen({
                   
                   {/* Chapter Name */}
                   <span className={`text-[13px] max-w-[75px] text-center line-clamp-1 ${
-                    isSelected ? 'font-semibold text-slate-900' : 'text-slate-900'
+                    isSelected ? `font-semibold ${theme.colors.text}` : theme.colors.text
                   }`}>
                     {chapter.subtitle}
                   </span>
@@ -246,7 +248,7 @@ export function ProfileScreen({
       </div>
 
       {/* Level Grid (Posts Grid) */}
-      <div className="bg-[#FAFAFA] pt-3 px-3">
+      <div className={`${theme.colors.background} pt-3 px-3`}>
         <div className="grid grid-cols-3 gap-3">
           {levels.map((level) => {
             const levelId = `level_${level.levelNumber}`;
@@ -266,7 +268,7 @@ export function ProfileScreen({
                   onClick={() => !isLocked && handleLevelClick(level.id)}
                   disabled={isLocked}
                   className={`relative w-full aspect-square bg-white overflow-hidden group touch-manipulation ${
-                    isCurrent ? 'ring-[3px] ring-orange-500' : ''
+                    isCurrent ? `ring-[3px] ${theme.colors.primary.replace('bg-','ring-')}` : ''
                   }`}
                   style={{ borderRadius: '12px' }}
                 >

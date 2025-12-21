@@ -3,6 +3,7 @@ import { ChatRow } from './components/ChatRow';
 import { ChatView } from './components/ChatView';
 import { Edit } from 'lucide-react';
 import { useGameState } from '@/core/state/gameState';
+import { useForge } from '@/forge-ui';
 import { contentManager } from '@/core/services/contentManager';
 import { useState } from 'react';
 
@@ -16,6 +17,7 @@ const NPC_COLORS: Record<string, string> = {
 };
 
 export function MessagesScreen() {
+  const { theme } = useForge();
   const { progress } = useGameState();
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   
@@ -46,20 +48,20 @@ export function MessagesScreen() {
   };
 
   return (
-    <div className="bg-[#FAFAFA] h-full flex flex-col relative">
+    <div className={`${theme.colors.background} h-full flex flex-col relative`}>
       {/* Hidden overlay prevents interaction with list when chat is open */}
       {selectedThreadId && (
         <div className="fixed inset-0 bg-black/20 z-40" onClick={() => setSelectedThreadId(null)} />
       )}
       {/* Header */}
-      <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
+      <div className={`px-5 py-4 flex items-center justify-between border-b ${theme.colors.border || 'border-slate-100'} bg-white shrink-0`}>
         <div className="flex-1" />
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className={`text-2xl font-bold ${theme.colors.text}`}>
           Inbox
         </h1>
         <div className="flex-1 flex justify-end">
           <button 
-            className="text-slate-700 active:text-slate-900 transition-colors p-2 -m-2 touch-manipulation"
+            className={`${theme.colors.muted} active:${theme.colors.text} transition-colors p-2 -m-2 touch-manipulation`}
           >
             <Edit className="w-6 h-6" strokeWidth={1.5} />
           </button>
@@ -70,11 +72,11 @@ export function MessagesScreen() {
       <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-4" style={{ WebkitOverflowScrolling: 'touch' }}>
         {threads.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className={`w-20 h-20 ${theme.colors.secondary} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}>
               <span className="text-4xl">💬</span>
             </div>
-            <p className="text-slate-400 text-sm font-medium">No messages yet</p>
-            <p className="text-slate-300 text-xs mt-1">Complete levels to unlock conversations!</p>
+            <p className={`${theme.colors.muted} text-sm font-medium`}>No messages yet</p>
+            <p className={`${theme.colors.muted} text-xs mt-1 opacity-70`}>Complete levels to unlock conversations!</p>
           </div>
         ) : (
           <div className="space-y-3 pb-4">

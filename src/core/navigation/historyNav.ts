@@ -1,5 +1,6 @@
 import type { AppTab } from '@/core/navigation/types';
 import type { GameLaunchRef } from '@/core/games/gameRegistry';
+import { tryHandleBack } from '@/core/navigation/backGuards';
 
 type NavBase = {
   v: 1;
@@ -55,10 +56,14 @@ export function canGoBack(nav: NavState | null): boolean {
 }
 
 export function back(): void {
+  // Allow screens (e.g. in-game) to intercept back and show confirmation UX.
+  if (tryHandleBack()) return;
   window.history.back();
 }
 
 export function backOrReplaceTab(tab: AppTab): void {
+  // Allow screens (e.g. in-game) to intercept back and show confirmation UX.
+  if (tryHandleBack()) return;
   const nav = getNavState();
   if (canGoBack(nav)) {
     back();
@@ -79,7 +84,19 @@ export function init(defaultTab: AppTab): NavState {
 }
 
 export function subscribe(onChange: (nav: NavState) => void): () => void {
+  // When the user presses browser back, `popstate` fires *after* the navigation happened.
+  // If a back guard wants to handle it (e.g. show "Exit game?" confirm),
+  // we immediately undo the back via `history.forward()` and keep app state unchanged.
+  let skipGuardOnce = false;
+
   const handler = (e: PopStateEvent) => {
+    if (!skipGuardOnce && tryHandleBack()) {
+      skipGuardOnce = true;
+      window.history.forward();
+      return;
+    }
+    skipGuardOnce = false;
+
     const nav = (e.state as HistoryState | null)?.__parsNav;
     if (isNavState(nav)) {
       onChange(nav);

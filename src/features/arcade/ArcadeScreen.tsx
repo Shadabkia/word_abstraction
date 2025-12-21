@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useForge } from '@/forge-ui';
 import { GameCard } from './components/GameCard';
 import { LevelSelector } from './components/LevelSelector';
 import { Gamepad2 } from 'lucide-react';
@@ -40,6 +41,7 @@ export function ArcadeScreen({
   onSelectGame,
   onCloseGameSelector,
 }: ArcadeScreenProps) {
+  const { theme } = useForge();
   const [uncontrolledSelectedGame, setUncontrolledSelectedGame] = useState<string | null>(null);
   const selectedGame = selectedGameId !== undefined ? selectedGameId : uncontrolledSelectedGame;
 
@@ -80,7 +82,7 @@ export function ArcadeScreen({
   // Show game library
   return (
     <motion.div 
-      className="p-6 min-h-full"
+      className={`p-6 min-h-full ${theme.colors.background}`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -88,19 +90,19 @@ export function ArcadeScreen({
       <motion.div variants={itemVariants} className="mb-8 px-2">
         <div className="flex items-center gap-3 mb-2">
           <motion.div
-            className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"
+            className={`w-12 h-12 ${theme.colors.accent} rounded-2xl flex items-center justify-center shadow-lg`}
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             <Gamepad2 className="w-7 h-7 text-white" />
           </motion.div>
           <div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
+            <h2 className={`text-3xl font-bold bg-clip-text text-transparent ${theme.colors.accent.includes('gradient') ? theme.colors.accent.replace('bg-', 'bg-') : 'bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500'}`}>
               Arcade
             </h2>
           </div>
         </div>
-        <p className="text-slate-600 text-sm ml-1">Quick games for short breaks. 🎮</p>
+        <p className={`${theme.colors.muted} text-sm ml-1`}>Quick games for short breaks. 🎮</p>
       </motion.div>
       
       <div className="grid grid-cols-2 gap-4 pb-20">

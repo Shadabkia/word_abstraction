@@ -90,7 +90,7 @@ No comments, no likes, no NPC reactions — Arcade is purely mechanical.
 
 - Back (including the mobile/system back button) returns to the previous Arcade view:
   - From a game’s level selector → back to the game library grid.
-  - From an active game session → back to where the player entered the game from.
+  - From an active game session → **show an exit confirmation dialog** before leaving. If confirmed, return to where the player entered the game from.
 - From level list → Start game in 2 taps.
 - No story progression; everything is self-contained.
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameState } from '@/core/state/gameState';
+import { useForge } from '@/forge-ui';
 import { contentManager } from '@/core/services/contentManager';
 import { HeroCard } from './components/HeroCard';
 import { QuickAccessCard } from './components/QuickAccessCard';
@@ -54,6 +55,7 @@ const swipePower = (offset: number, velocity: number) => {
 
 export function DashboardScreen() {
   const { user, progress } = useGameState();
+  const { theme } = useForge();
   const [[page, direction], setPage] = useState([0, 0]);
   const [isShopOpen, setIsShopOpen] = useState(false);
 
@@ -126,7 +128,7 @@ export function DashboardScreen() {
 
   return (
     <motion.div 
-      className="bg-white min-h-full"
+      className={`${theme.colors.background} min-h-full`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -135,7 +137,7 @@ export function DashboardScreen() {
       <motion.div variants={itemVariants} className="px-6 pt-5 pb-3">
         {/* Top Bar: Location & Status */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-1.5 text-slate-500">
+          <div className={`flex items-center gap-1.5 ${theme.colors.muted}`}>
             <MapPin className="w-4 h-4" strokeWidth={2} />
             <span className="text-[13px] font-medium tracking-wide">
               {currentChapter?.city || 'Tehran'}
@@ -164,15 +166,15 @@ export function DashboardScreen() {
         </div>
 
         <div className="flex items-start justify-between mb-2">
-          <h1 className="text-[28px] font-bold text-slate-900 leading-tight">
+          <h1 className={`text-[28px] font-bold ${theme.colors.text} leading-tight`}>
             Good Morning, {user.name}
           </h1>
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="relative p-2 -m-2 touch-manipulation mt-1"
           >
-            <Bell className="w-6 h-6 text-slate-900" strokeWidth={2} />
-            <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+            <Bell className={`w-6 h-6 ${theme.colors.text}`} strokeWidth={2} />
+            <div className={`absolute top-2 right-2 w-2 h-2 ${theme.colors.danger.replace('bg-', 'bg-')} rounded-full border-2 border-white`} />
           </motion.button>
         </div>
       </motion.div>
@@ -228,7 +230,7 @@ export function DashboardScreen() {
                 <div 
                   className={`h-2 rounded-full transition-all duration-300 ${
                     index === heroIndex 
-                      ? 'bg-red-500 w-6' 
+                      ? theme.colors.primary + ' w-6' 
                       : 'bg-slate-200 w-2'
                   }`}
                 />

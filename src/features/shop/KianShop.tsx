@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, HelpCircle, Coffee, Gem, Sticker, Plus, Sparkles, ShoppingBag } from 'lucide-react';
+import { X, HelpCircle, Coffee, Gem, Sticker, Sparkles, ShoppingBag } from 'lucide-react';
 import { useGameState } from '@/core/state/gameState';
+import { useForge } from '@/forge-ui';
 import { Button } from '@/shared/ui/button';
 import {
   Dialog,
@@ -66,6 +67,7 @@ const shopItems = [
 ];
 
 export function KianShop({ isOpen, onClose }: KianShopProps) {
+  const { theme } = useForge();
   const { addCoins, addBadge } = useGameState();
   const [purchasing, setPurchasing] = useState<string | null>(null);
 
@@ -90,24 +92,24 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed inset-0 z-50 bg-slate-50 flex flex-col sm:max-w-md sm:mx-auto shadow-2xl"
+          className={`fixed inset-0 z-50 ${theme.colors.background} flex flex-col sm:max-w-md sm:mx-auto shadow-2xl`}
         >
           {/* Header */}
-          <div className="bg-white px-6 py-4 shadow-sm flex items-center justify-between sticky top-0 z-10 border-b border-slate-100">
+          <div className={`bg-white px-6 py-4 shadow-sm flex items-center justify-between sticky top-0 z-10 border-b ${theme.colors.border || 'border-slate-100'}`}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                <ShoppingBag className="w-5 h-5 text-indigo-600" />
+              <div className={`w-10 h-10 ${theme.colors.primary.replace('bg-', 'bg-').replace('600', '100')} rounded-full flex items-center justify-center`}>
+                <ShoppingBag className={`w-5 h-5 ${theme.colors.primary.replace('bg-', 'text-')}`} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-900 leading-tight">Kian's Shop</h2>
-                <p className="text-xs text-slate-500">Support the journey</p>
+                <h2 className={`text-xl font-bold ${theme.colors.text} leading-tight`}>Kian's Shop</h2>
+                <p className={`text-xs ${theme.colors.muted}`}>Support the journey</p>
               </div>
             </div>
             
             <div className="flex items-center gap-1">
                <Dialog>
                 <DialogTrigger asChild>
-                  <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors rounded-full hover:bg-slate-50">
+                  <button className={`p-2 ${theme.colors.muted} hover:${theme.colors.text} transition-colors rounded-full hover:${theme.colors.secondary}`}>
                     <HelpCircle className="w-6 h-6" />
                   </button>
                 </DialogTrigger>
@@ -125,7 +127,7 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
 
               <button 
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-700 transition-colors rounded-full hover:bg-slate-50"
+                className={`p-2 ${theme.colors.muted} hover:${theme.colors.text} transition-colors rounded-full hover:${theme.colors.secondary}`}
               >
                 <X className="w-6 h-6" />
               </button>
@@ -133,22 +135,22 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+          <div className={`flex-1 overflow-y-auto p-6 ${theme.colors.background}`}>
             
             {/* Narrative Context Card */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mb-8 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100/50 rounded-2xl p-5 shadow-sm relative overflow-hidden"
+              className={`mb-8 ${theme.colors.accent.includes('gradient') ? 'bg-amber-50' : theme.colors.accent.replace('bg-', 'bg-').replace('500', '50')} border ${theme.colors.border} rounded-2xl p-5 shadow-sm relative overflow-hidden`}
             >
-              <div className="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-amber-100 rounded-full blur-2xl opacity-50" />
+              <div className={`absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 ${theme.colors.accent} rounded-full blur-2xl opacity-50`} />
               
               <div className="flex items-start gap-4 relative z-10">
                 <div className="text-4xl filter drop-shadow-sm">☕️</div>
                 <div>
-                  <h3 className="text-amber-900 font-bold mb-1">Fuel the Adventure</h3>
-                  <p className="text-amber-800/80 text-sm leading-relaxed">
+                  <h3 className={`${theme.colors.text} font-bold mb-1`}>Fuel the Adventure</h3>
+                  <p className={`${theme.colors.text} opacity-80 text-sm leading-relaxed`}>
                     In order for Kian to continue his adventure, he generates income by selling coffee, antiques, and stickers.
                   </p>
                 </div>
@@ -163,7 +165,7 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + (index * 0.05) }}
-                  className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 group hover:shadow-md transition-shadow"
+                  className={`bg-white rounded-2xl p-4 shadow-sm border ${theme.colors.border || 'border-slate-100'} flex items-center gap-4 group hover:shadow-md transition-shadow`}
                 >
                   {/* Icon Box */}
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${item.color} shadow-inner group-hover:scale-105 transition-transform`}>
@@ -173,14 +175,14 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
                   {/* Details */}
                   <div className="flex-1 min-w-0 py-1">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-bold text-slate-900">{item.name}</h3>
+                      <h3 className={`font-bold ${theme.colors.text}`}>{item.name}</h3>
                       {item.isSticker && (
                         <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-purple-200 text-purple-600 bg-purple-50">
                           Badge
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 mb-2 line-clamp-1">{item.description}</p>
+                    <p className={`text-xs ${theme.colors.muted} mb-2 line-clamp-1`}>{item.description}</p>
                     
                     <div className="flex items-center gap-1.5 text-amber-600 font-bold text-xs bg-amber-50 w-fit px-2 py-1 rounded-lg">
                       <Sparkles className="w-3 h-3" />
@@ -192,7 +194,7 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
                   <Button 
                     onClick={() => handlePurchase(item)}
                     disabled={!!purchasing}
-                    className="shrink-0 h-10 px-5 bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-200"
+                    className={`shrink-0 h-10 px-5 ${theme.colors.primary} ${theme.colors.primary.includes('text-white') ? '' : 'text-white'} shadow-lg`}
                   >
                     {purchasing === item.id ? (
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -210,7 +212,7 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
               transition={{ delay: 0.5 }}
               className="mt-8 text-center"
             >
-              <p className="text-xs text-slate-400 font-medium">
+              <p className={`text-xs ${theme.colors.muted} font-medium opacity-70`}>
                 Stickers purchased are automatically added to your Badges page.
               </p>
             </motion.div>

@@ -22,6 +22,7 @@ Themes may also provide optional palettes (variants) to shift mood without chang
 - Theme choice is **persisted** across app launches.
 - Theme changes should apply immediately without requiring reload.
 - The system must support an explicit **Reduced Motion** option (independent of theme identity).
+- Default theme on first launch is **Instagram**.
 
 ## Configuration Surface
 The app exposes a **floating configuration entry point** that opens a dialog where the player can:

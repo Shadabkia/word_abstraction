@@ -37,7 +37,7 @@ export const useSettingsStore = create<SettingsState>()(
       musicEnabled: true,
       hapticsEnabled: true,
 
-      themeMode: 'casual',
+      themeMode: 'instagram',
       themePalette: 'default',
       themeAlive: true,
       themeConfig: {

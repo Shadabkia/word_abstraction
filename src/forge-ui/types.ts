@@ -2,7 +2,7 @@
 import { ReactNode } from 'react';
 
 // --- Core Theme Types ---
-export type ThemeMode = 'casual' | 'scifi' | 'fantasy' | 'playful' | 'horror' | 'pixel' | 'comic' | 'nature' | 'bubble' | 'paper' | 'manga' | 'popart' | 'sketch' | 'sticker' | 'clay' | 'social';
+export type ThemeMode = 'casual' | 'scifi' | 'fantasy' | 'playful' | 'horror' | 'pixel' | 'comic' | 'nature' | 'bubble' | 'paper' | 'manga' | 'popart' | 'sketch' | 'sticker' | 'clay' | 'social' | 'instagram';
 
 export interface ColorPalette {
   background: string;

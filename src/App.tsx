@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Truck, Grid, MessageCircle, User, Zap } from 'lucide-react';
+import { Truck, Grid, MessageCircle, User, Zap, Gamepad2, Home, Compass } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { FeedScreen } from './features/feed/FeedScreen';
@@ -214,10 +214,10 @@ export default function App() {
             className={`absolute bottom-0 left-0 right-0 z-40 ${isFullscreen ? 'max-w-md mx-auto' : ''}`}
           >
             <BottomNav
-              variant="center"
+              variant={theme.id === 'instagram' ? 'flat' : 'center'}
               items={[
-                { key: 'feed', icon: Zap, label: 'Feed' },
-                { key: 'arcade', icon: Grid, label: 'Arcade' },
+                { key: 'feed', icon: Home, label: 'Feed' },
+                { key: 'arcade', icon: Gamepad2, label: 'Arcade' },
                 { key: 'dashboard', icon: Truck, label: 'Home' },
                 { key: 'messages', icon: MessageCircle, label: 'Msgs', badge: unreadCount },
                 { key: 'profile', icon: User, label: 'Profile' },
