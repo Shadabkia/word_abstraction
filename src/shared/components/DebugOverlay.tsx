@@ -15,9 +15,9 @@ export function DebugOverlay({ isOpen, onClose }: DebugOverlayProps) {
   if (!isOpen) return null;
 
   const handleUnlockAll = () => {
-    // Unlock first 20 levels
+    // Unlock first 20 levels in career mode
     for (let i = 1; i <= 20; i++) {
-      completeLevel(`level_${i}`, 1000, 3);
+      completeLevel(`level_${i}`, 1000, 3, 'career');
     }
     // Unlock all chapters
     ['chapter_1', 'chapter_2', 'chapter_3', 'chapter_4'].forEach(id => unlockChapter(id));
@@ -57,8 +57,9 @@ export function DebugOverlay({ isOpen, onClose }: DebugOverlayProps) {
           <div className="bg-slate-50 rounded-xl p-3">
             <div className="text-xs font-bold text-slate-400 uppercase mb-2">Progress</div>
             <div className="text-sm space-y-1">
-              <div><span className="font-bold">Levels Completed:</span> {progress.completedLevels.length}</div>
-              <div><span className="font-bold">Chapters Unlocked:</span> {progress.unlockedChapters.length}</div>
+              <div><span className="font-bold">Career Levels:</span> {progress.career.completedLevels.length}</div>
+              <div><span className="font-bold">Arcade Levels:</span> {progress.arcade.completedLevels.length}</div>
+              <div><span className="font-bold">Chapters Unlocked:</span> {progress.career.unlockedChapters.length}</div>
             </div>
           </div>
 
@@ -103,28 +104,28 @@ export function DebugOverlay({ isOpen, onClose }: DebugOverlayProps) {
             <div className="text-xs font-bold text-slate-400 uppercase mb-2">Quick Actions</div>
             <div className="space-y-2">
               <Button 
-                onClick={() => completeLevel('level_1', 1000, 3)}
+                onClick={() => completeLevel('level_1', 1000, 3, 'career')}
                 size="sm"
                 variant="outline"
                 className="w-full text-xs"
               >
-                Complete Level 1
+                Complete Level 1 (Career)
               </Button>
               <Button 
-                onClick={() => completeLevel('level_5', 1000, 3)}
+                onClick={() => completeLevel('level_5', 1000, 3, 'career')}
                 size="sm"
                 variant="outline"
                 className="w-full text-xs"
               >
-                Complete Level 5
+                Complete Level 5 (Career)
               </Button>
               <Button 
-                onClick={() => completeLevel('level_10', 1000, 3)}
+                onClick={() => completeLevel('level_10', 1000, 3, 'career')}
                 size="sm"
                 variant="outline"
                 className="w-full text-xs"
               >
-                Complete Level 10
+                Complete Level 10 (Career)
               </Button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, HelpCircle, Coffee, Gem, Sticker, Plus, Sparkles, ShoppingBag } from 'lucide-react';
+import { X, HelpCircle, Coffee, Gem, Sticker, Sparkles, ShoppingBag } from 'lucide-react';
 import { useGameState } from '@/core/state/gameState';
 import { Button } from '@/shared/ui/button';
 import {
@@ -111,7 +111,7 @@ export function KianShop({ isOpen, onClose }: KianShopProps) {
                     <HelpCircle className="w-6 h-6" />
                   </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="bg-white">
                   <DialogHeader>
                     <DialogTitle>Why Support Kian?</DialogTitle>
                     <DialogDescription className="pt-3 text-base leading-relaxed">

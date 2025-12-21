@@ -9,8 +9,8 @@ import { Sparkles } from 'lucide-react';
 export function FeedScreen() {
   const { progress } = useGameState();
   
-  // Get unlocked posts based on completed levels
-  const posts = contentManager.getUnlockedPosts(progress.completedLevels);
+  // Get unlocked posts based on completed career levels
+  const posts = contentManager.getUnlockedPosts(progress.career.completedLevels);
   const npcs = contentManager.getNPCs();
   
   // Create a map of NPC data for quick lookup

@@ -189,8 +189,20 @@ Each campaign post launches a specific game session using a `gameRef`:
 
 ## Progression Features
 
-### 1. Profile Evolution
-The profile itself becomes a record of Kian’s transformation.
+### 1. Career Mode Progress Tracking
+- Profile tab launches games in **Career mode**
+- Career progress is **separate** from Arcade mode
+- Completing levels in Career mode:
+  - Awards coins
+  - Unlocks narrative content (posts, messages, chapters)
+  - Tracks high scores
+  - Marks levels as complete in Career progression
+  - Advances the story
+- Career completion does not affect Arcade progress
+- Levels are unlocked sequentially in Career mode
+
+### 2. Profile Evolution
+The profile itself becomes a record of Kian's transformation.
 Progression signals include:
 - Avatar changes
 - Bio updates
@@ -198,9 +210,9 @@ Progression signals include:
 - New followers
 - New achievements
 
-### 2. Achievements Panel
+### 3. Achievements Panel
 - Accessible via a small icon next to the bio.
-- Shows badges (e.g., “Office Escapee,” “Gaz Survivor”) and progress meters.
+- Shows badges (e.g., "Office Escapee," "Gaz Survivor") and progress meters.
 
 ## Design Principles
 

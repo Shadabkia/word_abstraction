@@ -56,11 +56,15 @@ export function DashboardScreen() {
   const { user, progress } = useGameState();
   const [[page, direction], setPage] = useState([0, 0]);
   const [isShopOpen, setIsShopOpen] = useState(false);
+  
+  // Debug logging
+  console.log('[Dashboard] Progress:', progress);
+  console.log('[Dashboard] Career completed:', progress?.career?.completedLevels?.length || 0);
 
   // We only have 4 cards now, so we wrap the page index around 0-3
   const heroCardsData = [
     {
-      levelNumber: progress.completedLevels.length + 1,
+      levelNumber: progress.career.completedLevels.length + 1,
       chapterTitle: "Chapter 1",
       levelTitle: "The Departure",
       description: "Continue your journey...",
@@ -122,7 +126,7 @@ export function DashboardScreen() {
     console.log('Playing next level...');
   };
 
-  const currentChapter = contentManager.getUnlockedChapters(progress.completedLevels)[0];
+  const currentChapter = contentManager.getUnlockedChapters(progress.career.completedLevels)[0];
 
   return (
     <motion.div 

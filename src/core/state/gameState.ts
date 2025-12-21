@@ -14,9 +14,17 @@ interface UserState {
 }
 
 interface ProgressState {
-  completedLevels: string[]; // List of level IDs
-  unlockedChapters: string[]; // List of chapter IDs
-  highScores: Record<string, number>; // levelId -> score
+  // Career mode progress (story campaign)
+  career: {
+    completedLevels: string[]; // List of campaign level IDs
+    unlockedChapters: string[]; // List of chapter IDs
+    highScores: Record<string, number>; // levelId -> score
+  };
+  // Arcade mode progress (standalone play)
+  arcade: {
+    completedLevels: string[]; // List of arcade level IDs
+    highScores: Record<string, number>; // levelId -> score
+  };
 }
 
 interface FeedState {
@@ -41,7 +49,7 @@ interface GameState {
   addVibes: (amount: number) => void;
   spendVibes: (amount: number) => boolean;
   addBadge: (badgeId: string) => void;
-  completeLevel: (levelId: string, score: number, stars: number) => void;
+  completeLevel: (levelId: string, score: number, stars: number, mode: 'career' | 'arcade') => void;
   unlockChapter: (chapterId: string) => void;
   markMessageRead: (messageId: string) => void;
   resetProgress: () => void;
@@ -61,9 +69,42 @@ const initialUser: UserState = {
 };
 
 const initialProgress: ProgressState = {
-  completedLevels: [],
-  unlockedChapters: ['chapter_1'],
-  highScores: {},
+  career: {
+    completedLevels: [],
+    unlockedChapters: ['chapter_1'],
+    highScores: {},
+  },
+  arcade: {
+    completedLevels: [],
+    highScores: {},
+  },
+};
+
+// Helper to ensure progress has the correct structure
+const ensureProgressStructure = (progress: any): ProgressState => {
+  // If progress already has the new structure, return it
+  if (progress?.career && progress?.arcade) {
+    return progress as ProgressState;
+  }
+  
+  // If progress has the old structure, migrate it
+  if (progress?.completedLevels) {
+    console.log('Auto-migrating old progress structure...');
+    return {
+      career: {
+        completedLevels: progress.completedLevels || [],
+        unlockedChapters: progress.unlockedChapters || ['chapter_1'],
+        highScores: progress.highScores || {},
+      },
+      arcade: {
+        completedLevels: [],
+        highScores: {},
+      },
+    };
+  }
+  
+  // Fallback to initial state
+  return initialProgress;
 };
 
 export const useGameState = create<GameState>()(
@@ -108,34 +149,57 @@ export const useGameState = create<GameState>()(
           },
         })),
 
-      completeLevel: (levelId, score, stars) =>
+      completeLevel: (levelId, score, stars, mode) =>
         set((state) => {
-          const isNewCompletion = !state.progress.completedLevels.includes(levelId);
-          return {
+          const modeProgress = state.progress[mode];
+          const isNewCompletion = !modeProgress.completedLevels.includes(levelId);
+          
+          console.log('[GameState] completeLevel called:', {
+            levelId,
+            mode,
+            isNewCompletion,
+            currentCareerLevels: state.progress.career.completedLevels,
+            currentArcadeLevels: state.progress.arcade.completedLevels,
+          });
+          
+          const newState = {
             progress: {
               ...state.progress,
-              completedLevels: isNewCompletion
-                ? [...state.progress.completedLevels, levelId]
-                : state.progress.completedLevels,
-              highScores: {
-                ...state.progress.highScores,
-                [levelId]: Math.max(state.progress.highScores[levelId] || 0, score),
+              [mode]: {
+                ...modeProgress,
+                completedLevels: isNewCompletion
+                  ? [...modeProgress.completedLevels, levelId]
+                  : modeProgress.completedLevels,
+                highScores: {
+                  ...modeProgress.highScores,
+                  [levelId]: Math.max(modeProgress.highScores[levelId] || 0, score),
+                },
               },
             },
-            // Example: Add coins on first completion
-            user: isNewCompletion
+            // Add coins only on first career completion (not arcade)
+            user: isNewCompletion && mode === 'career'
               ? { ...state.user, coins: state.user.coins + 10 }
               : state.user,
           };
+          
+          console.log('[GameState] After completion:', {
+            careerLevels: newState.progress.career.completedLevels,
+            arcadeLevels: newState.progress.arcade.completedLevels,
+          });
+          
+          return newState;
         }),
 
       unlockChapter: (chapterId) =>
         set((state) => ({
           progress: {
             ...state.progress,
-            unlockedChapters: state.progress.unlockedChapters.includes(chapterId)
-              ? state.progress.unlockedChapters
-              : [...state.progress.unlockedChapters, chapterId],
+            career: {
+              ...state.progress.career,
+              unlockedChapters: state.progress.career.unlockedChapters.includes(chapterId)
+                ? state.progress.career.unlockedChapters
+                : [...state.progress.career.unlockedChapters, chapterId],
+            },
           },
         })),
 
@@ -160,6 +224,43 @@ export const useGameState = create<GameState>()(
     {
       name: 'pars-ra-pas-storage', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      version: 1, // Increment this when making breaking changes
+      migrate: (persistedState: any, version: number) => {
+        try {
+          // Migration from old structure to new structure
+          if (persistedState?.state?.progress) {
+            const oldProgress = persistedState.state.progress;
+            
+            // Ensure progress has the correct structure
+            persistedState.state.progress = ensureProgressStructure(oldProgress);
+          }
+          
+          return persistedState;
+        } catch (error) {
+          console.error('Migration failed, resetting to initial state:', error);
+          // Return a clean state if migration fails
+          return {
+            state: {
+              user: initialUser,
+              progress: initialProgress,
+              feed: { seenPosts: [], unlockedStories: [] },
+              inbox: { readMessages: [], activeThreads: [] },
+            },
+            version: 1,
+          };
+        }
+      },
+      // Add error handling for storage operations
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (error) {
+            console.error('Failed to rehydrate state:', error);
+          } else if (state) {
+            // Ensure progress structure is correct after rehydration
+            state.progress = ensureProgressStructure(state.progress);
+          }
+        };
+      },
     }
   )
 );

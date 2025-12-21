@@ -107,6 +107,14 @@ The Arcade Tab is a clean, scrollable list of all available games. Each game ope
 Arcade launches games using a `gameRef`:
 - `gameId`
 - `levelId`
+- `mode: 'arcade'`
+
+## Progress Tracking
+- Arcade mode maintains **separate** progress tracking from Career mode
+- Completing a level in Arcade does not mark it complete in Career
+- Arcade progress tracks high scores for replay value
+- No coin rewards or narrative unlocks in Arcade mode
+- All levels are unlocked from the start in Arcade
 
 
 

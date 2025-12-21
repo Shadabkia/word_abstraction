@@ -142,5 +142,15 @@ The Dashboard includes an adaptive, context-aware recommendation banner that int
 - **Instagram Influence**: Clean white background, card-based layout, notification bell
 - **Carousel Ready**: Designed to support multiple hero cards with smooth transitions
 
+## Progress Tracking
+- Dashboard launches games in **Career mode**
+- Career mode progress is separate from Arcade mode
+- Completing levels in Career mode:
+  - Awards coins
+  - Unlocks narrative content (posts, messages, chapters)
+  - Tracks high scores
+  - Marks levels as complete in Career progression
+- Career completion does not affect Arcade progress
+
 ## Final Essence
 The Dashboard is the player's home base — a clean, modern hub with a bold greeting, carousel of hero cards, and three vibrant quick-access cards. The design is Instagram-inspired with card-based layout, prominent gradients, and generous spacing. Touch-optimized with scale-down feedback and proper touch targets. The hero carousel is the primary CTA, designed to expand with multiple cards in the future. Every element reinforces the narrative (location, greeting, chapter context) while maintaining a friction-free path to gameplay.

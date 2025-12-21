@@ -48,13 +48,22 @@ Tracks long-term progress.
 -   **Store:** `useGameState`
 -   **Slices:**
     -   `user`: { id, name, avatar, coins, vibes }
-    -   `progress`: { completedLevels: [], unlockedChapters: [], highScores: {} }
+    -   `progress`: {
+        -   `career`: { completedLevels: [], unlockedChapters: [], highScores: {} }
+        -   `arcade`: { completedLevels: [], highScores: {} }
+    }
     -   `feed`: { seenPosts: [], unlockedStories: [] }
     -   `inbox`: { readMessages: [], activeThreads: [] }
 -   **Actions:**
-    -   `completeLevel(levelId, score, stars)`: Marks level complete, updates scores, adds coins
-    -   `unlockChapter(chapterId)`: Unlocks new chapter
+    -   `completeLevel(levelId, score, stars, mode)`: Marks level complete in specified mode ('career' or 'arcade'), updates scores, adds coins (career only)
+    -   `unlockChapter(chapterId)`: Unlocks new chapter (career only)
     -   `markMessageRead(messageId)`: Marks message as read
+
+**Progress Separation:**
+- Career and Arcade modes maintain separate completion tracking
+- Completing a level in Career mode does not mark it complete in Arcade mode, and vice versa
+- Career mode completion awards coins and unlocks narrative content
+- Arcade mode completion only tracks high scores for replay value
 
 ### 3.2 Settings State (Zustand + LocalStorage)
 Tracks app preferences.
@@ -92,9 +101,15 @@ All game launches in the app use a structured reference:
 type GameLaunchRef = {
   gameId: string;                  // e.g. "word-connect"
   levelId: string | number;        // game-specific level address (number for Word Connect)
-  campaignLevelId?: string;        // set when launched from Campaign so progression updates the correct campaign level
+  mode: 'career' | 'arcade';       // which mode the game was launched from
+  campaignLevelId?: string;        // set when launched from Career mode so progression updates the correct campaign level
 };
 ```
+
+**Mode Context:**
+- `mode: 'career'`: Launched from Dashboard or Profile (story campaign)
+- `mode: 'arcade'`: Launched from Arcade tab (standalone play)
+- The mode determines which progress tracker is updated on completion
 
 ### 4.2 Current Games
 -   **Word Connect**: 4x4 grid word categorization puzzle (fully integrated)

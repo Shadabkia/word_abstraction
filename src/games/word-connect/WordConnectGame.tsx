@@ -44,9 +44,10 @@ interface WordConnectGameProps {
   onExit?: () => void;
   onComplete?: (score: number) => void;
   initialLevel?: number;
+  gameMode?: 'career' | 'arcade';
 }
 
-export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }: WordConnectGameProps) {
+export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, gameMode = 'career' }: WordConnectGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [coins] = useState(10);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
@@ -55,6 +56,12 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1 }
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   const levelCompletedRef = useRef(false);
+  
+  // Set the game storage mode when component mounts or mode changes
+  useEffect(() => {
+    gameStorage.setMode(gameMode);
+    console.log(`[WordConnectGame] Running in ${gameMode} mode`);
+  }, [gameMode]);
   
   // Level data state
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
