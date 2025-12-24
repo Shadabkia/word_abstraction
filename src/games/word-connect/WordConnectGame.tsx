@@ -244,6 +244,42 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   const screenVisuals = currentLevelData?.visuals;
   const chapterId = currentLevelData?.chapter?.id;
 
+  const backgroundCandidates = useMemo(() => {
+    const rawSrc = screenVisuals?.background?.src;
+    const normalizedSrc =
+      rawSrc ? (rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`) : undefined;
+
+    const candidates: string[] = [];
+
+    // If the level JSON points at a legacy PNG background in /public/backgrounds,
+    // prefer the equivalent WebP first (if present), then fall back to the original.
+    if (normalizedSrc) {
+      const isPublicBackgroundPng =
+        normalizedSrc.startsWith('/backgrounds/') && /\.png$/i.test(normalizedSrc);
+      if (isPublicBackgroundPng) {
+        candidates.push(normalizedSrc.replace(/\.png$/i, '.webp'));
+      }
+      candidates.push(normalizedSrc);
+    }
+
+    // Fallback: chapter-based background asset.
+    // Note: chapter meta ids are like "chapter_1" but asset filenames might be "chapter1".
+    const chapterIdNoUnderscore = chapterId ? chapterId.replace(/_/g, '') : undefined;
+    const chapterIdPrefixFixed = chapterId ? chapterId.replace(/^chapter_/, 'chapter') : undefined;
+
+    if (chapterId) {
+      // Prefer WebP for size. If you add PNG-only assets later, update this list.
+      if (chapterIdPrefixFixed) candidates.push(`/backgrounds/${chapterIdPrefixFixed}.webp`);
+      if (chapterIdNoUnderscore) candidates.push(`/backgrounds/${chapterIdNoUnderscore}.webp`);
+      candidates.push(`/backgrounds/${chapterId}.webp`);
+    }
+
+    // De-dupe while preserving order.
+    return candidates.filter((c, idx) => candidates.indexOf(c) === idx);
+  }, [screenVisuals?.background?.src, chapterId]);
+
+  const resolvedBackgroundSrc = useResolvedBackgroundSrc(backgroundCandidates);
+
   const screenStyle = useMemo<CSSProperties>(() => {
     const style: Record<string, any> = {};
 
@@ -259,41 +295,55 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
     if (climate?.highlight) style['--color-climate-highlight'] = climate.highlight;
     if (climate?.success) style['--color-climate-success'] = climate.success;
 
-    // Full-screen background image
-    const rawSrc = screenVisuals?.background?.src;
-    const normalizedSrc =
-      rawSrc ? (rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`) : undefined;
-
-    // Fallback: chapter-based background asset.
-    // Note: chapter meta ids are like "chapter_1" but asset filenames might be "chapter1".
-    const chapterIdNoUnderscore = chapterId ? chapterId.replace(/_/g, '') : undefined;
-    const chapterIdPrefixFixed = chapterId ? chapterId.replace(/^chapter_/, 'chapter') : undefined;
-
-    const fallbackCandidates = chapterId
-      ? [
-          `/backgrounds/${chapterId}.png`,
-          `/backgrounds/${chapterIdNoUnderscore}.png`,
-          `/backgrounds/${chapterIdPrefixFixed}.png`,
-          `/backgrounds/${chapterId}.webp`,
-          `/backgrounds/${chapterIdNoUnderscore}.webp`,
-          `/backgrounds/${chapterIdPrefixFixed}.webp`,
-        ]
-      : [];
-
-    // Primary background source (level JSON overrides chapter fallback)
-    const bgCandidates = normalizedSrc ? [normalizedSrc, ...fallbackCandidates] : fallbackCandidates;
-
     style.backgroundColor = 'var(--color-climate-bg)';
 
-    if (bgCandidates.length > 0) {
-      // Multiple url() layers allow graceful fallback if one asset 404s.
-      // No overlay/scrim: background is shown at full strength.
-      style.backgroundImage = bgCandidates.map((s) => `url('${s}')`).join(', ');
+    if (resolvedBackgroundSrc) {
+      // Single resolved background (avoids downloading multiple assets for "fallbacks").
+      style.backgroundImage = `url('${resolvedBackgroundSrc}')`;
       style.backgroundPosition = screenVisuals?.background?.position || 'center';
     }
 
     return style as CSSProperties;
-  }, [screenVisuals, chapterId]);
+  }, [screenVisuals, resolvedBackgroundSrc]);
+
+function useResolvedBackgroundSrc(candidates: string[]) {
+  const [resolved, setResolved] = useState<string | undefined>(undefined);
+
+  const key = useMemo(() => candidates.join('|'), [candidates]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function run() {
+      setResolved(undefined);
+      for (const src of candidates) {
+        const ok = await canLoadImage(src);
+        if (cancelled) return;
+        if (ok) {
+          setResolved(src);
+          return;
+        }
+      }
+    }
+
+    // Avoid work if there are no candidates
+    if (candidates.length > 0) run();
+    return () => {
+      cancelled = true;
+    };
+  }, [key, candidates]);
+
+  return resolved;
+}
+
+function canLoadImage(src: string) {
+  return new Promise<boolean>((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
   
   if (!isLoading && (!currentLevelData || !currentLevelData.words || currentLevelData.words.length === 0)) {
     return (

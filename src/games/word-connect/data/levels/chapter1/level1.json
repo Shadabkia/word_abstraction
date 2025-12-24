@@ -13,7 +13,7 @@
     },
     "visuals": {
       "background": {
-        "src": "/backgrounds/CH01L01.png",
+        "src": "/backgrounds/CH01L01.webp",
         "position": "center"
       }
     }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Truck, Grid, MessageCircle, User, Zap, Gamepad2, Home, Compass } from 'lucide-react';
+import { Truck, MessageCircle, User, Gamepad2, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { FeedScreen } from './features/feed/FeedScreen';
@@ -19,9 +19,14 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { BottomNav } from '@/forge-ui';
 import { Palette } from 'lucide-react';
 import { useForge } from '@/forge-ui';
+import { SplashSequence } from '@/shared/components/SplashSequence';
+import { backgroundMusic } from '@/core/audio/backgroundMusic';
+import { useSettingsStore } from '@/core/state/settingsStore';
 
 export default function App() {
   const { theme } = useForge();
+  const [showSplash, setShowSplash] = useState(true);
+  const musicEnabled = useSettingsStore((s) => s.musicEnabled);
   const [nav, setNav] = useState<historyNav.NavState>(() => {
     if (typeof window === 'undefined') return { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
     const navState = historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
@@ -104,6 +109,20 @@ export default function App() {
 
   const profileSelectedLevelId = nav.kind === 'profilePost' ? nav.levelId : null;
   const arcadeSelectedGameId = nav.kind === 'arcadeGame' ? nav.gameId : null;
+
+  // Background music: start on the 2nd splash clip, then fade volume based on location.
+  useEffect(() => {
+    backgroundMusic.setEnabled(musicEnabled);
+  }, [musicEnabled]);
+
+  useEffect(() => {
+    // Dashboard: normal volume. Other tabs: lower. In-game: lowest.
+    const target =
+      activeGame ? 0.15 :
+      activeTab === 'dashboard' ? 0.6 :
+      0.25;
+    backgroundMusic.setTargetVolume(target, { ms: 650 });
+  }, [activeGame, activeTab]);
 
   const setTab = (tab: AppTab) => {
     // Mobile-friendly: tab switches do NOT add to the back stack.
@@ -280,8 +299,21 @@ export default function App() {
 
   if (isMobile) {
     return (
-      <div className="h-[100dvh] w-full bg-white">
+      <div className="relative h-[100dvh] w-full bg-white overflow-hidden">
         {renderContent()}
+        {showSplash && (
+          <SplashSequence
+            clips={[
+              { name: 'logo', webmSrc: '/splash/splash-logo.webm', mp4Src: '/splash/splash-logo.mp4' },
+              { name: 'van', webmSrc: '/splash/splash-van.webm', mp4Src: '/splash/splash-van.mp4' },
+            ]}
+            onClipStart={(_, idx) => {
+              // Start (or attempt to start) BGM when the second splash begins.
+              if (idx === 1) backgroundMusic.setDesiredPlaying(true);
+            }}
+            onDone={() => setShowSplash(false)}
+          />
+        )}
       </div>
     );
   }
@@ -294,6 +326,18 @@ export default function App() {
       >
         <div className={`bg-white overflow-hidden shadow-2xl relative ring-1 ring-slate-900/5 transition-all duration-500 ease-spring ${getContainerStyle(deviceModel)}`}>
           {renderContent()}
+          {showSplash && (
+            <SplashSequence
+              clips={[
+                { name: 'logo', webmSrc: '/splash/splash-logo.webm', mp4Src: '/splash/splash-logo.mp4' },
+                { name: 'van', webmSrc: '/splash/splash-van.webm', mp4Src: '/splash/splash-van.mp4' },
+              ]}
+              onClipStart={(_, idx) => {
+                if (idx === 1) backgroundMusic.setDesiredPlaying(true);
+              }}
+              onDone={() => setShowSplash(false)}
+            />
+          )}
         </div>
       </div>
       
