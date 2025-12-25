@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, Star } from 'lucide-react';
 
 interface Level {
@@ -33,6 +32,12 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <style>{`
+        @keyframes enter-scale {
+          0% { opacity: 0; transform: translateY(15px) scale(0.9); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
       {/* Header */}
       <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
         <div className="max-w-md mx-auto px-4 py-4 flex items-center gap-4">
@@ -53,21 +58,21 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
       <div className="max-w-md mx-auto px-4 py-6">
         <div className="grid grid-cols-4 gap-2">
           {levels.map((level, index) => (
-            <motion.button
+            <button
               key={level.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
-              whileHover={!level.isLocked ? { scale: 1.05 } : {}}
-              whileTap={!level.isLocked ? { scale: 0.95 } : {}}
               onClick={() => !level.isLocked && onSelectLevel(level.id)}
               disabled={level.isLocked}
+              style={{
+                animation: 'enter-scale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both',
+                animationDelay: `${Math.min(index * 0.03, 0.3)}s`
+              }}
               className={`
                 relative aspect-square rounded-xl p-2 flex flex-col items-center justify-center
-                transition-all duration-200
+                transition-all duration-200 active:scale-95
+                ${!level.isLocked && 'hover:scale-105 hover:shadow-xl'}
                 ${level.isLocked 
                   ? 'bg-slate-200 cursor-not-allowed opacity-50' 
-                  : `bg-gradient-to-br ${difficultyColors[level.difficulty]} text-white shadow-lg hover:shadow-xl`
+                  : `bg-gradient-to-br ${difficultyColors[level.difficulty]} text-white shadow-lg`
                 }
               `}
             >
@@ -108,7 +113,7 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
                   </div>
                 </>
               )}
-            </motion.button>
+            </button>
           ))}
         </div>
 
