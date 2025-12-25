@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
@@ -49,7 +49,7 @@ interface WordConnectGameProps {
 }
 
 // Animation variants
-const pageVariants = {
+const pageVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
@@ -61,7 +61,7 @@ const pageVariants = {
   }
 };
 
-const topBarVariants = {
+const topBarVariants: Variants = {
   hidden: { y: -50, opacity: 0 },
   visible: { 
     y: 0, 
@@ -70,7 +70,7 @@ const topBarVariants = {
   }
 };
 
-const gridContainerVariants = {
+const gridContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -81,7 +81,7 @@ const gridContainerVariants = {
   }
 };
 
-const rowVariantsLeft = {
+const rowVariantsLeft: Variants = {
   hidden: { x: -100, opacity: 0 },
   visible: { 
     x: 0, 
@@ -90,7 +90,7 @@ const rowVariantsLeft = {
   }
 };
 
-const rowVariantsRight = {
+const rowVariantsRight: Variants = {
   hidden: { x: 100, opacity: 0 },
   visible: { 
     x: 0, 
@@ -99,7 +99,7 @@ const rowVariantsRight = {
   }
 };
 
-const bottomDockVariants = {
+const bottomDockVariants: Variants = {
   hidden: { y: 100, opacity: 0 },
   visible: { 
     y: 0, 
@@ -118,6 +118,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   const [winOpen, setWinOpen] = useState(false);
   const levelCompletedRef = useRef(false);
   const isExitingRef = useRef(false);
+  const winCompletionSentRef = useRef(false);
   
   // Set the game storage mode when component mounts or mode changes
   useEffect(() => {
@@ -226,6 +227,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   const triggerWin = () => {
     if (levelCompletedRef.current) return;
     levelCompletedRef.current = true;
+    winCompletionSentRef.current = false;
     setWinOpen(true);
   };
 
@@ -233,10 +235,22 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
     if (!onExit) return;
     return backGuards.registerBackGuard(() => {
       if (isExitingRef.current) return false;
+      // If the win dialog is up, back should behave like "dismiss + continue"
+      // (i.e., return to the level selector without showing the exit confirm).
+      if (winOpen) {
+        setWinOpen(false);
+        if (onComplete && levelCompletedRef.current && !winCompletionSentRef.current) {
+          winCompletionSentRef.current = true;
+          setExitConfirmOpen(false);
+          isExitingRef.current = true;
+          onComplete(1000);
+        }
+        return true;
+      }
       setExitConfirmOpen(true);
       return true;
     });
-  }, [onExit]);
+  }, [onExit, onComplete, winOpen]);
 
   // ----------------------------
   // Visual system (JSON-driven)
@@ -918,10 +932,19 @@ function canLoadImage(src: string) {
         open={winOpen}
         onOpenChange={(open) => {
           setWinOpen(open);
-          // Mark level as complete when dialog closes (any way: button, backdrop, ESC, back)
-          if (!open && onComplete && levelCompletedRef.current) {
-            onComplete(1000);
+
+          if (open) {
+            winCompletionSentRef.current = false;
+            return;
           }
+
+          // Win flow: dismissing the win dialog means "continue" (leave to level selector).
+          // Do not show the exit confirmation dialog.
+          if (!onComplete || !levelCompletedRef.current || winCompletionSentRef.current) return;
+          winCompletionSentRef.current = true;
+          setExitConfirmOpen(false);
+          isExitingRef.current = true;
+          onComplete(1000);
         }}
         title="You did it!"
         description="Level complete. That was smooth."
