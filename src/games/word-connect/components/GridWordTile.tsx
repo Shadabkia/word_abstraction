@@ -286,9 +286,8 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
   // OPTIMIZATION: Memoize transition config
   const transitionConfig = React.useMemo(() => 
     (isMerging || hintColor) ? {} : { 
-      type: "spring" as const, 
-      stiffness: 400, 
-      damping: 30,
+      duration: 0.3,
+      ease: "easeOut" as const,
       layout: { duration: 0.2 },
       repeat: 0
     },
@@ -300,7 +299,7 @@ export function GridWordTile({ word, rowIndex, colIndex, onSwap, isSubcategoryGl
     <motion.div
       layoutId={!isDragging ? word.id : undefined}
       layout={!isDragging}
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0 }}
       animate={animateState}
       transition={transitionConfig}
       ref={tileRef}

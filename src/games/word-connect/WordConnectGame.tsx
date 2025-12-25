@@ -75,27 +75,33 @@ const gridContainerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
+      staggerChildren: 0.06,
+      delayChildren: 0.1
     }
   }
 };
 
 const rowVariantsLeft: Variants = {
-  hidden: { x: -100, opacity: 0 },
+  hidden: { x: -20, opacity: 0 },
   visible: { 
     x: 0, 
     opacity: 1,
-    transition: { type: "spring", stiffness: 100, damping: 20 }
+    transition: { 
+      duration: 0.35,
+      ease: "easeOut"
+    }
   }
 };
 
 const rowVariantsRight: Variants = {
-  hidden: { x: 100, opacity: 0 },
+  hidden: { x: 20, opacity: 0 },
   visible: { 
     x: 0, 
     opacity: 1,
-    transition: { type: "spring", stiffness: 100, damping: 20 }
+    transition: { 
+      duration: 0.35,
+      ease: "easeOut"
+    }
   }
 };
 
