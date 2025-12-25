@@ -51,7 +51,7 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
 
       {/* Level Grid */}
       <div className="max-w-md mx-auto px-4 py-6">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {levels.map((level, index) => (
             <motion.button
               key={level.id}
@@ -63,7 +63,7 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
               onClick={() => !level.isLocked && onSelectLevel(level.id)}
               disabled={level.isLocked}
               className={`
-                relative aspect-square rounded-2xl p-4 flex flex-col items-center justify-center
+                relative aspect-square rounded-xl p-2 flex flex-col items-center justify-center
                 transition-all duration-200
                 ${level.isLocked 
                   ? 'bg-slate-200 cursor-not-allowed opacity-50' 
@@ -73,21 +73,21 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
             >
               {level.isLocked ? (
                 <>
-                  <Lock className="w-8 h-8 text-slate-400 mb-2" />
-                  <span className="text-xs font-bold text-slate-500">Locked</span>
+                  <Lock className="w-6 h-6 text-slate-400 mb-1" />
+                  <span className="text-[10px] font-bold text-slate-500">Locked</span>
                 </>
               ) : (
                 <>
                   {/* Level Number */}
-                  <div className="text-3xl font-black mb-1">{level.id}</div>
+                  <div className="text-2xl font-black mb-0.5">{level.id}</div>
                   
                   {/* Stars */}
                   {level.stars !== undefined && (
-                    <div className="flex gap-0.5 mb-1">
+                    <div className="flex gap-0.5 mb-0.5">
                       {[1, 2, 3].map((star) => (
                         <Star
                           key={star}
-                          className={`w-3 h-3 ${
+                          className={`w-2.5 h-2.5 ${
                             star <= level.stars! 
                               ? 'fill-yellow-300 text-yellow-300' 
                               : 'fill-white/30 text-white/30'
@@ -98,12 +98,12 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
                   )}
                   
                   {/* Difficulty Badge */}
-                  <div className="absolute top-2 right-2">
-                    <div className="w-2 h-2 rounded-full bg-white/50" />
+                  <div className="absolute top-1.5 right-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
                   </div>
                   
                   {/* Level Name */}
-                  <div className="text-[10px] font-medium opacity-90 text-center line-clamp-1">
+                  <div className="text-[9px] font-medium opacity-90 text-center line-clamp-1">
                     {level.name}
                   </div>
                 </>

@@ -58,41 +58,39 @@ This is the page shown after tapping a Game Card.
 - Progress bar or numeric counter (“7 / 20 Levels Completed”)
 
 ### 2. Level List
-A clean, vertical list of levels.
+A compact grid of level buttons (4 columns) for quick scanning and selection.
 
-**Level Card Contains:**
-- Level Number + Title
-- Small preview image/icon
+**Level Button Contains:**
+- Level Number (prominent)
+- Level Name (small, truncated if long)
+- Star indicators (if completed)
 - Completion state:
-    - Completed: full color
-    - Current: highlighted or pulsing
+    - Completed: full color with stars
+    - Available: vibrant gradient based on difficulty
     - Locked: grey with lock icon
-- Optional: difficulty icon (easy/med/hard)
+- Difficulty indicator: subtle badge in corner
 
-### 3. Level Card Interaction
-- Tap → Level Intro Page (like a “mini post”)
-- From there → “Start Game” to launch the puzzle session.
+### 3. Level Button Interaction
+- Tap → Directly launches game session
+- Compact grid layout (4 columns) allows quick scanning of many levels
+- Each button provides immediate visual feedback on tap
 
-## Level Intro Page (Inside the Arcade)
+## Level Launch
 
-Much simpler than Campaign post view. No comic slides, no narrative carousel.
-
-**Contains:**
-- Level Title
-- Level Description (1–2 lines)
-- Preview image
-- “Start Game” button (sticker style)
-- Optional: Mode label (e.g., “Timed Mode”), Score from last attempt
+Arcade mode prioritizes speed and simplicity:
+- Tapping a level button directly launches the game session
+- No intro page or intermediate steps
+- Players can immediately start playing
 
 No comments, no likes, no NPC reactions — Arcade is purely mechanical.
 
 ## Interactions & Navigation
 
 - Back (including the mobile/system back button) returns to the previous Arcade view:
-  - From a game’s level selector → back to the game library grid.
+  - From a game's level selector → back to the game library grid.
   - From an active game session → **show an exit confirmation dialog** before leaving. If confirmed, return to where the player entered the game from.
   - **Exception (Win Dialog):** If the player has completed the level and the win dialog is shown, dismissing it (Continue / Close / Back) returns directly to the level selector **without** an exit confirmation.
-- From level list → Start game in 2 taps.
+- From game library → level selector → game session (2 taps total).
 - No story progression; everything is self-contained.
 
 ## Design Feel
@@ -102,7 +100,7 @@ No comments, no likes, no NPC reactions — Arcade is purely mechanical.
 - Zero cognitive load — straight to playing.
 
 ## Final Essence
-The Arcade Tab is a clean, scrollable list of all available games. Each game opens to a list of its levels, and each level opens to a simple start screen. No search, no categories — just instant access to quick-play sessions.
+The Arcade Tab is a clean, scrollable grid of all available games. Each game opens to a compact 4-column grid of level buttons, allowing quick scanning and immediate launch. No search, no categories, no intermediate screens — just instant access to quick-play sessions.
 
 ## Launch Contract
 Arcade launches games using a `gameRef`:
