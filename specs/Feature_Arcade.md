@@ -113,7 +113,12 @@ Arcade launches games using a `gameRef`:
 - Completing a level in Arcade does not mark it complete in Career
 - Arcade progress tracks high scores for replay value
 - No coin rewards or narrative unlocks in Arcade mode
-- All levels are unlocked from the start in Arcade
+- Levels are unlocked **sequentially by row** in Arcade:
+  - Each row contains 4 levels.
+  - The **first row** (levels 1-4) starts unlocked.
+  - Completing **all** levels in a row unlocks the **next** row.
+  - Completed levels remain replayable.
+  - Unlocking in Arcade does **not** affect Career progression (and vice versa).
 
 
 

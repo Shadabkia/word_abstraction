@@ -1,4 +1,4 @@
-import { ArrowLeft, Lock, Star } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 
 interface Level {
   id: number;
@@ -67,19 +67,35 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
                 animationDelay: `${Math.min(index * 0.03, 0.3)}s`
               }}
               className={`
-                relative aspect-square rounded-xl p-2 flex flex-col items-center justify-center
+                relative aspect-square rounded-xl overflow-hidden p-2 flex flex-col items-center justify-center
                 transition-all duration-200 active:scale-95
                 ${!level.isLocked && 'hover:scale-105 hover:shadow-xl'}
                 ${level.isLocked 
-                  ? 'bg-slate-200 cursor-not-allowed opacity-50' 
+                  ? `bg-gradient-to-br ${difficultyColors[level.difficulty]} cursor-not-allowed shadow-lg` 
                   : `bg-gradient-to-br ${difficultyColors[level.difficulty]} text-white shadow-lg`
                 }
               `}
             >
               {level.isLocked ? (
                 <>
-                  <Lock className="w-6 h-6 text-slate-400 mb-1" />
-                  <span className="text-[10px] font-bold text-slate-500">Locked</span>
+                  {/* Keep level identity visible, then overlay a transparent lock layer (Profile-style) */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-3xl font-black text-white/55 drop-shadow-sm select-none">
+                      {level.id}
+                    </div>
+                  </div>
+
+                  {/* Transparent "lock screen" overlay */}
+                  <div className="absolute inset-0 bg-slate-900/40" />
+
+                  {/* Lock icon on top */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <svg className="w-12 h-12 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
@@ -133,4 +149,3 @@ export function LevelSelector({ gameName, levels, onSelectLevel, onBack }: Level
     </div>
   );
 }
-

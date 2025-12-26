@@ -47,9 +47,45 @@ export function ArcadeScreen({
   const selectedGame = selectedGameId !== undefined ? selectedGameId : uncontrolledSelectedGame;
   const { progress } = useGameState();
 
+  const getRowUnlockLimit = (gameId: string) => {
+    // Compute the highest level number that is currently playable (inclusive).
+    // Rule: Completing a row (4 levels) unlocks the next row.
+    // Row 1 (1-4) is always unlocked.
+    const prefix = `${gameId}_`;
+    const completedNums = progress.arcade.completedLevels
+      .filter((id) => id.startsWith(prefix))
+      .map((id) => Number(id.slice(prefix.length)))
+      .filter((n) => Number.isFinite(n) && n > 0);
+
+    const completed = new Set<number>(completedNums);
+    let limit = 4; // Start with first row unlocked
+    const ROW_SIZE = 4;
+
+    // Check consecutive rows
+    while (true) {
+      // Check if current unlocked range (up to 'limit') is fully complete
+      const startOfCurrentRow = limit - ROW_SIZE + 1;
+      let rowComplete = true;
+      for (let i = startOfCurrentRow; i <= limit; i++) {
+        if (!completed.has(i)) {
+          rowComplete = false;
+          break;
+        }
+      }
+
+      if (rowComplete) {
+        limit += ROW_SIZE;
+      } else {
+        break;
+      }
+    }
+    return limit;
+  };
+
   // If Word Connect is selected, show level selector
   if (selectedGame === 'word-connect') {
     const allLevels = getAllWordConnectLevels();
+    const unlockLimit = getRowUnlockLimit('word-connect');
     
     // Map levels to selector format with arcade progress
     const levels = allLevels.map(level => {
@@ -61,7 +97,7 @@ export function ArcadeScreen({
         id: level.number,
         name: level.name,
         difficulty: level.difficulty,
-        isLocked: false, // All levels unlocked in arcade mode
+        isLocked: !isCompleted && level.number > unlockLimit,
         stars: isCompleted ? 3 : undefined, // Show 3 stars if completed in arcade
         bestScore: bestScore,
       };
