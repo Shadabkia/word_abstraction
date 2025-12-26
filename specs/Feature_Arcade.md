@@ -120,5 +120,19 @@ Arcade launches games using a `gameRef`:
   - Completed levels remain replayable.
   - Unlocking in Arcade does **not** affect Career progression (and vice versa).
 
+## Replay Behavior
+- When a player enters a **completed** level in Arcade mode:
+  - The level displays in its completed state (all completed rows visible in word connect game for)
+  - A **Replay** button appears at the bottom of the game screen (below the tiles, above the bottom dock)
+  - Tapping Replay:
+    - Clears the level's in-progress state (completed rows vanish, tiles reset)
+    - Starts the level fresh (tiles animate in as if starting new)
+    - The level **remains marked as completed** in Arcade progress
+    - High score is preserved (can be improved on replay)
+- If the player leaves and re-enters a completed level:
+  - They see the completed state again with the Replay button
+  - The level does **not** save again as completed (already marked)
+- Replay is **only available in Arcade mode** (not Career mode)
+
 
 

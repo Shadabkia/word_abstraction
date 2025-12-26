@@ -4,7 +4,8 @@ import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { CustomDragPreview } from './components/CustomDragPreview';
-import { Settings, Search, Lightbulb, X } from 'lucide-react';
+import { Settings, Search, Lightbulb, X, RotateCcw } from 'lucide-react';
+import { GameButton } from './components/GameButton';
 import { SettingsDialog } from '../../shared/ui/dialogs/SettingsDialog';
 import { LevelSelector } from './components/LevelSelector';
 import { LanguageProvider } from '../../contexts/LanguageContext';
@@ -125,6 +126,7 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
   const levelCompletedRef = useRef(false);
   const isExitingRef = useRef(false);
   const winCompletionSentRef = useRef(false);
+  const [isLevelAlreadyCompleted, setIsLevelAlreadyCompleted] = useState(false);
   
   // Set the game storage mode when component mounts or mode changes
   useEffect(() => {
@@ -170,17 +172,27 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
     loadLevel(level).then(async data => {
       setCurrentLevelData(data);
       const savedProgress = await gameStorage.getLevelProgress(level);
-      if (savedProgress?.gridRows?.length) {
+      
+      // Check if level was already completed (for arcade replay feature)
+      if (savedProgress?.gridRows?.length && data) {
+        const totalSteps = data.totalSteps || 6;
+        const completedSteps = (savedProgress.mergedSubcategoriesCount || 0) + (savedProgress.completedCategoriesCount || 0);
+        const wasCompleted = completedSteps >= totalSteps;
+        
+        setIsLevelAlreadyCompleted(wasCompleted && gameMode === 'arcade');
+        
         setGridRows(savedProgress.gridRows);
         setHiddenPool(savedProgress.hiddenPool || []);
         setMergedSubcategoriesCount(savedProgress.mergedSubcategoriesCount || 0);
+      } else {
+        setIsLevelAlreadyCompleted(false);
       }
       setIsLoading(false);
     }).catch(error => {
       console.error('Failed to load level:', error);
       setIsLoading(false);
     });
-  }, [level]);
+  }, [level, gameMode]);
   
   const LEVEL_DATA = currentLevelData?.words || [];
   const CATEGORY_NAMES = currentLevelData?.categories || {};
@@ -234,6 +246,10 @@ export default function WordConnectGame({ onExit, onComplete, initialLevel = 1, 
     if (levelCompletedRef.current) return;
     levelCompletedRef.current = true;
     winCompletionSentRef.current = false;
+    
+    // Mark that this level is now completed (for showing replay button on re-entry)
+    setIsLevelAlreadyCompleted(gameMode === 'arcade');
+    
     setWinOpen(true);
   };
 
@@ -789,6 +805,43 @@ function canLoadImage(src: string) {
     }
   }, [hintedWords]);
 
+  const handleReplay = async () => {
+    // Clear level progress to restart from scratch
+    await gameStorage.clearLevelProgress(level);
+    
+    // Reset all state
+    setIsLevelAlreadyCompleted(false);
+    setMergedSubcategoriesCount(0);
+    setHintedWords(new Map());
+    setWinOpen(false);
+    levelCompletedRef.current = false;
+    winCompletionSentRef.current = false;
+    setGlowingSubcategoryId(null);
+    
+    // Reinitialize the grid with fresh words
+    if (shuffledWords.length > 0) {
+      const rowSize = 4;
+      const numRows = Math.ceil(shuffledWords.length / rowSize);
+      const newRows: GridRow[] = [];
+      
+      for (let i = 0; i < numRows; i++) {
+        const startIdx = i * rowSize;
+        const endIdx = Math.min(startIdx + rowSize, shuffledWords.length);
+        const rowWords = shuffledWords.slice(startIdx, endIdx);
+        
+        if (rowWords.length > 0) {
+          const immutableWords = rowWords.map(w => ({ ...w }));
+          newRows.push({ type: 'words', words: immutableWords });
+        }
+      }
+      
+      setGridRows(newRows);
+      setHiddenPool([...hiddenWordsPool]);
+    }
+    
+    soundManager.playMerge();
+  };
+
   return (
     <LanguageProvider>
       <DragProvider>
@@ -816,9 +869,14 @@ function canLoadImage(src: string) {
                         <span className="font-medium">{coins}</span>
                      </div>
                      {onExit && (
-                        <button onClick={requestExit} className="text-[var(--color-climate-text-secondary)] hover:text-red-500 transition-colors">
-                            <X className="w-5 h-5" />
-                        </button>
+                        <div className="-mr-1">
+                            <GameButton 
+                                onClick={requestExit} 
+                                variant="danger" 
+                                size="sm" 
+                                icon={<X className="w-5 h-5" strokeWidth={3} />}
+                            />
+                        </div>
                     )}
                 </div>
             </motion.div>
@@ -883,34 +941,53 @@ function canLoadImage(src: string) {
                          <div className="w-6 h-6 border-2 border-[var(--color-climate-accent)] border-t-[var(--color-climate-text-primary)] rounded-full animate-spin" />
                     </div>
                 )}
+                
+                {/* Replay Button - Only in Arcade mode for completed levels */}
+                {!isLoading && isLevelAlreadyCompleted && gameMode === 'arcade' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                    className="mt-6 flex justify-center"
+                  >
+                    <GameButton
+                      onClick={handleReplay}
+                      variant="success"
+                      size="lg"
+                      icon={<RotateCcw className="w-8 h-8" strokeWidth={3} />}
+                      label="Replay Level"
+                    />
+                  </motion.div>
+                )}
             </div>
             
             {/* Minimal Bottom Dock */}
             <motion.div variants={bottomDockVariants} className="fixed bottom-8 left-0 right-0 z-20 px-4 pointer-events-none">
                 <div className="w-full mx-auto flex items-center justify-center gap-6 pointer-events-auto">
-                     <button
+                     <GameButton
                         onClick={() => setShowSettingsDialog(true)}
-                        className="w-14 h-14 rounded-full glass-tile text-[var(--color-climate-text-secondary)] flex items-center justify-center hover:bg-white transition-all active:scale-95 border border-white/60"
-                     >
-                        <Settings className="w-6 h-6" />
-                     </button>
+                        variant="neutral"
+                        size="md"
+                        icon={<Settings className="w-7 h-7" strokeWidth={2.5} />}
+                        className="rounded-full"
+                     />
                      
-                     <div className="flex items-center gap-3 px-2">
-                        <button
+                     <div className="flex items-center gap-4 px-2">
+                        <GameButton
                             onClick={handleSearchHint}
-                            className="w-16 h-16 rounded-2xl glass-tile text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-white hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0 border border-white/60"
-                            title="Reveal Categories"
-                        >
-                             <Search className="w-7 h-7 opacity-80" strokeWidth={2.5} />
-                        </button>
+                            variant="primary"
+                            size="lg"
+                            icon={<Search className="w-8 h-8" strokeWidth={3} />}
+                            label="Reveal Categories"
+                        />
                         
-                        <button
+                        <GameButton
                             onClick={handleHint}
-                            className="w-16 h-16 rounded-2xl glass-tile text-[var(--color-climate-text-primary)] flex items-center justify-center hover:bg-white hover:-translate-y-1 transition-all active:scale-95 active:translate-y-0 border border-white/60"
-                             title="Hint Pair"
-                        >
-                            <Lightbulb className="w-7 h-7 opacity-80" strokeWidth={2.5} />
-                        </button>
+                            variant="warning"
+                            size="lg"
+                            icon={<Lightbulb className="w-8 h-8" strokeWidth={3} />}
+                            label="Hint Pair"
+                        />
                      </div>
                 </div>
             </motion.div>
