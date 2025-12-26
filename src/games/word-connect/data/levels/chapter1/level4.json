@@ -40,7 +40,7 @@
       { "id": "t_cable",      "text": "کابل",      "type": "word", "visuals": { "color_hex": "#708090" } },
       
       
-      { "id": "t_media_icon", "text": "★ رسانه",   "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "electronics-group" } },
+      { "id": "t_media_icon", "text": "★ رسانه",   "type": "meta_group", "visuals": { "icon_enabled": true, "icon_id": "electronics-group", "color_hex": "#FF4500"  } },
       { "id": "t_news",       "text": "اخبار",     "type": "word", "visuals": { "color_hex": "#00008B" } },
       { "id": "t_film",       "text": "فیلم",      "type": "word", "visuals": { "color_hex": "#8B008B" } },
       { "id": "t_serial",     "text": "سریال",     "type": "word", "visuals": { "color_hex": "#4B0082" } }

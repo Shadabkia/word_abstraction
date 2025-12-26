@@ -708,12 +708,15 @@ function canLoadImage(src: string) {
       }
     }
 
-    if (wordsToAdd.length > 0) {
-      const consensusCategory = wordsToAdd[0].category;
-      if (consensusCategory !== subcategoryWord.category) {
-        subcategoryWord.category = consensusCategory;
-      }
-    }
+    // REMOVED: Do not override the merged word's category based on revealed words.
+    // The merged word (meta_group) has its own target category defined in the level data.
+    // The revealed words might belong to different categories (e.g., Level 3: glass->dishes, stove->cooking).
+    // if (wordsToAdd.length > 0) {
+    //   const consensusCategory = wordsToAdd[0].category;
+    //   if (consensusCategory !== subcategoryWord.category) {
+    //     subcategoryWord.category = consensusCategory;
+    //   }
+    // }
 
     const newRow: Word[] = [subcategoryWord, ...wordsToAdd];
     while (newRow.length < 4) {

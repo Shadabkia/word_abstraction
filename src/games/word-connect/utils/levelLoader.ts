@@ -169,20 +169,52 @@ function convertJSONToLevelData(jsonLevel: LevelJSON): LevelData {
   // Process hidden tiles (tiles that will be revealed)
   jsonLevel.dictionary.tiles.forEach(tile => {
     if (!processedTiles.has(tile.id) && (hiddenTileIds.has(tile.id) || revealedIds.has(tile.id))) {
-      // Find which group this tile belongs to or will be revealed by
-      const revealingGroup = jsonLevel.mechanics.groups.find(g => 
-        g.outcomes?.reveal_ids?.includes(tile.id)
-      );
-      
+      // Find which group this tile belongs to
       const belongsToGroup = jsonLevel.mechanics.groups.find(g =>
         g.requirements.trigger_ids.includes(tile.id)
       );
       
-      const group = belongsToGroup || revealingGroup;
+      // Check if it's revealed (so we know to include it even if not a trigger)
+      const isRevealed = jsonLevel.mechanics.groups.some(g => 
+        g.outcomes?.reveal_ids?.includes(tile.id)
+      );
       
-      if (group) {
-        const categoryId = tile.meta?.category || group.id;
-        categories[categoryId] = group.display_name;
+      // Only include if it has a role (trigger or revealed)
+      if (belongsToGroup || isRevealed) {
+        // Fix: Do NOT use the revealing group as the category. 
+        // Only trigger requirements determine the matching group.
+        // If a tile is revealed but not a trigger, it gets its own ID as category (no merge).
+        
+        let categoryId;
+        if (belongsToGroup) {
+          categoryId = tile.meta?.category || belongsToGroup.id;
+          categories[categoryId] = belongsToGroup.display_name;
+        } else {
+          // If revealed but not a trigger for any subsequent group, 
+          // it might be part of a 'final' group that includes revealed items (like in level 3 cooking group)
+          // We need to re-check if this tile is part of a group's triggers, even if it was just revealed.
+          // The previous 'belongsToGroup' check should have caught it if it was in ANY group's trigger_ids.
+          // BUT, if the level definition relies on the *revealed* tiles being part of a group 
+          // that wasn't initially available (which is standard), 'belongsToGroup' is correct.
+          
+          // Wait, 'belongsToGroup' scans ALL groups in the mechanics. 
+          // If 't_pot' is in 'grp_cooking' triggers, belongsToGroup MUST be found.
+          
+          // Let's debug why it might not be found.
+          // In level 3: 'grp_cooking' triggers are ["t_food_icon", "t_pot", "t_stove", "t_steam"]
+          // 't_pot' IS in triggers. So 'belongsToGroup' should be 'grp_cooking'.
+          
+          // If belongsToGroup is found, we enter the 'if (belongsToGroup)' block above (or would have).
+          // Ah, the logic flow:
+          // const belongsToGroup = ...
+          // const isRevealed = ...
+          // if (belongsToGroup || isRevealed) { ... }
+          
+          // If belongsToGroup is found, categoryId is set correctly.
+          // If NOT found (which shouldn't happen for t_pot in level 3), then we fall back to tile.id.
+          
+          categoryId = tile.meta?.category || tile.id;
+        }
         
         // Build icon data from registry if icon is enabled
         let iconData = undefined;

@@ -51,7 +51,7 @@
           "trigger_ids": ["t_rice", "t_oil", "t_salt", "t_onion"]
         },
         "outcomes": {
-          "reveal_ids": ["t_food_icon", "t_pot", "t_stove", "t_steam"],
+          "reveal_ids": ["t_food_icon", "t_glass", "t_stove", "t_steam"],
           "sound_fx": "sfx_sizzle"
         },
         "meta": { "hint": "What do you need to start cooking?" }
@@ -92,7 +92,7 @@
     "initial_grid": [
       ["t_spoon", "t_fork",  "t_rice",  "t_plate"],
       ["t_knife", "t_oil",   "t_bowl",  "t_ladle"],
-      ["t_salt",  "t_glass", "t_onion", "t_pitcher"]
+      ["t_salt",  "t_pot", "t_onion", "t_pitcher"]
     ],
     "comment": "Ingredients are scattered down the center columns to ensure the player interacts with the whole board."
   }
