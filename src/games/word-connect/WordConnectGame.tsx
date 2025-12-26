@@ -4,7 +4,7 @@ import { GameHeader } from './components/GameHeader';
 import { GridWordTile } from './components/GridWordTile';
 import { CategoryRow } from './components/CategoryRow';
 import { CustomDragPreview } from './components/CustomDragPreview';
-import { Settings, Search, Lightbulb, X, RotateCcw } from 'lucide-react';
+import { Settings, Search, Lightbulb, X, RotateCcw, Coins, Plus } from 'lucide-react';
 import { GameButton } from './components/GameButton';
 import { SettingsDialog } from '../../shared/ui/dialogs/SettingsDialog';
 import { LevelSelector } from './components/LevelSelector';
@@ -864,9 +864,12 @@ function canLoadImage(src: string) {
                 </div>
                 
                 <div className="flex items-center gap-4">
-                     <div className="flex items-center gap-1.5 text-[var(--color-climate-text-primary)]">
-                        <span className="text-yellow-500">★</span>
-                        <span className="font-medium">{coins}</span>
+                     <div className="flex items-center gap-2 bg-amber-100 border-2 border-amber-200 rounded-full pl-3 pr-1.5 py-1 shadow-sm">
+                        <Coins className="w-5 h-5 text-amber-600 fill-amber-600" strokeWidth={2.5} />
+                        <span className="font-display font-extrabold text-amber-800 text-lg translate-y-[1px] min-w-[1.5ch] text-center">{coins}</span>
+                        <button className="bg-white hover:bg-amber-50 rounded-full w-7 h-7 flex items-center justify-center shadow-sm ml-1 border-2 border-amber-100 transition-colors active:scale-95">
+                             <Plus className="w-4 h-4 text-amber-600" strokeWidth={4} />
+                        </button>
                      </div>
                      {onExit && (
                         <div className="-mr-1">
@@ -1056,11 +1059,11 @@ function canLoadImage(src: string) {
         <div className="flex flex-col gap-4 w-full mt-2">
             {/* Career Mode Coin Reward */}
             {gameMode === 'career' && (
-                <div className="flex items-center justify-center gap-2 bg-yellow-400/10 rounded-xl py-3 border border-yellow-500/20 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                    <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center shadow-sm text-yellow-900 font-bold text-lg">
-                        $
+                <div className="flex items-center justify-center gap-3 bg-amber-100 rounded-2xl py-4 border-2 border-amber-200 animate-fade-in-up shadow-sm" style={{ animationDelay: '0.2s' }}>
+                    <div className="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center shadow-sm text-white border-2 border-amber-500">
+                        <Coins className="w-6 h-6 fill-amber-500 text-white" strokeWidth={2.5} />
                     </div>
-                    <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">+10 Coins</span>
+                    <span className="text-2xl font-extrabold text-amber-700">+10 Coins</span>
                 </div>
             )}
 
