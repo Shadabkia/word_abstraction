@@ -7,6 +7,7 @@ Give the app a cohesive “living” feel through subtle sound effects and a con
 - BGM starts **during the second splash clip** and then continues looping through the app.
 - BGM loops seamlessly (or as close as possible given the source track).
 - The player can disable BGM via the **Music** setting.
+- BGM **pauses automatically** when the app goes to background (minimized) and **resumes** when the app comes back to foreground (if music is enabled).
 
 ## Volume Behavior
 - **Dashboard**: normal BGM volume.
