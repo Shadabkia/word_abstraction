@@ -55,6 +55,12 @@ const threads = contentManager.getUnlockedThreads(completedLevels);
 
 ## Debugging Tips
 
+### Debug Mode Features
+For comprehensive debug mode documentation (arcade level unlocking, etc.):
+```
+📖 See src/DEBUG_MODE.md
+```
+
 ### Reset Save Data
 Open browser console:
 ```javascript

@@ -37,5 +37,8 @@ The app is structured around five main tabs, mimicking a social media app:
 - **Content System**: All content (levels, posts, messages) is defined in JSON/DSL to allow rapid iteration without code changes (see Architecture).
 - **Game Modules**: Individual game engines (Word Connect, etc.) are pluggable and reusable across Campaign and Arcade modes.
 
+## Game Specs
+- **[Word Connect — Level Rules](Feature_WordConnect_LevelRules.md)**: Constraints and design intent for valid Word Connect levels.
+
 ## Development Status
 See `Developer_Guide.md` for setup and contribution guidelines.
