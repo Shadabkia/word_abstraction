@@ -84,17 +84,19 @@ class Counter {
 }
 
 class LevelValidator {
-    constructor(levelPath) {
+    constructor(levelPath, options = {}) {
         this.levelPath = levelPath;
         this.data = null;
         this.valid = true;
+        this.verbose = options.verbose || false;
         this.report = {
             status: "VALID",
             level_id: "unknown",
             file: path.basename(levelPath),
             stats: {},
             solution_path: [],
-            details: {}
+            details: {},
+            checks: []
         };
 
         try {
@@ -111,22 +113,49 @@ class LevelValidator {
         }
     }
 
+    _log(checkName, status, details = null) {
+        const check = { name: checkName, status };
+        if (details) check.details = details;
+        this.report.checks.push(check);
+        
+        if (this.verbose) {
+            const symbol = status === "PASS" ? "✓" : "✗";
+            console.log(`  ${symbol} ${checkName}${details ? `: ${JSON.stringify(details)}` : ""}`);
+        }
+    }
+
     validate() {
         if (!this.data) return this.report;
 
+        // Rule 1-4: Static integrity (IDs, grid dimensions, group sizes)
         if (!this._checkStaticIntegrity()) {
             this.report.status = "INVALID";
             this.report.error_layer = "SCHEMA";
             return this.report;
         }
         
-        // New constraint check
+        // Rule 5: Word count validation (multiple of 4, minimum count)
+        if (!this._checkWordCount()) {
+            this.report.status = "INVALID";
+            this.report.error_layer = "WORD_COUNT";
+            return this.report;
+        }
+        
+        // Rule 6: Chain reaction prevention
         if (!this._checkChainReactions()) {
             this.report.status = "INVALID";
             this.report.error_layer = "CONSTRAINT";
             return this.report;
         }
 
+        // Rule 7: Reveal tiles should be bridges (reused by other groups)
+        if (!this._checkRevealBridges()) {
+            this.report.status = "INVALID";
+            this.report.error_layer = "REVEAL_BRIDGE";
+            return this.report;
+        }
+
+        // Rule 8: Economy (no missing/leftover tiles)
         const economyResult = this._checkEconomy();
         if (economyResult !== SUCCESS) {
             this.report.status = "INVALID";
@@ -135,6 +164,7 @@ class LevelValidator {
             return this.report;
         }
 
+        // Rule 9: Solvability simulation
         const [simulationResult, history, stats] = this._simulate();
         if (simulationResult !== SUCCESS) {
             this.report.status = "INVALID";
@@ -155,36 +185,44 @@ class LevelValidator {
         const groups = mechanics.groups || [];
         const layout = this.data.layout || {};
         
+        // Check: Unique tile IDs
         const ids = tiles.map(t => t.id);
         const idSet = new Set(ids);
         if (ids.length !== idSet.size) {
-            this.report.message = "Duplicate IDs in dictionary";
             const counts = new Counter(ids);
             const duplicates = [];
             for (const [id, count] of counts.entries()) {
                 if (count > 1) duplicates.push(id);
             }
+            this._log("Unique tile IDs", "FAIL", { duplicates });
+            this.report.message = "Duplicate IDs in dictionary";
             this.report.details = { duplicates };
             return false;
         }
+        this._log("Unique tile IDs", "PASS", { count: ids.length });
 
         const knownIds = idSet;
 
+        // Check: All grid IDs exist in dictionary
         const grid = layout.initial_grid || [];
         const flatGrid = grid.flat();
         const gridIds = new Set(flatGrid);
 
         for (const tid of flatGrid) {
             if (tid && !knownIds.has(tid)) {
+                this._log("Grid ID references", "FAIL", { unknown_id: tid });
                 this.report.message = `Unknown ID in grid: ${tid}`;
                 return false;
             }
         }
+        this._log("Grid ID references", "PASS");
 
+        // Check: All trigger and reveal IDs exist in dictionary
         for (const group of groups) {
             const triggerIds = group.requirements?.trigger_ids || [];
             for (const tid of triggerIds) {
                 if (!knownIds.has(tid)) {
+                    this._log("Trigger ID references", "FAIL", { group: group.id, unknown_id: tid });
                     this.report.message = `Unknown ID in triggers: ${tid} (Group: ${group.id})`;
                     return false;
                 }
@@ -193,24 +231,31 @@ class LevelValidator {
             const revealIds = group.outcomes?.reveal_ids || [];
             for (const tid of revealIds) {
                 if (!knownIds.has(tid)) {
+                    this._log("Reveal ID references", "FAIL", { group: group.id, unknown_id: tid });
                     this.report.message = `Unknown ID in reveals: ${tid} (Group: ${group.id})`;
                     return false;
                 }
             }
         }
+        this._log("Trigger/Reveal ID references", "PASS");
 
+        // Check: Grid dimensions match declared rows/cols
         if (grid.length !== layout.rows) {
+            this._log("Grid dimensions", "FAIL", { actual_rows: grid.length, expected_rows: layout.rows });
             this.report.message = `Grid rows (${grid.length}) != meta.rows (${layout.rows})`;
             return false;
         }
         
         for (let i = 0; i < grid.length; i++) {
             if (grid[i].length !== layout.cols) {
+                this._log("Grid dimensions", "FAIL", { row: i, actual_cols: grid[i].length, expected_cols: layout.cols });
                 this.report.message = `Row ${i} length (${grid[i].length}) != meta.cols (${layout.cols})`;
                 return false;
             }
         }
+        this._log("Grid dimensions", "PASS", { rows: layout.rows, cols: layout.cols });
 
+        // Check: Group structure (trigger/reveal counts)
         const targetSize = layout.cols || 4;
         for (const group of groups) {
             const behavior = group.behavior;
@@ -218,25 +263,180 @@ class LevelValidator {
             const triggerIds = group.requirements?.trigger_ids || [];
 
             if (behavior === "transform" && revealIds.length === 0) {
+                this._log("Group structure", "FAIL", { group: group.id, issue: "transform without reveals" });
                 this.report.message = `Transform rule has no reveals: ${group.id}`;
                 return false;
             }
             if (behavior === "final" && revealIds.length > 0) {
+                this._log("Group structure", "FAIL", { group: group.id, issue: "final with reveals" });
                 this.report.message = `Final rule has reveals: ${group.id}`;
                 return false;
             }
 
             if (triggerIds.length !== targetSize) {
+                this._log("Group structure", "FAIL", { group: group.id, actual: triggerIds.length, expected: targetSize });
                 this.report.message = `Rule members length (${triggerIds.length}) != ${targetSize}: ${group.id}`;
                 return false;
             }
 
             if (behavior === "transform" && revealIds.length !== targetSize) {
+                this._log("Group structure", "FAIL", { group: group.id, actual: revealIds.length, expected: targetSize });
                 this.report.message = `Rule reveals length (${revealIds.length}) != ${targetSize}: ${group.id}`;
                 return false;
             }
+
+            // NEW CHECK: Transform groups must have a meta_group tile
+            if (behavior === "transform") {
+                const hasMetaGroup = revealIds.some(id => {
+                    const tile = tiles.find(t => t.id === id);
+                    return tile && tile.type === 'meta_group';
+                });
+                
+                if (!hasMetaGroup) {
+                    this._log("Group structure", "FAIL", { 
+                        group: group.id, 
+                        issue: "transform missing meta_group tile in reveals" 
+                    });
+                    this.report.message = `Transform group '${group.id}' must have a meta_group tile in reveal_ids (game requirement)`;
+                    this.report.details = {
+                        group: group.id,
+                        reveal_ids: revealIds,
+                        issue: "No tile with type='meta_group' found in reveals",
+                        fix: "Add one meta_group tile (icon) to the reveal_ids array"
+                    };
+                    return false;
+                }
+            }
+        }
+        this._log("Group structure", "PASS", { groups: groups.length, group_size: targetSize });
+
+        return true;
+    }
+
+    _checkWordCount() {
+        const grid = this.data.layout.initial_grid;
+        const flatGrid = grid.flat();
+        const totalWords = flatGrid.length;
+        const uniqueWords = new Set(flatGrid).size;
+
+        // Rule: Total word count must be a multiple of 4
+        if (totalWords % 4 !== 0) {
+            this._log("Word count (multiple of 4)", "FAIL", { total: totalWords, remainder: totalWords % 4 });
+            this.report.message = `Total word count (${totalWords}) is not a multiple of 4`;
+            this.report.details = { 
+                total_words: totalWords,
+                expected: "multiple of 4"
+            };
+            return false;
+        }
+        this._log("Word count (multiple of 4)", "PASS", { total: totalWords });
+
+        // Rule: Minimum word count should be at least 12
+        if (totalWords < 12) {
+            this._log("Word count (minimum 12)", "FAIL", { total: totalWords, minimum: 12 });
+            this.report.message = `Total word count (${totalWords}) is less than minimum (12)`;
+            this.report.details = { 
+                total_words: totalWords,
+                minimum: 12
+            };
+            return false;
+        }
+        this._log("Word count (minimum 12)", "PASS", { total: totalWords });
+
+        // Rule: Unique words in initial grid must be at least 12
+        if (uniqueWords < 12) {
+            // Find duplicates
+            const seen = {};
+            flatGrid.forEach(tile => {
+                seen[tile] = (seen[tile] || 0) + 1;
+            });
+            const duplicates = Object.entries(seen)
+                .filter(([_, count]) => count > 1)
+                .map(([tile, count]) => `${tile} (${count}x)`);
+            
+            this._log("Unique words in grid", "FAIL", { 
+                unique: uniqueWords, 
+                total: totalWords,
+                duplicates: totalWords - uniqueWords
+            });
+            
+            this.report.message = `Only ${uniqueWords} unique words in initial grid (minimum: 12)`;
+            this.report.details = { 
+                unique_words: uniqueWords,
+                total_cells: totalWords,
+                minimum_unique: 12,
+                duplicate_tiles: duplicates
+            };
+            return false;
+        }
+        this._log("Unique words in grid", "PASS", { unique: uniqueWords });
+
+        return true;
+    }
+
+    _checkRevealBridges() {
+        const groups = this.data.mechanics.groups;
+        const transformGroups = groups.filter(g => g.behavior === "transform");
+        
+        // Skip check if no transform groups
+        if (transformGroups.length === 0) {
+            this._log("Reveal bridges", "SKIP", { reason: "no transform groups" });
+            return true;
         }
 
+        const grid = this.data.layout.initial_grid;
+        const flatGrid = grid.flat();
+        const initialTiles = new Set(flatGrid);
+
+        let totalReveals = 0;
+        let bridgeReveals = 0;
+
+        for (const tGroup of transformGroups) {
+            const revealIds = tGroup.outcomes?.reveal_ids || [];
+            
+            for (const revealId of revealIds) {
+                // Skip if already in initial grid (those are OK)
+                if (initialTiles.has(revealId)) {
+                    continue;
+                }
+
+                totalReveals++;
+
+                // Check if this revealed tile is used by any other group
+                let isUsedByOtherGroup = false;
+                for (const otherGroup of groups) {
+                    if (otherGroup.id === tGroup.id) continue;
+                    
+                    const triggers = otherGroup.requirements?.trigger_ids || [];
+                    if (triggers.includes(revealId)) {
+                        isUsedByOtherGroup = true;
+                        bridgeReveals++;
+                        break;
+                    }
+                }
+
+                if (!isUsedByOtherGroup) {
+                    // Log as warning instead of error (design guideline, not hard requirement)
+                    this._log("Reveal bridges", "WARN", { 
+                        group: tGroup.id, 
+                        orphaned_reveal: revealId,
+                        note: "Design guideline - revealed tiles should be reused"
+                    });
+                    
+                    if (!this.report.details.warnings) {
+                        this.report.details.warnings = [];
+                    }
+                    this.report.details.warnings.push(
+                        `Revealed tile '${revealId}' from '${tGroup.id}' is not reused (not a bridge)`
+                    );
+                }
+            }
+        }
+
+        this._log("Reveal bridges", "PASS", { 
+            transform_groups: transformGroups.length, 
+            bridge_reveals: bridgeReveals 
+        });
         return true;
     }
 
@@ -244,6 +444,11 @@ class LevelValidator {
         const groups = this.data.mechanics.groups;
         const transformGroups = groups.filter(g => g.behavior === "transform");
         
+        if (transformGroups.length === 0) {
+            this._log("Chain reaction prevention", "SKIP", { reason: "no transform groups" });
+            return true;
+        }
+
         for (const tGroup of transformGroups) {
             const revealed = new Set(tGroup.outcomes?.reveal_ids || []);
             if (revealed.size === 0) continue;
@@ -257,6 +462,10 @@ class LevelValidator {
                 // Constraint: Revealed tiles must not form a complete trigger set for another group
                 // This prevents instant auto-matches upon transformation
                 if ([...triggers].every(id => revealed.has(id))) {
+                    this._log("Chain reaction prevention", "FAIL", {
+                        source: tGroup.id,
+                        target: otherGroup.id
+                    });
                     this.report.message = `Constraint Violation: Group '${tGroup.id}' reveals exactly the triggers for '${otherGroup.id}'. This causes an instant auto-match which is bad design.`;
                     this.report.details = {
                         source_group: tGroup.id,
@@ -267,6 +476,8 @@ class LevelValidator {
                 }
             }
         }
+        
+        this._log("Chain reaction prevention", "PASS", { transform_groups: transformGroups.length });
         return true;
     }
 
@@ -304,16 +515,33 @@ class LevelValidator {
             else if (v > 0) leftover[k] = v;
         }
 
+        const available = flatGrid.length;
+        const produced = producedTiles.elements().length;
+        const consumed = consumedTiles.elements().length;
+
         if (Object.keys(missing).length > 0) {
+            this._log("Tile economy", "FAIL", { 
+                issue: "missing tiles",
+                available, 
+                produced, 
+                consumed 
+            });
             this.report.details = { missing_tiles: Object.entries(missing).map(([k, v]) => `${k} (${v})`) };
             return ERROR_MISSING_INGREDIENTS;
         }
 
         if (Object.keys(leftover).length > 0) {
+            this._log("Tile economy", "FAIL", { 
+                issue: "leftover tiles",
+                available, 
+                produced, 
+                consumed 
+            });
             this.report.details = { orphaned_tiles: Object.entries(leftover).map(([k, v]) => `${k} (${v})`) };
             return ERROR_LEFTOVER_TILES;
         }
 
+        this._log("Tile economy", "PASS", { available, produced, consumed, balanced: true });
         return SUCCESS;
     }
 
@@ -337,11 +565,25 @@ class LevelValidator {
         const initialBagCounter = new Counter(initialBag);
         this.report.details.warnings = [];
         
+        // Rule: Check for initial matches (warning only, design guideline)
+        const noInitialMatchesConstraint = this.data.meta?.constraints?.no_initial_matches;
+        let hasInitialMatches = false;
         for (const rule of rules) {
             const ruleCounter = new Counter(rule.members);
             if (initialBagCounter.isSubset(ruleCounter)) {
-                this.report.details.warnings.push(`Initial state contains match for ${rule.name}`);
+                const warningMsg = `Initial state contains match for ${rule.name}`;
+                this.report.details.warnings.push(warningMsg);
+                hasInitialMatches = true;
             }
+        }
+        
+        if (hasInitialMatches && noInitialMatchesConstraint) {
+            this._log("No initial matches", "WARN", { 
+                constraint_set: true, 
+                note: "Design guideline - not enforced as error" 
+            });
+        } else if (!hasInitialMatches) {
+            this._log("No initial matches", "PASS");
         }
 
         let transformCount = 0;
@@ -363,6 +605,10 @@ class LevelValidator {
                     complexity: visitedStates.size,
                     min_steps: history.length
                 };
+                this._log("Solvability", "PASS", { 
+                    steps: history.length, 
+                    states_explored: visitedStates.size 
+                });
                 return [SUCCESS, history, stats];
             }
 
@@ -400,6 +646,10 @@ class LevelValidator {
             }
         }
 
+        this._log("Solvability", "FAIL", { 
+            issue: "no solution found", 
+            states_explored: visitedStates.size 
+        });
         return [ERROR_UNSOLVABLE_DEADLOCK, [], {}];
     }
 
@@ -483,11 +733,12 @@ function main() {
     const args = process.argv.slice(2);
     const jsonOutput = args.includes('--json');
     const trace = args.includes('--trace');
+    const verbose = args.includes('--verbose') || args.includes('-v');
     
     const specificLevel = args.find(arg => arg.startsWith('--level='))?.split('=')[1];
     const specificChapter = args.find(arg => arg.startsWith('--chapter='))?.split('=')[1];
 
-    const levelsDir = path.join(__dirname, 'src/data/levels');
+    const levelsDir = path.join(__dirname, 'data/levels');
     
     function findFiles(dir) {
         let results = [];
@@ -559,7 +810,10 @@ function main() {
     }
 
     for (const filePath of files) {
-        const validator = new LevelValidator(filePath);
+        if (verbose && !jsonOutput) {
+            console.log(`\nValidating: ${path.basename(filePath)}`);
+        }
+        const validator = new LevelValidator(filePath, { verbose: verbose && !jsonOutput });
         const report = validator.validate();
         reports.push(report);
 

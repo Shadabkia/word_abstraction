@@ -37,19 +37,19 @@
       { "id": "t_sand", "text": "شن", "type": "word", "visuals": { "color_hex": "#F4A460" } },
       { "id": "t_heat", "text": "گرما", "type": "word", "visuals": { "color_hex": "#FF4500" } },
       { "id": "t_thirst", "text": "تشنگی", "type": "word", "visuals": { "color_hex": "#A52A2A" } },
-      { "id": "t_sun", "text": "خورشید", "type": "word", "visuals": { "color_hex": "#FFD700" } },
+      { "id": "t_sun", "text": "☀️", "type": "meta_group", "visuals": { "color_hex": "#FFD700" } },
       
-      { "id": "t_dream", "text": "رویا", "type": "word", "visuals": { "color_hex": "#ADD8E6" } },
+      { "id": "t_dream", "text": "💭", "type": "meta_group", "visuals": { "color_hex": "#ADD8E6" } },
       { "id": "t_sleep", "text": "خواب", "type": "word", "visuals": { "color_hex": "#191970" } },
       { "id": "t_bed", "text": "تخت", "type": "word", "visuals": { "color_hex": "#8B4513" } },
       { "id": "t_pillow", "text": "بالش", "type": "word", "visuals": { "color_hex": "#F0F8FF" } },
       
-      { "id": "t_trick", "text": "حیله", "type": "word", "visuals": { "color_hex": "#4B0082" } },
+      { "id": "t_trick", "text": "🎩", "type": "meta_group", "visuals": { "color_hex": "#4B0082" } },
       { "id": "t_hand", "text": "دست", "type": "word", "visuals": { "color_hex": "#DEB887" } },
       { "id": "t_smoke", "text": "دود", "type": "word", "visuals": { "color_hex": "#708090" } },
-      { "id": "t_mirror", "text": "آینه", "type": "word", "visuals": { "color_hex": "#C0C0C0" } },
+      { "id": "t_mirror", "text": "🪞", "type": "meta_group", "visuals": { "color_hex": "#C0C0C0" } },
       
-      { "id": "t_glass", "text": "شیشه", "type": "word", "visuals": { "color_hex": "#E0FFFF" } },
+      { "id": "t_glass", "text": "🪞", "type": "meta_group", "visuals": { "color_hex": "#E0FFFF" } },
       { "id": "t_light", "text": "نور", "type": "word", "visuals": { "color_hex": "#FFFFE0" } },
       { "id": "t_sound", "text": "صدا", "type": "word", "visuals": { "color_hex": "#000080" } },
       { "id": "t_image", "text": "تصویر", "type": "word", "visuals": { "color_hex": "#FF00FF" } }
@@ -62,28 +62,28 @@
         "display_name": "سراب (Mirage)",
         "behavior": "transform",
         "requirements": { "trigger_ids": ["t_oasis", "t_shade", "t_water", "t_palm"] },
-        "outcomes": { "reveal_ids": ["t_sand", "t_heat", "t_thirst", "t_sun"] }
+        "outcomes": { "reveal_ids": ["t_sand", "t_heat", "t_dream", "t_sun"] }
       },
       {
         "id": "grp_dream",
         "display_name": "رویا (Dream)",
         "behavior": "transform",
         "requirements": { "trigger_ids": ["t_monster", "t_fly", "t_gold", "t_magic"] },
-        "outcomes": { "reveal_ids": ["t_dream", "t_sleep", "t_bed", "t_pillow"] }
+        "outcomes": { "reveal_ids": ["t_thirst", "t_sleep", "t_bed", "t_trick"] }
       },
       {
         "id": "grp_trick",
         "display_name": "شعبده (Trick)",
         "behavior": "transform",
         "requirements": { "trigger_ids": ["t_hat", "t_wand", "t_rabbit", "t_card"] },
-        "outcomes": { "reveal_ids": ["t_trick", "t_hand", "t_smoke", "t_mirror"] }
+        "outcomes": { "reveal_ids": ["t_pillow", "t_hand", "t_smoke", "t_glass"] }
       },
       {
         "id": "grp_reflect",
         "display_name": "انعکاس (Reflection)",
         "behavior": "transform",
         "requirements": { "trigger_ids": ["t_face", "t_twin", "t_echo", "t_reflection"] },
-        "outcomes": { "reveal_ids": ["t_glass", "t_light", "t_sound", "t_image"] }
+        "outcomes": { "reveal_ids": ["t_mirror", "t_light", "t_sound", "t_image"] }
       },
       {
         "id": "grp_desert",
