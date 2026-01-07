@@ -38,6 +38,8 @@ A multilingual puzzle game where you find connections between words. Group 16 wo
 
 Levels are stored as JSON files in `src/data/levels/`.
 
+See **`LEVEL_RULES.md`** in this folder for the complete level rules and constraints.
+
 ### File Structure
 Each level file (e.g., `chapter1/level1.json`) contains:
 *   **Meta**: Title, description, difficulty.
@@ -63,12 +65,24 @@ We have a built-in tool to ensure levels are broken-free and solvable.
 **Run Validator:**
 ```bash
 npm run validate-levels
+
+# With verbose output showing all checks:
+npm run validate-levels -- --verbose
+
+# Validate specific chapter or level:
+npm run validate-levels -- --chapter=1
+npm run validate-levels -- --level=level4
 ```
 
 **What it Checks:**
 *   **Schema**: Is the JSON valid?
-*   **Economy**: Do inputs equal outputs? (Are all 16 tiles used?)
-*   **Simulation**: Can the AI solve it? (Detects deadlocks).
+*   **Word Count**: Multiple of 4, minimum of 12
+*   **Economy**: Do inputs equal outputs? (No missing/leftover tiles)
+*   **Chain Reactions**: Prevents instant auto-matches
+*   **Reveal Bridges**: Warns if reveals aren't reused (design guideline)
+*   **Simulation**: Can the AI solve it? (Detects deadlocks)
+
+See [LEVEL_RULES.md](./LEVEL_RULES.md) for complete level design rules and [VALIDATION_RULES_SUMMARY.md](./VALIDATION_RULES_SUMMARY.md) for validation details.
 
 ## 📱 Capacitor & Mobile Build
 
