@@ -26,13 +26,6 @@ The app is structured around five main tabs, mimicking a social media app:
 4.  **[Arcade (Games)](Feature_Arcade.md)**: Library of all standalone mini-games.
 5.  **[Messages (Quests)](Feature_Messages.md)**: Read-only DMs from NPCs serving as quests and notifications.
 
-## UI System
-- **[Theme System (Forge UI)](Feature_ThemeSystem.md)**: The global theming and UI source-of-truth system.
-- **[Audio](Feature_Audio.md)**: Sound effects and background music behavior.
-
-## Startup
-- **[Splash (Startup Sequence)](Feature_Splash.md)**: Short motion sequence that plays before the app becomes interactive.
-
 ## Shared Concepts
 - **Content System**: All content (levels, posts, messages) is defined in JSON/DSL to allow rapid iteration without code changes (see Architecture).
 - **Game Modules**: Individual game engines (Word Connect, etc.) are pluggable and reusable across Campaign and Arcade modes.

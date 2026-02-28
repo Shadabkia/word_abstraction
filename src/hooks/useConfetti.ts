@@ -59,3 +59,6 @@ export const useConfetti = () => {
   return { triggerConfetti, triggerSmallPop };
 };
 
+
+
+

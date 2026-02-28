@@ -1,10 +1,9 @@
-import { X, Globe, Volume2, Music } from 'lucide-react';
+import { X, Globe, Volume2 } from 'lucide-react';
 import { useState } from 'react';
 import { LanguageDialog } from './LanguageDialog';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useSettingsStore } from '../../../core/state/settingsStore';
 import { soundManager } from '../../../games/word-connect/utils/soundManager';
-import { backgroundMusic } from '@/core/audio/backgroundMusic';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -13,18 +12,12 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   const { language, setLanguage, t } = useLanguage();
-  const { soundEnabled, musicEnabled, toggleSound, toggleMusic } = useSettingsStore();
+  const { soundEnabled, toggleSound } = useSettingsStore();
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
   
   const handleSoundToggle = () => {
     const newState = toggleSound();
     soundManager.setEnabled(newState);
-  };
-
-  const handleMusicToggle = () => {
-    const newState = toggleMusic();
-    backgroundMusic.setEnabled(newState);
-    if (newState) backgroundMusic.setDesiredPlaying(true);
   };
 
   const getLanguageDisplayName = (code: string) => {
@@ -179,53 +172,6 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                   top: '4px',
                   transition: 'transform 0.3s',
                   transform: soundEnabled ? 'translateX(-24px)' : 'translateX(-4px)',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-                }}
-              />
-            </button>
-          </div>
-
-          {/* Music row */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 14px',
-              backgroundColor: '#f9fafb',
-              borderRadius: '12px'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Music size={20} color="#1e3a8a" />
-              <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>
-                {t.music}
-              </span>
-            </div>
-            {/* Toggle button */}
-            <button
-              onClick={handleMusicToggle}
-              style={{
-                width: '48px',
-                height: '28px',
-                borderRadius: '14px',
-                border: 'none',
-                cursor: 'pointer',
-                position: 'relative',
-                transition: 'background-color 0.3s',
-                backgroundColor: musicEnabled ? '#4ade80' : '#d1d5db'
-              }}
-            >
-              <div
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  backgroundColor: 'white',
-                  position: 'absolute',
-                  top: '4px',
-                  transition: 'transform 0.3s',
-                  transform: musicEnabled ? 'translateX(-24px)' : 'translateX(-4px)',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                 }}
               />

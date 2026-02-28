@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Truck, MessageCircle, User, Gamepad2, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardScreen } from './features/dashboard/DashboardScreen';
 import { FeedScreen } from './features/feed/FeedScreen';
@@ -8,49 +7,23 @@ import { MessagesScreen } from './features/messages/MessagesScreen';
 import { ProfileScreen } from './features/profile/ProfileScreen';
 import { DebugOverlay } from './shared/components/DebugOverlay';
 import { DeviceSimulatorBar, DeviceModel } from './shared/components/DeviceSimulatorBar';
-import { ThemeConfigDialog } from './shared/components/ThemeConfigDialog';
+import { BottomNavigation } from './shared/ui/BottomNavigation';
 import { useGameState } from './core/state/gameState';
 import { gameRegistry, type GameLaunchRef } from './core/games/gameRegistry';
 import type { AppTab } from '@/core/navigation/types';
 import * as historyNav from '@/core/navigation/historyNav';
-import * as backGuards from '@/core/navigation/backGuards';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
-import { BottomNav } from '@/forge-ui';
-import { Palette } from 'lucide-react';
-import { useForge } from '@/forge-ui';
-import { SplashSequence } from '@/shared/components/SplashSequence';
-import { backgroundMusic } from '@/core/audio/backgroundMusic';
-import { useSettingsStore } from '@/core/state/settingsStore';
 
 export default function App() {
-  const { theme } = useForge();
-  const [showSplash, setShowSplash] = useState(true);
-  const musicEnabled = useSettingsStore((s) => s.musicEnabled);
   const [nav, setNav] = useState<historyNav.NavState>(() => {
     if (typeof window === 'undefined') return { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
-    const navState = historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
-    console.log('[App] Initial nav state:', navState);
-    return navState;
+    return historyNav.getNavState() ?? { kind: 'tab', tab: 'dashboard', v: 1, depth: 0 };
   });
   const [debugOpen, setDebugOpen] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false);
   const [deviceModel, setDeviceModel] = useState<DeviceModel>('iphone-14-pro');
   const [scale, setScale] = useState(100);
-  
-  // Add error boundary for state access
-  let gameState;
-  try {
-    gameState = useGameState();
-  } catch (error) {
-    console.error('[App] Failed to load game state:', error);
-    // Clear corrupted storage and reload
-    localStorage.removeItem('pars-ra-pas-storage');
-    window.location.reload();
-    return <div>Loading...</div>;
-  }
-  
-  const { completeLevel, inbox } = gameState;
+  const { completeLevel, inbox } = useGameState();
   
   // Calculate total unread messages
   const unreadCount = inbox.activeThreads.length - inbox.readMessages.length;
@@ -68,7 +41,6 @@ export default function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     const remove = CapacitorApp.addListener('backButton', () => {
-      if (backGuards.tryHandleBack()) return;
       const current = historyNav.getNavState();
       if (historyNav.canGoBack(current)) {
         historyNav.back();
@@ -110,20 +82,6 @@ export default function App() {
   const profileSelectedLevelId = nav.kind === 'profilePost' ? nav.levelId : null;
   const arcadeSelectedGameId = nav.kind === 'arcadeGame' ? nav.gameId : null;
 
-  // Background music: start on the 2nd splash clip, then fade volume based on location.
-  useEffect(() => {
-    backgroundMusic.setEnabled(musicEnabled);
-  }, [musicEnabled]);
-
-  useEffect(() => {
-    // Dashboard: normal volume. Other tabs: lower. In-game: lowest.
-    const target =
-      activeGame ? 0.15 :
-      activeTab === 'dashboard' ? 0.6 :
-      0.25;
-    backgroundMusic.setTargetVolume(target, { ms: 650 });
-  }, [activeGame, activeTab]);
-
   const setTab = (tab: AppTab) => {
     // Mobile-friendly: tab switches do NOT add to the back stack.
     historyNav.replace({ kind: 'tab', tab, v: 1, depth: 0 });
@@ -140,25 +98,16 @@ export default function App() {
   };
 
   const handleGameComplete = (score: number) => {
-    if (!activeGame) return;
+    // Update campaign progression only when launched from campaign.
+    if (activeGame?.campaignLevelId) {
+      completeLevel(activeGame.campaignLevelId, score, 3); // 3 stars for now
+    }
     
-    // Update progress based on the mode the game was launched from
-    const mode = activeGame.mode;
-    const levelId = activeGame.campaignLevelId || `${activeGame.gameId}_${activeGame.levelId}`;
-    
-    console.log('[App] Game completed:', {
-      mode,
-      levelId,
-      campaignLevelId: activeGame.campaignLevelId,
-      gameId: activeGame.gameId,
-      gameLevelId: activeGame.levelId,
-      score
-    });
-    
-    completeLevel(levelId, score, 3, mode); // 3 stars for now
-    
-    // Game modules own their celebration UX; completion means "ready to leave".
-    historyNav.backOrReplaceTab('arcade');
+    // Show success, then return to previous tab
+    setTimeout(() => {
+      // Return to wherever the player was before the game.
+      historyNav.backOrReplaceTab('arcade');
+    }, 2000);
   };
 
   const getContainerStyle = (model: DeviceModel) => {
@@ -209,18 +158,16 @@ export default function App() {
 
     return (
       <>
-        <div
-          className={`flex flex-col h-full relative overflow-hidden ${isFullscreen ? 'h-screen' : ''} ${theme.colors.background} ${theme.colors.text}`}
-        >
+        <div className={`flex flex-col h-full bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/30 relative overflow-hidden ${isFullscreen ? 'h-screen' : ''}`}>
           
           {/* Background Texture */}
           <div className="absolute inset-0 bg-pattern-subtle opacity-[0.03] pointer-events-none" />
 
           {/* Decorative floating elements - hidden (portrait-first) */}
           <div className="hidden absolute inset-0 pointer-events-none overflow-hidden opacity-30">
-            <div className={`absolute top-20 left-10 w-20 h-20 ${theme.colors.primary} rounded-full blur-2xl floating-element opacity-30`} style={{ animationDelay: '0s' }} />
-            <div className={`absolute top-40 right-20 w-32 h-32 ${theme.colors.secondary} rounded-full blur-3xl floating-element opacity-25`} style={{ animationDelay: '2s' }} />
-            <div className={`absolute bottom-40 left-20 w-24 h-24 ${theme.colors.accent} rounded-full blur-2xl floating-element opacity-25`} style={{ animationDelay: '4s' }} />
+            <div className="absolute top-20 left-10 w-20 h-20 bg-purple-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '0s' }} />
+            <div className="absolute top-40 right-20 w-32 h-32 bg-blue-300 rounded-full blur-3xl floating-element" style={{ animationDelay: '2s' }} />
+            <div className="absolute bottom-40 left-20 w-24 h-24 bg-pink-300 rounded-full blur-2xl floating-element" style={{ animationDelay: '4s' }} />
           </div>
           
           {/* Main Content Area */}
@@ -252,44 +199,17 @@ export default function App() {
             )}
           </div>
 
-          {/* Bottom Navigation Bar (Forge UI) */}
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 100 }}
-            className={`absolute bottom-0 left-0 right-0 z-40 ${isFullscreen ? 'max-w-md mx-auto' : ''}`}
-          >
-            <BottomNav
-              variant={theme.id === 'instagram' ? 'flat' : 'center'}
-              items={[
-                { key: 'feed', icon: Home, label: 'Feed' },
-                { key: 'arcade', icon: Gamepad2, label: 'Arcade' },
-                { key: 'dashboard', icon: Truck, label: 'Home' },
-                { key: 'messages', icon: MessageCircle, label: 'Msgs', badge: unreadCount },
-                { key: 'profile', icon: User, label: 'Profile' },
-              ]}
-              activeTab={['feed', 'arcade', 'dashboard', 'messages', 'profile'].indexOf(activeTab)}
-              onTabChange={(index) => {
-                const keys: AppTab[] = ['feed', 'arcade', 'dashboard', 'messages', 'profile'];
-                const next = keys[index] ?? 'dashboard';
-                setTab(next);
-              }}
-            />
-          </motion.div>
+          {/* Bottom Navigation Bar */}
+          <BottomNavigation 
+            activeTab={activeTab} 
+            onTabChange={setTab} 
+            unreadCount={unreadCount} 
+            isFullscreen={isFullscreen} 
+          />
         </div>
-
-        {/* Mobile-friendly Theme FAB */}
-        <button
-          onClick={() => setThemeOpen(true)}
-          className="fixed bottom-24 right-4 z-50 md:hidden bg-black/70 text-white backdrop-blur-xl border border-white/10 rounded-full shadow-xl p-3 active:scale-95 transition-transform"
-          aria-label="Theme settings"
-        >
-          <Palette className="w-5 h-5" />
-        </button>
 
         {/* Debug Overlay - Ctrl+Shift+D to open */}
         <DebugOverlay isOpen={debugOpen} onClose={() => setDebugOpen(false)} />
-        <ThemeConfigDialog open={themeOpen} onOpenChange={setThemeOpen} />
       </>
     );
   };
@@ -299,21 +219,8 @@ export default function App() {
 
   if (isMobile) {
     return (
-      <div className="relative h-[100dvh] w-full bg-white overflow-hidden">
+      <div className="h-[100dvh] w-full bg-white">
         {renderContent()}
-        {showSplash && (
-          <SplashSequence
-            clips={[
-              { name: 'logo', webmSrc: '/splash/splash-logo.webm', mp4Src: '/splash/splash-logo.mp4' },
-              { name: 'van', webmSrc: '/splash/splash-van.webm', mp4Src: '/splash/splash-van.mp4' },
-            ]}
-            onClipStart={(_, idx) => {
-              // Start (or attempt to start) BGM when the second splash begins.
-              if (idx === 1) backgroundMusic.setDesiredPlaying(true);
-            }}
-            onDone={() => setShowSplash(false)}
-          />
-        )}
       </div>
     );
   }
@@ -326,18 +233,6 @@ export default function App() {
       >
         <div className={`bg-white overflow-hidden shadow-2xl relative ring-1 ring-slate-900/5 transition-all duration-500 ease-spring ${getContainerStyle(deviceModel)}`}>
           {renderContent()}
-          {showSplash && (
-            <SplashSequence
-              clips={[
-                { name: 'logo', webmSrc: '/splash/splash-logo.webm', mp4Src: '/splash/splash-logo.mp4' },
-                { name: 'van', webmSrc: '/splash/splash-van.webm', mp4Src: '/splash/splash-van.mp4' },
-              ]}
-              onClipStart={(_, idx) => {
-                if (idx === 1) backgroundMusic.setDesiredPlaying(true);
-              }}
-              onDone={() => setShowSplash(false)}
-            />
-          )}
         </div>
       </div>
       
@@ -350,3 +245,4 @@ export default function App() {
     </div>
   );
 }
+

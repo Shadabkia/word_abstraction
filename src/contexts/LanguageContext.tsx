@@ -7,7 +7,6 @@ interface Translations {
   settings: string;
   language: string;
   sound: string;
-  music: string;
   selectLanguage: string;
   
   // Language names
@@ -32,7 +31,6 @@ const translations: Record<Language, Translations> = {
     settings: 'تنظیمات',
     language: 'زبان',
     sound: 'صدا',
-    music: 'موسیقی',
     selectLanguage: 'انتخاب زبان',
     
     // Language names
@@ -55,7 +53,6 @@ const translations: Record<Language, Translations> = {
     settings: 'Settings',
     language: 'Language',
     sound: 'Sound',
-    music: 'Music',
     selectLanguage: 'Select Language',
     
     // Language names
